@@ -7,14 +7,18 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "AddVenueViewController.h"
+#import "storeClass.h"
+#import "ICHObjectPrinter.h"
+#import "FirebaseReferenceClass.h"
 @import Firebase;
 
-@interface VenueListViewController : UIViewController
-@property (weak, nonatomic) IBOutlet UIButton *AddVenueButton;
-@property(strong, nonatomic) FIRDatabaseReference *ref;
-@property(copy, nonatomic) NSString *key;
+@interface StoreListViewController : UIViewController <UITableViewDelegate, UITableViewDataSource>
 
+@property (weak, nonatomic) IBOutlet UIButton *AddStoreButton;
+@property (weak, nonatomic) IBOutlet UITableView *tableView;
+@property (strong, nonatomic) IBOutlet NSMutableArray *storeObjectArray;
+@property (strong, nonatomic) IBOutlet UIBarButtonItem *optionsListButton;
+@property (strong, nonatomic) IBOutlet NSDictionary *storeObjectDictionary;
 
 @end
 

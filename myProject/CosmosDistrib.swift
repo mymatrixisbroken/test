@@ -1,5 +1,4 @@
-/*
- //
+//
 // Star rating control written in Swift for iOS and tvOS.
 //
 // https://github.com/marketplacer/Cosmos
@@ -26,7 +25,7 @@ struct CosmosAccessibility {
      
      */
     
-    static func update(_ view: UIView, rating: Double, text: String?, settings: CosmosSettings) {
+    static func update(view: UIView, rating: Double, text: String?, settings: CosmosSettings) {
         view.isAccessibilityElement = true
         
         view.accessibilityTraits = settings.updateOnTouch ?
@@ -51,7 +50,7 @@ struct CosmosAccessibility {
      if .full the value will be 5.
      
      */
-    static func accessibilityValue(_ view: UIView, rating: Double, settings: CosmosSettings) -> String {
+    static func accessibilityValue(view: UIView, rating: Double, settings: CosmosSettings) -> String {
         let accessibilityRating = CosmosRating.displayedRatingFromPreciseRating(rating,
                                                                                 fillMode: settings.fillMode, totalStars: settings.totalStars)
         
@@ -72,7 +71,7 @@ struct CosmosAccessibility {
      rating is incremented by 0.5.
      
      */
-    static func accessibilityIncrement(_ rating: Double, settings: CosmosSettings) -> Double {
+    static func accessibilityIncrement(rating: Double, settings: CosmosSettings) -> Double {
         var increment: Double = 0
         
         switch settings.fillMode {
@@ -90,7 +89,7 @@ struct CosmosAccessibility {
         return increment
     }
     
-    static func accessibilityDecrement(_ rating: Double, settings: CosmosSettings) -> Double {
+    static func accessibilityDecrement(rating: Double, settings: CosmosSettings) -> Double {
         var increment: Double = 0
         
         switch settings.fillMode {
@@ -236,7 +235,7 @@ class CosmosLayerHelper {
      - returns: New text layer.
      
      */
-    class func createTextLayer(_ text: String, font: UIFont, color: UIColor) -> CATextLayer {
+    class func createTextLayer(text: String, font: UIFont, color: UIColor) -> CATextLayer {
         let size = NSString(string: text).size(attributes: [NSFontAttributeName: font])
         
         let layer = CATextLayer()
@@ -276,7 +275,7 @@ class CosmosLayers {
      - returns: Array of star layers.
      
      */
-    class func createStarLayers(_ rating: Double, settings: CosmosSettings) -> [CALayer] {
+    class func createStarLayers(rating: Double, settings: CosmosSettings) -> [CALayer] {
         
         var ratingRemander = CosmosRating.numberOfFilledStars(rating,
                                                               totalNumberOfStars: settings.totalStars)
@@ -308,7 +307,7 @@ class CosmosLayers {
      - returns: Layer that shows the star. The layer is displauyed in the cosmos view.
      
      */
-    class func createCompositeStarLayer(_ starFillLevel: Double, settings: CosmosSettings) -> CALayer {
+    class func createCompositeStarLayer(starFillLevel: Double, settings: CosmosSettings) -> CALayer {
         
         if starFillLevel >= 1 {
             return createStarLayer(true, settings: settings)
@@ -333,7 +332,7 @@ class CosmosLayers {
      - returns: Layer that contains the partially filled star.
      
      */
-    class func createPartialStar(_ starFillLevel: Double, settings: CosmosSettings) -> CALayer {
+    class func createPartialStar(starFillLevel: Double, settings: CosmosSettings) -> CALayer {
         let filledStar = createStarLayer(true, settings: settings)
         let emptyStar = createStarLayer(false, settings: settings)
         
@@ -350,7 +349,7 @@ class CosmosLayers {
         return parentLayer
     }
     
-    private class func createStarLayer(_ isFilled: Bool, settings: CosmosSettings) -> CALayer {
+    private class func createStarLayer(isFilled: Bool, settings: CosmosSettings) -> CALayer {
         let fillColor = isFilled ? settings.filledColor : settings.emptyColor
         let strokeColor = isFilled ? settings.filledBorderColor : settings.emptyBorderColor
         
@@ -368,7 +367,7 @@ class CosmosLayers {
      - parameter layers: The star layers array.
      - parameter starMargin: Margin between stars.
      */
-    class func positionStarLayers(_ layers: [CALayer], starMargin: Double) {
+    class func positionStarLayers(layers: [CALayer], starMargin: Double) {
         var positionX:CGFloat = 0
         
         for layer in layers {
@@ -443,7 +442,7 @@ struct CosmosLocalizedRating {
      - parameter language: ISO 639-1 language code. Example: 'en'.
      
      */
-    static func translation(_ language: String) -> String? {
+    static func translation(language: String) -> String? {
         return localizedRatings[language]
     }
     
@@ -460,7 +459,7 @@ struct CosmosLocalizedRating {
      - returns: Translation for the preferred language.
      
      */
-    static func translationInPreferredLanguage(_ preferredLanguages: [String],
+    static func translationInPreferredLanguage(preferredLanguages: [String],
                                                  localizedText: [String: String],
                                                  fallbackTranslation: String) -> String {
         
@@ -473,13 +472,13 @@ struct CosmosLocalizedRating {
         return fallbackTranslation
     }
     
-    static func ratingInPreferredLanguage(_ preferredLanguages: [String]) -> String {
+    static func ratingInPreferredLanguage(preferredLanguages: [String]) -> String {
         return translationInPreferredLanguage(preferredLanguages,
                                               localizedText: localizedRatings,
                                               fallbackTranslation: defaultText)
     }
     
-    static func preferredLanguages(_ preferredLocales: [String]) -> [String] {
+    static func preferredLanguages(preferredLocales: [String]) -> [String] {
         return preferredLocales.map { element in
             
             let dashSeparated = element.components(separatedBy: "-")
@@ -539,7 +538,7 @@ struct CosmosRating {
      - returns: The rounded fill level.
      
      */
-    static func roundFillLevel(_ starFillLevel: Double, fillMode: StarFillMode) -> Double {
+    static func roundFillLevel(starFillLevel: Double, fillMode: StarFillMode) -> Double {
         switch fillMode {
         case .full:
             return Double(round(starFillLevel))
@@ -565,7 +564,7 @@ struct CosmosRating {
      - returns: Returns rating that is displayed to the user taking into account the star fill mode.
      
      */
-    static func displayedRatingFromPreciseRating(_ preciseRating: Double,
+    static func displayedRatingFromPreciseRating(preciseRating: Double,
                                                    fillMode: StarFillMode, totalStars: Int) -> Double {
         
         let starFloorNumber = floor(preciseRating)
@@ -589,7 +588,7 @@ struct CosmosRating {
      - returns: Number of filled stars. If rating is biggen than the total number of stars (usually 5) it returns the maximum number of stars.
      
      */
-    static func numberOfFilledStars(_ rating: Double, totalNumberOfStars: Int) -> Double {
+    static func numberOfFilledStars(rating: Double, totalNumberOfStars: Int) -> Double {
         if rating > Double(totalNumberOfStars) { return Double(totalNumberOfStars) }
         if rating < 0 { return 0 }
         
@@ -698,7 +697,7 @@ class CosmosSize {
      Calculates the size of the cosmos view. It goes through all the star and text layers and makes size the view size is large enough to show all of them.
      
      */
-    class func calculateSizeToFitLayers(_ layers: [CALayer]) -> CGSize {
+    class func calculateSizeToFitLayers(layers: [CALayer]) -> CGSize {
         var size = CGSize()
         
         for layer in layers {
@@ -739,7 +738,7 @@ class CosmosText {
      - parameter textMargin: The distance between the stars and the text.
      
      */
-    class func position(_ layer: CALayer, starsSize: CGSize, textMargin: Double) {
+    class func position(layer: CALayer, starsSize: CGSize, textMargin: Double) {
         layer.position.x = starsSize.width + CGFloat(textMargin)
         let yOffset = (starsSize.height - layer.bounds.height) / 2
         layer.position.y = yOffset
@@ -770,7 +769,7 @@ struct CosmosTouch {
      - returns: The rating representing the touch location.
      
      */
-    static func touchRating(_ locationX: CGFloat, starsWidth: CGFloat, settings: CosmosSettings) -> Double {
+    static func touchRating(locationX: CGFloat, starsWidth: CGFloat, settings: CosmosSettings) -> Double {
         
         let position = locationX / starsWidth
         let totalStars = Double(settings.totalStars)
@@ -926,7 +925,7 @@ import UIKit
      - returns: The newly created text layer.
      
      */
-    private func createTextLayer(_ text: String, layers: [CALayer]) -> CALayer {
+    private func createTextLayer(text: String, layers: [CALayer]) -> CALayer {
         let textLayer = CosmosLayerHelper.createTextLayer(text,
                                                           font: settings.textFont, color: settings.textColor)
         
@@ -944,7 +943,7 @@ import UIKit
      
      - parameter layers: Array of layers containing stars and the text.
      */
-    private func updateSize(_ layers: [CALayer]) {
+    private func updateSize(layers: [CALayer]) {
         viewSize = CosmosSize.calculateSizeToFitLayers(layers)
         invalidateIntrinsicContentSize()
     }
@@ -987,7 +986,7 @@ import UIKit
     public var didFinishTouchingCosmos: ((Double)->())?
     
     /// Overriding the function to detect the first touch gesture.
-    public override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+    public override func touchesBegan(touches: Set<UITouch>, with event: UIEvent?) {
         super.touchesBegan(touches, with: event)
         
         if let touch = touches.first {
@@ -997,7 +996,7 @@ import UIKit
     }
     
     /// Overriding the function to detect touch move.
-    public override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
+    public override func touchesMoved(touches: Set<UITouch>, with event: UIEvent?) {
         super.touchesMoved(touches, with: event)
         
         if let touch = touches.first {
@@ -1007,7 +1006,7 @@ import UIKit
     }
     
     /// Detecting event when the user lifts their finger.
-    public override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+    public override func touchesEnded(touches: Set<UITouch>, with event: UIEvent?) {
         super.touchesEnded(touches, with: event)
         
         didFinishTouchingCosmos?(rating)
@@ -1020,7 +1019,7 @@ import UIKit
      - parameter starsWidth: The width of the stars excluding the text.
      
      */
-    func onDidTouch(_ locationX: CGFloat, starsWidth: CGFloat) {
+    func onDidTouch(locationX: CGFloat, starsWidth: CGFloat) {
         let calculatedTouchRating = CosmosTouch.touchRating(locationX, starsWidth: starsWidth,
                                                             settings: settings)
         
@@ -1171,7 +1170,7 @@ import UIKit
  The function is used in pointInside(point: CGPoint, withEvent event: UIEvent?) of UIImageView.
  */
 struct CosmosTouchTarget {
-    static func optimize(_ bounds: CGRect) -> CGRect {
+    static func optimize(bounds: CGRect) -> CGRect {
         let recommendedHitSize: CGFloat = 44
         
         var hitWidthIncrease:CGFloat = recommendedHitSize - bounds.width
@@ -1240,7 +1239,7 @@ struct StarLayer {
      - returns: New layer containing the star shape.
      
      */
-    static func create(_ starPoints: [CGPoint], size: Double,
+    static func create(starPoints: [CGPoint], size: Double,
                          lineWidth: Double, fillColor: UIColor, strokeColor: UIColor) -> CALayer {
         
         let containerLayer = createContainerLayer(size)
@@ -1269,7 +1268,7 @@ struct StarLayer {
      - returns: New shape layer.
      
      */
-    static func createShapeLayer(_ path: CGPath, lineWidth: Double, fillColor: UIColor,
+    static func createShapeLayer(path: CGPath, lineWidth: Double, fillColor: UIColor,
                                    strokeColor: UIColor, size: Double) -> CALayer {
         
         let layer = CAShapeLayer()
@@ -1292,7 +1291,7 @@ struct StarLayer {
      - returns: New container layer.
      
      */
-    static func createContainerLayer(_ size: Double) -> CALayer {
+    static func createContainerLayer(size: Double) -> CALayer {
         let layer = CALayer()
         layer.contentsScale = UIScreen.main().scale
         layer.anchorPoint = CGPoint()
@@ -1313,7 +1312,7 @@ struct StarLayer {
      - returns: New shape path.
      
      */
-    static func createStarPath(_ starPoints: [CGPoint], size: Double,
+    static func createStarPath(starPoints: [CGPoint], size: Double,
                                  lineWidth: Double) -> UIBezierPath {
         
         let lineWidthLocal = lineWidth + ceil(lineWidth * 0.3)
@@ -1345,7 +1344,7 @@ struct StarLayer {
      - returns: The scaled shape.
      
      */
-    static func scaleStar(_ starPoints: [CGPoint], factor: Double, lineWidth: Double) -> [CGPoint] {
+    static func scaleStar(starPoints: [CGPoint], factor: Double, lineWidth: Double) -> [CGPoint] {
         return starPoints.map { point in
             return CGPoint(
                 x: point.x * CGFloat(factor) + CGFloat(lineWidth),

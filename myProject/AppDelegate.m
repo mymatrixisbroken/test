@@ -7,6 +7,10 @@
 //
 
 #import "AppDelegate.h"
+#import <FBSDKCoreKit/FBSDKCoreKit.h>
+@import Firebase;
+@import GooglePlaces;
+
 
 @interface AppDelegate ()
 
@@ -14,10 +18,26 @@
 
 @implementation AppDelegate
 
-
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    // Override point for customization after application launch.
-    return YES;
+    [[FBSDKApplicationDelegate sharedInstance] application:application didFinishLaunchingWithOptions:launchOptions];
+    [FIRApp configure];
+    
+    NSError *error;
+    [[FIRAuth auth] signOut:&error];
+    if (!error) {NSLog(@"Signed out any Firebase user if signed in.");}  //Sign out Firebase User at launch of App
+    
+    [GMSPlacesClient provideAPIKey:@"AIzaSyCiJtePMaCbT4QEc6xAM4QEqFTAiVTyH_I"];
+
+       return YES;
+}
+
+- (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation {
+    BOOL handled = [[FBSDKApplicationDelegate sharedInstance] application:application
+        openURL:url
+        sourceApplication:sourceApplication
+        annotation:annotation
+    ];
+    return handled;
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application {
@@ -36,6 +56,7 @@
 
 - (void)applicationDidBecomeActive:(UIApplication *)application {
     // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
+    [FBSDKAppEvents activateApp];
 }
 
 - (void)applicationWillTerminate:(UIApplication *)application {

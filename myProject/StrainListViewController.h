@@ -7,13 +7,17 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "AddStrainController.h"
+#import "strainClass.h"
+#import "FirebaseReferenceClass.h"
+#import "ICHObjectPrinter.h"
 @import Firebase;
 
-@interface ThirdViewController : UIViewController
+@interface StrainListViewController : UIViewController <UITableViewDelegate, UITableViewDataSource>
+
 @property (weak, nonatomic) IBOutlet UIButton *AddStrainButton;
-@property(strong, nonatomic) FIRDatabaseReference *ref;
-@property(copy, nonatomic) NSString *key;
+@property (weak, nonatomic) IBOutlet UITableView *tableView;
+@property (strong, nonatomic) IBOutlet NSMutableArray *strainObjectArray;
+@property (strong, nonatomic) IBOutlet NSDictionary *strainObjectDictionary;
 
 @end
 

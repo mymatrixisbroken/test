@@ -7,20 +7,26 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "strainClass.h"
+#import "FirebaseReferenceClass.h"
 @import JVFloatLabeledTextField;
 @import Firebase;
 
-@interface AddStrainController : UIViewController
-@property(copy, nonatomic) NSString *key;
-@property (weak, nonatomic) IBOutlet UITextField *thcField;
-@property (weak, nonatomic) IBOutlet UITextField *StrainNameField;
-@property (weak, nonatomic) IBOutlet UITextField *SpeciesField;
-@property (weak, nonatomic) IBOutlet UITextField *GrowerField;
-@property (weak, nonatomic) IBOutlet UITextField *DescriptionField;
-@property (weak, nonatomic) IBOutlet UIButton *SubmitStrainButton;
-@property(strong, nonatomic) FIRDatabaseReference *ref;
-@property (weak, nonatomic) IBOutlet UIButton *BackButton;
-
-
+@interface AddStrainViewController : UIViewController <UIImagePickerControllerDelegate, UINavigationControllerDelegate>{
+    UIImagePickerController *picker;
+    UIImagePickerController *picker2;
+    UIImage *image;
+}
+@property (weak, nonatomic) IBOutlet UIImageView *strainImageView;
+@property (strong, nonatomic) IBOutlet UISegmentedControl *speciesType;
+@property (weak, nonatomic) IBOutlet JVFloatLabeledTextField *strainNameField;
+@property (weak, nonatomic) IBOutlet JVFloatLabeledTextField *thcField;
+@property (weak, nonatomic) IBOutlet JVFloatLabeledTextField *cbdField;
+@property (weak, nonatomic) IBOutlet JVFloatLabeledTextField *speciesField;
+@property (weak, nonatomic) IBOutlet JVFloatLabeledTextField *growerField;
+@property (weak, nonatomic) IBOutlet JVFloatLabeledTextField *flavorField;
+@property (weak, nonatomic) IBOutlet JVFloatLabeledTextField *aromaField;
+@property (weak, nonatomic) IBOutlet JVFloatLabeledTextField *highTypeField;
+@property BOOL imageSelected;
 @end
 

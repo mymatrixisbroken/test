@@ -7,9 +7,18 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "userClass.h"
+#import "strainClass.h"
+#import "FirebaseReferenceClass.h"
+@import Firebase;
+@import JVFloatLabeledTextField;
 
 @interface LoginViewController : UIViewController
-
-
+@property (weak, nonatomic) IBOutlet JVFloatLabeledTextField *SignInUsername;
+@property (strong, nonatomic) IBOutlet UIView *viewForButtonCreateAccount;
+@property (strong, nonatomic) IBOutlet UIButton *tappedSignUpButton;
+@property (weak, nonatomic) IBOutlet JVFloatLabeledTextField *SignInPassword;
+@property (strong, nonatomic) IBOutlet UIView *signInVIew;
+@property (weak, nonatomic) IBOutlet UIButton *SignInButton;
 @end
 

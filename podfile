@@ -1,0 +1,30 @@
+# Uncomment this line to define a global platform for your project
+platform :ios, '9.0'
+
+target 'myProject' do
+  # Comment this line if you're not using Swift and don't want to use dynamic frameworks
+  use_frameworks!
+
+  # Pods for myProject
+  pod ‘Firebase/Core’
+  pod 'Firebase/Auth'
+  pod ‘Firebase/Database’
+  pod 'Firebase/Storage'
+  pod 'JVFloatLabeledTextField'
+  pod 'Cosmos'
+  pod 'MBProgressHUD'
+  pod 'SideMenu'
+  pod 'GooglePlaces'
+  pod 'GooglePlacePicker'
+  pod 'GoogleMaps'
+target 'myProjectTests' do
+    inherit! :search_paths
+    # Pods for testing
+  end
+
+  target 'myProjectUITests' do
+    inherit! :search_paths
+    # Pods for testing
+  end
+
+end

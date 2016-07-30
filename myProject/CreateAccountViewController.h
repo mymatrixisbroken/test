@@ -1,13 +1,26 @@
 //
-//  CreateAccountViewController.h
+//  SecondViewController.h
 //  myProject
 //
-//  Created by Guy on 6/17/16.
+//  Created by Guy on 6/15/16.
 //  Copyright © 2016 Joaquin. All rights reserved.
 //
 
-#ifndef CreateAccountViewController_h
-#define CreateAccountViewController_h
+#import <UIKit/UIKit.h>
+#import "userClass.h"
+#import "FirebaseReferenceClass.h"
+@import Firebase;
+@import JVFloatLabeledTextField;
 
+@interface CreateAccountViewController : UIViewController
+@property (weak, nonatomic) IBOutlet UIButton *CreateAccountNext;
+@property (weak, nonatomic) IBOutlet UIButton *BackArrowCreateAccount;
 
-#endif /* CreateAccountViewController_h */
+@property (weak, nonatomic) IBOutlet JVFloatLabeledTextField *emailField;
+@property (weak, nonatomic) IBOutlet JVFloatLabeledTextField *passwordField;
+@property (strong, nonatomic) IBOutlet JVFloatLabeledTextField *usernameField;
+
+@property (weak, nonatomic) IBOutlet NSString* todays_date;
+
+@end
+

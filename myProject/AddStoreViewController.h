@@ -7,19 +7,28 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <MapKit/MKAnnotation.h>
+#import "storeClass.h"
+#import "FirebaseReferenceClass.h"
 @import Firebase;
+@import GooglePlaces;
+@import JVFloatLabeledTextField;
 
-@interface AddVenueViewController : UIViewController
-@property (weak, nonatomic) IBOutlet UIButton *AddVenueBackButton;
-@property (weak, nonatomic) IBOutlet UITextField *VenueNameField;
-@property (weak, nonatomic) IBOutlet UITextField *AddressField;
-@property (weak, nonatomic) IBOutlet UITextField *CityField;
-@property (weak, nonatomic) IBOutlet UITextField *StateField;
-@property (weak, nonatomic) IBOutlet UITextField *PhoneNumberField;
-@property(copy, nonatomic) NSString *key;
-@property(strong, nonatomic) FIRDatabaseReference *ref;
+@interface AddStoreViewController : UIViewController <UIImagePickerControllerDelegate, UINavigationControllerDelegate>{
+    UIImagePickerController *picker;
+    UIImagePickerController *picker2;
+    UIImage *image;
+}
 
-
+@property (weak, nonatomic) IBOutlet UIButton *back_button;
+@property (weak, nonatomic) IBOutlet JVFloatLabeledTextField *store_name_field;
+@property (weak, nonatomic) IBOutlet JVFloatLabeledTextField *address_field;
+@property (weak, nonatomic) IBOutlet JVFloatLabeledTextField *city_field;
+@property (weak, nonatomic) IBOutlet JVFloatLabeledTextField *state_field;
+@property (weak, nonatomic) IBOutlet JVFloatLabeledTextField *phone_number_field;
+@property (weak, nonatomic) IBOutlet UIButton *submit_store_button;
+@property (strong, nonatomic) IBOutlet UIImageView *imageView;
+@property BOOL imageSelected;
 
 @end
 

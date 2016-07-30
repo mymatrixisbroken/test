@@ -7,6 +7,7 @@
 //
 
 #import "FirstViewController.h"
+@import Firebase;
 
 @interface FirstViewController ()
 
