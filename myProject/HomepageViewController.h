@@ -7,11 +7,13 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "userClass.h"
+#import "strainClass.h"
+#import "storeClass.h"
+#import "FirebaseReferenceClass.h"
 @import Firebase;
 
-@interface HomepageViewController : UIViewController <UITableViewDelegate, UITableViewDataSource>
-@property (strong, nonatomic) IBOutlet NSString *label;
-@property (strong, nonatomic) IBOutlet UITableView *tableView;
+@interface HomepageViewController : UIViewController
 
 @end
 

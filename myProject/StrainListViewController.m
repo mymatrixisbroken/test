@@ -37,24 +37,12 @@
             //you have to delcare a new object instance to load table cells!!!!!!!!!!!!!!!!!!!
             strainClass *strainLoop = [[strainClass alloc] init];
             [strainLoop setClassObject:key Values:dict];
-            [self getSmallImageFromFirebase:strainLoop];
             //**********************************************//
             //NSLog(@"0 Object description is %@ at %d",[ICHObjectPrinter descriptionForObject:[_strainObjectArray objectAtIndex:i]], i);
             //**********************************************//
             [_strainObjectArray addObject:strainLoop];
         }
         [self.tableView reloadData];
-    }];
-}
-
-- (void) getSmallImageFromFirebase:(strainClass *)strainLoop{
-    FIRStorageReference *imageRef = [firebaseRef.strains_small_images_ref child:strainLoop.strain_key];
-    [imageRef dataWithMaxSize:1 * 1024 * 1024 completion:^(NSData *data, NSError *error){
-        if (error != nil) {
-            // Uh-oh, an error occurred!
-        } else {
-            strainLoop.small_image = [UIImage imageWithData:data]; //*downloadTask observeStatus:FIRStorageTaskStatusSuccess
-        }
     }];
 }
 
@@ -71,7 +59,17 @@
         cell.textLabel.text = strain.strain_name;     //set textLabel text to index value in _strainNameArray
         cell.detailTextLabel.text = [[[@"THC:" stringByAppendingString:strain.thc] stringByAppendingString:@" CBD:" ] stringByAppendingString:strain.cbd];
         if([_strainObjectArray count] > indexPath.row){
-            cell.imageView.image = strain.small_image;
+            dispatch_async(dispatch_get_global_queue(0,0), ^{
+                NSData * data = [[NSData alloc] initWithContentsOfURL: [NSURL URLWithString:strain.image_name]];
+                if( data == nil ){
+                    NSLog(@"image is nil");
+                    return;
+                }
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    // WARNING: is the cell still using the same data by this point??
+                    cell.imageView.image = [UIImage imageWithData: data];
+                });
+            });
         }
     }
     return cell;
@@ -79,23 +77,9 @@
 
 - (void) tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     strain = [_strainObjectArray objectAtIndex:indexPath.row];
-    
-    FIRStorageReference *imageRef = [firebaseRef.strains_medium_images_ref child:strain.strain_key];
-    [imageRef dataWithMaxSize:1 * 2000 * 2000 completion:^(NSData *data, NSError *error){
-        if (error != nil) {
-            // Uh-oh, an error occurred!
-        } else {
-            strain.medium_image = [UIImage imageWithData:data];
-        }
-    }];
     [self performSegueWithIdentifier:@"strainListToProfileSegue" sender:self];
-
 }
 
-
-- (IBAction)tappedOptionButton:(UIBarButtonItem *)sender {
-    [self performSegueWithIdentifier:@"optionListSegue" sender:self];
-}
 
 - (IBAction)tappedAddStrain:(UIBarButtonItem *)sender {
     [self dismissViewControllerAnimated:YES completion:^{}];

@@ -19,13 +19,6 @@ extern FirebaseReferenceClass *firebaseRef;
 @property(strong, nonatomic) FIRDatabaseReference *storesRef;
 @property(strong, nonatomic) FIRDatabaseReference *reviewsRef;
 
-@property(strong, nonatomic) FIRStorage *storage;
-@property(strong, nonatomic) FIRStorageReference *storageRef;
-@property(strong, nonatomic) FIRStorageReference *stores_small_images_ref;
-@property(strong, nonatomic) FIRStorageReference *stores_medium_images_ref;
-@property(strong, nonatomic) FIRStorageReference *strains_small_images_ref;
-@property(strong, nonatomic) FIRStorageReference *strains_medium_images_ref;
-
 + (FirebaseReferenceClass *)sharedInstance;
 
 @end

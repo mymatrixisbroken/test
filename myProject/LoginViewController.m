@@ -8,7 +8,6 @@
 
 #import "LoginViewController.h"
 
-const static CGFloat frameSizeHeight = 70.0f;
 const static CGFloat frameSizeWidth = 600.0f;
 
 
@@ -40,19 +39,19 @@ const static CGFloat frameSizeWidth = 600.0f;
 
 
 - (void) setTextFields {
-    [_SignInUsername.layer addSublayer:[self customUITextField]];
+    [_SignInUsername.layer addSublayer:[self customUITextField:70]];
     _SignInUsername.layer.masksToBounds = YES;
     [_SignInUsername becomeFirstResponder];
     
     //Custom format uiTextField
-    [_SignInPassword.layer addSublayer:[self customUITextField]];
+    [_SignInPassword.layer addSublayer:[self customUITextField:70]];
     _SignInPassword.layer.masksToBounds = YES;
     
     _SignInButton.enabled = NO;
     _SignInButton.alpha = 0.5;
     _SignInButton.contentEdgeInsets = UIEdgeInsetsMake(5, 22, 5, 0);
 
-    [_signInVIew.layer addSublayer:[self customUITextField]];
+    [_signInVIew.layer addSublayer:[self customUITextField:75]];
     _signInVIew.layer.masksToBounds = YES;
 
 }
@@ -126,12 +125,12 @@ const static CGFloat frameSizeWidth = 600.0f;
     [self presentViewController:alertController animated:YES completion:nil];
 }
 
-- (CALayer *) customUITextField{
+- (CALayer *) customUITextField:(CGFloat) frameHeight{
     CALayer *border = [CALayer layer];
     UIColor *selectedColor = [UIColor colorWithRed:199.0/255.0 green:199.0/255.0 blue:205.0/255.0 alpha:1];
     CGFloat borderWidth = 2;
     border.borderColor = selectedColor.CGColor;
-    border.frame = CGRectMake(0, frameSizeHeight - borderWidth, frameSizeWidth, frameSizeHeight);
+    border.frame = CGRectMake(0, frameHeight - borderWidth, frameSizeWidth, frameHeight);
     border.borderWidth = borderWidth;
     return border;
 }

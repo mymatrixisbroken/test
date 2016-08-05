@@ -19,13 +19,13 @@ extern userClass *user;
 @property NSString *date_joined;
 @property NSString *last_signed_in;
 @property NSString *account_type;
+@property NSString *image_name;
 @property NSMutableArray *wish_list;
 @property NSMutableArray *friends;
 @property NSMutableArray *reviews;
 @property NSMutableArray *badges;
 @property NSMutableArray *strains_tried;
 @property NSMutableArray *stores_visited;
-@property UIImage *avatar;
 
 + (userClass *)sharedInstance;
 -(id)createEmptyUserObject;

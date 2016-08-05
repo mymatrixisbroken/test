@@ -21,7 +21,12 @@ extern strainClass *strain;
 @property NSString *grower;
 @property NSString *flavor;
 @property NSString *aroma;
-@property NSString *high_type;
+@property NSString *happiness;
+@property NSString *uplifting;
+@property NSString *euphoric;
+@property NSString *energetic;
+@property NSString *relaxed;
+@property NSString *image_name;
 @property (nonatomic, assign) double rating_score;
 @property (nonatomic, assign) int rating_count;
 @property (nonatomic, assign) int total_count;
@@ -31,8 +36,6 @@ extern strainClass *strain;
 @property BOOL concentrate;
 @property BOOL topical;
 @property BOOL edible;
-@property UIImage *small_image;
-@property UIImage *medium_image;
 @property NSMutableArray *strainObjectArray;
 
 

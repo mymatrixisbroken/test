@@ -21,8 +21,6 @@
     [self loadRatingScore];
     // Do any additional setup after loading the view, typically from a nib.
 }
-- (IBAction)tappedEditStore:(UIButton *)sender {
-}
 - (IBAction)tappedImage:(UITapGestureRecognizer *)sender {
     [self performSegueWithIdentifier:@"storeImageViewSegue" sender:self];
 }
@@ -31,7 +29,7 @@
 }
 
 - (void)loadImageView {
-    [_store_image_view setImage:store .medium_image];
+    [_store_image_view setImage:store.medium_image];
 }
 
 - (void)loadLabels {

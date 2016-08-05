@@ -14,7 +14,6 @@
 
 @interface CreateAccountViewController : UIViewController
 @property (weak, nonatomic) IBOutlet UIButton *CreateAccountNext;
-@property (weak, nonatomic) IBOutlet UIButton *BackArrowCreateAccount;
 
 @property (weak, nonatomic) IBOutlet JVFloatLabeledTextField *emailField;
 @property (weak, nonatomic) IBOutlet JVFloatLabeledTextField *passwordField;

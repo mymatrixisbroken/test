@@ -7,99 +7,157 @@
 //
 
 #import "ListViewController.h"
-
 @interface ListViewController ()
-
 @end
 
 @implementation ListViewController
 - (void)viewDidLoad {
     [super viewDidLoad];
-    self.tableView.dataSource = self;
-    self.tableView.delegate = self;
-    [self.tableView reloadData];
+    /*
+    self.collectionView.dataSource = self;
+    self.collectionView.delegate = self;
+    [self.collectionView reloadData];*/
 }
-
-
+/*
+-(NSInteger) collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section{
+    if(_cellSelected){
+        return [objectsArray.storeObjectArray count];
+    }
+    else{
+        return [objectsArray.strainObjectArray count];
+    }
+}
 
 - (NSInteger) tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
-    if(_optionSelected){
-        return [store.storeObjectArray count];
+    if(_cellSelected){
+        return [objectsArray.storeObjectArray count];
     }
     else{
-        return [strain.strainObjectArray count];
+        return [objectsArray.strainObjectArray count];
     }
 }
 
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
-    if(_optionSelected){
-        static NSString *cellIdentifier = @"cellIdentifier";
-        UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier forIndexPath:indexPath];
-        
-        if ([store.storeObjectArray count] > 0) {
-            store = [store.storeObjectArray objectAtIndex:indexPath.row];
-            cell.textLabel.text = store.store_name;     //set textLabel text to index value in _strainNameArray
-            cell.detailTextLabel.text = [[[@"City:" stringByAppendingString:store.city] stringByAppendingString:@" State:" ] stringByAppendingString:store.state];     //set detailTextLabed text to index value in _thcArray and _cbdArray
+-(UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(nonnull NSIndexPath *)indexPath{
+    static NSString *cellIdentifier = @"cellIdentifier";
+
+    CustomCollectionViewCell *cell =
+    (CustomCollectionViewCell *)[collectionView dequeueReusableCellWithReuseIdentifier:cellIdentifier
+                                                                                forIndexPath:indexPath];
+
+    
+    
+    if(_cellSelected){
+        NSLog(@"stores selected");
+        if ([objectsArray.storeObjectArray count] > 0) {
             
-            if([store.storeObjectArray count] > indexPath.row){ //Check if image array is populated
-                cell.imageView.image = store.small_image;}
+            store = [objectsArray.storeObjectArray objectAtIndex:indexPath.row];
+            //cell.label.text = store.store_name;
+            
+            dispatch_async(dispatch_get_global_queue(0,0), ^{
+                NSData * data = [[NSData alloc] initWithContentsOfURL: [NSURL URLWithString:store.image_name]];
+                if( data == nil ){
+                    NSLog(@"image is nil");
+                    return;
+                }
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    // WARNING: is the cell still using the same data by this point??
+                    cell.imageView.image = [UIImage imageWithData: data];
+                });
+            });
         }
-        return cell;
     }
     else{
-        static NSString *cellIdentifier = @"cellIdentifier";
-        UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier forIndexPath:indexPath];
+        NSLog(@"strains selected");
         
-        if ([strain.strainObjectArray count] > 0) {
-            strain = [strain.strainObjectArray objectAtIndex:indexPath.row];
+        if ([objectsArray.strainObjectArray count] > 0) {
+            strain = [objectsArray.strainObjectArray objectAtIndex:indexPath.row];
+            cell.label.text = strain.strain_name;  
+            dispatch_async(dispatch_get_global_queue(0,0), ^{
+                NSData * data = [[NSData alloc] initWithContentsOfURL: [NSURL URLWithString:strain.image_name]];
+                if( data == nil ){
+                    NSLog(@"image is nil");
+                    return;
+                }
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    // WARNING: is the cell still using the same data by this point??
+                    cell.imageView.image = [UIImage imageWithData: data];
+                });
+            });
+        }
+    }
+    return cell;
+
+}
+
+/*
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
+    static NSString *cellIdentifier = @"cellIdentifier";
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier forIndexPath:indexPath];
+    
+    if(_cellSelected){
+        NSLog(@"stores selected");
+        if ([objectsArray.storeObjectArray count] > 0) {
+            NSLog(@"0 Object description is %@",[ICHObjectPrinter descriptionForObject:[objectsArray.storeObjectArray objectAtIndex:0]]);
+
+        store = [objectsArray.storeObjectArray objectAtIndex:indexPath.row];
+        cell.textLabel.text = store.store_name;
+        cell.detailTextLabel.text = [[[@"City:" stringByAppendingString:store.city] stringByAppendingString:@" State:"]stringByAppendingString:store.state];
+        
+        dispatch_async(dispatch_get_global_queue(0,0), ^{
+            NSData * data = [[NSData alloc] initWithContentsOfURL: [NSURL URLWithString:store.image_name]];
+            if( data == nil ){
+                NSLog(@"image is nil");
+                return;
+            }
+            dispatch_async(dispatch_get_main_queue(), ^{
+                // WARNING: is the cell still using the same data by this point??
+                cell.imageView.image = [UIImage imageWithData: data];
+            });
+        });
+        }
+    }
+    else{
+        NSLog(@"strains selected");
+
+        if ([objectsArray.strainObjectArray count] > 0) {
+            strain = [objectsArray.strainObjectArray objectAtIndex:indexPath.row];
             cell.textLabel.text = strain.strain_name;     //set textLabel text to index value in _strainNameArray
             cell.detailTextLabel.text = [[[@"THC:" stringByAppendingString:strain.thc] stringByAppendingString:@" CBD:" ] stringByAppendingString:strain.cbd];
-            if([strain.strainObjectArray count] > indexPath.row){
-                cell.imageView.image = strain.small_image;
+        dispatch_async(dispatch_get_global_queue(0,0), ^{
+            NSData * data = [[NSData alloc] initWithContentsOfURL: [NSURL URLWithString:strain.image_name]];
+            if( data == nil ){
+                NSLog(@"image is nil");
+                return;
             }
+            dispatch_async(dispatch_get_main_queue(), ^{
+                // WARNING: is the cell still using the same data by this point??
+                cell.imageView.image = [UIImage imageWithData: data];
+            });
+        });
         }
-        return cell;
     }
+    return cell;
 }
-
+*/
+/*
 - (void) tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
-    if(_optionSelected){
-        store = [store.storeObjectArray objectAtIndex:indexPath.row];
-        FIRStorageReference *imageRef = [firebaseRef.strains_medium_images_ref child:strain.strain_key];
-        [imageRef dataWithMaxSize:1 * 2000 * 2000 completion:^(NSData *data, NSError *error){
-            if (error != nil) {
-                // Uh-oh, an error occurred!
-            } else {
-                strain.medium_image = [UIImage imageWithData:data];
-                [self performSegueWithIdentifier:@"storeListToProfileSegue" sender:self];
-            }
-        }];
+    if(_cellSelected){
+        store = [objectsArray.storeObjectArray objectAtIndex:indexPath.row];
+        [self performSegueWithIdentifier:@"listToStoreProfileSegue" sender:self];
     }
-    else{
-        strain = [strain.strainObjectArray objectAtIndex:indexPath.row];
-        FIRStorageReference *imageRef = [firebaseRef.strains_medium_images_ref child:strain.strain_key];
-        [imageRef dataWithMaxSize:1 * 2000 * 2000 completion:^(NSData *data, NSError *error){
-            if (error != nil) {
-                // Uh-oh, an error occurred!
-            } else {
-                strain.medium_image = [UIImage imageWithData:data];
-                [self performSegueWithIdentifier:@"StrainListToProfileSegue" sender:self];
-            }
-        }];
+    else if (!_cellSelected){
+        strain = [objectsArray.strainObjectArray objectAtIndex:indexPath.row];
+        [self performSegueWithIdentifier:@"listToStrainProfileSegue" sender:self];
     }
 }
+*/
 
-- (IBAction)tappedAddButton:(UIBarButtonItem *)sender {
-    if(_optionSelected){
-        [self performSegueWithIdentifier:@"AddStoreSegue" sender:self];
-    }
-    else{
-        [self performSegueWithIdentifier:@"AddStrainSegue" sender:self];
-    }
-}
 
-- (IBAction)tappedOptionsButton:(UIBarButtonItem *)sender {
-    [self performSegueWithIdentifier:@"optionListSegue" sender:self];
+
+ 
+- (IBAction)tappedCancelButton:(UIBarButtonItem *)sender {
+    
+    [self performSegueWithIdentifier:@"listToHomepageSegue" sender:self];
 }
 
 

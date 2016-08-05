@@ -60,22 +60,16 @@
 }
 
 - (void) updateFirebaseStorage {
-    FIRStorageReference *medium_image_ref = [firebaseRef.stores_medium_images_ref child:store.store_key];
-    NSData *medium_data = UIImagePNGRepresentation(store .medium_image); //Converts UIImage to Data for Storage upload
+    /*FIRStorageReference *medium_image_ref = [firebaseRef.stores_medium_images_ref child:store.store_key];
+    NSData *medium_data = UIImagePNGRepresentation(store.medium_image); //Converts UIImage to Data for Storage upload
     FIRStorageUploadTask *uploadTask = [self uploadImage:medium_data ToRef:medium_image_ref];
     [uploadTask observeStatus:FIRStorageTaskStatusSuccess handler:^(FIRStorageTaskSnapshot *snapshot) {
-        // Upload completed successfully
-    }];
+        [self dismissViewControllerAnimated:YES completion:^{}];
+    }];*/
 }
 
 - (FIRStorageUploadTask *) uploadImage:(NSData *)data ToRef:(FIRStorageReference *)ref {
     FIRStorageUploadTask *uploadTask = [ref putData:data metadata:nil completion:^(FIRStorageMetadata *metadata, NSError *error) {
-        if (error != nil) {
-            // Uh-oh, an error occurred!
-        } else {
-            // Metadata contains file metadata such as size, content-type, and download URL.
-            //NSURL *downloadURL = metadata.downloadURL;
-        }
     }];
     return uploadTask;
 }

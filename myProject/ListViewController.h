@@ -7,16 +7,16 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "storeClass.h"
+#import "userClass.h"
 #import "strainClass.h"
+#import "storeClass.h"
+#import "objectsArrayClass.h"
 #import "FirebaseReferenceClass.h"
-#import "ICHObjectPrinter.h"
+#import "CustomCollectionViewCell.h"
 @import Firebase;
 
-@interface ListViewController : UIViewController <UITableViewDelegate, UITableViewDataSource>
-@property (strong, nonatomic) IBOutlet UIBarButtonItem *optionsListButton;
-@property (weak, nonatomic) IBOutlet UITableView *tableView;
-@property BOOL optionSelected;
+@interface ListViewController : UIViewController
+@property BOOL cellSelected;
 
 @end
 

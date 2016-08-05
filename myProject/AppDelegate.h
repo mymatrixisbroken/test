@@ -8,6 +8,11 @@
 
 #import <UIKit/UIKit.h>
 #import <Firebase/Firebase.h>
+#import "storeClass.h"
+#import "strainClass.h"
+#import "FirebaseReferenceClass.h"
+@import Firebase;
+@import GooglePlaces;
 
 @interface AppDelegate : UIResponder <UIApplicationDelegate>
 

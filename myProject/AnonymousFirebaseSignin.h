@@ -7,15 +7,17 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "ICHObjectPrinter.h"
 #import "userClass.h"
 #import "strainClass.h"
 #import "storeClass.h"
+#import "objectsArrayClass.h"
 #import "FirebaseReferenceClass.h"
-#import "MBProgressHUD.h"
 @import Firebase;
 
 @interface AnonymousFirebaseSignin : UIViewController
-
+@property (strong, nonatomic) IBOutlet NSDictionary *storeObjectDictionary;
+@property (strong, nonatomic) IBOutlet NSDictionary *strainObjectDictionary;
 
 @end
 

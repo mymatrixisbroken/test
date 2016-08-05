@@ -19,11 +19,23 @@
     [self loadLabels];
     [self loadImageView];
     [self loadRatingScore];
+    
+
     // Do any additional setup after loading the view, typically from a nib.
 }
 
 - (void)loadImageView {
-    [_strainImage setImage:strain.medium_image];
+    dispatch_async(dispatch_get_global_queue(0,0), ^{
+        NSData * data = [[NSData alloc] initWithContentsOfURL: [NSURL URLWithString:strain.image_name]];
+        if( data == nil ){
+            NSLog(@"image is nil");
+            return;
+        }
+        dispatch_async(dispatch_get_main_queue(), ^{
+            // WARNING: is the cell still using the same data by this point??
+            _strainImage.image = [UIImage imageWithData: data];
+        });
+    });
 }
 - (IBAction)tapped_strainImage:(UITapGestureRecognizer *)sender {
     [self performSegueWithIdentifier:@"popOverStrainImage" sender:self];
@@ -57,6 +69,7 @@
 }
 
 - (void)loadRatingCount{
+    if(strain.rating_count != nil)
     _ratingCount.text = [[NSString stringWithFormat:@"%lu", (unsigned long)strain.rating_count] stringByAppendingString:@" reviews"];
 }
 - (IBAction)tappedBackButton:(UIBarButtonItem *)sender {
@@ -71,8 +84,31 @@
     _strainGrowerLabel.text = [@"By: " stringByAppendingString:strain.grower];
     _strainFlavorLabel.text = strain.flavor;
     _strainAromaLabel.text = strain.aroma;
-    _strainHighTypeLabel.text = strain.high_type;
     [self loadRatingCount];
+    
+    _happinessView.progress = [strain.happiness floatValue];
+    //_happinessView.type               = YLProgressBarTypeFlat;
+    _happinessView.progressTintColor  = [UIColor blueColor];
+    //_happinessView.hideStripes        = YES;
+    _upliftedView.progress = [strain.uplifting floatValue];
+    //_happinessView.type               = YLProgressBarTypeFlat;
+    _upliftedView.progressTintColor  = [UIColor blueColor];
+    //_happinessView.hideStripes        = YES;
+    _euphoricView.progress = [strain.euphoric floatValue];
+    //_happinessView.type               = YLProgressBarTypeFlat;
+    _euphoricView.progressTintColor  = [UIColor blueColor];
+    //_happinessView.hideStripes        = YES;
+    _energeticView.progress = [strain.energetic floatValue];
+    //_happinessView.type               = YLProgressBarTypeFlat;
+    _energeticView.progressTintColor  = [UIColor blueColor];
+    //_happinessView.hideStripes        = YES;
+    _relaxedView.progress = [strain.relaxed floatValue];
+    //_happinessView.type               = YLProgressBarTypeFlat;
+    _relaxedView.progressTintColor  = [UIColor blueColor];
+    //_happinessView.hideStripes        = YES;
+
+    
+    
 }
 
 

@@ -16,16 +16,9 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    [MBProgressHUD showHUDAddedTo:self.view animated:YES];
-    dispatch_async(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
-        [self signinFirebaseAnonymously];
-        [self loadObjectInstance];
-
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [MBProgressHUD hideHUDForView:self.view animated:YES];
-            [self performSegueWithIdentifier:@"successfulAnonymousLoginSegue" sender:self];
-        });
-    });
+    [self loadObjectInstance];
+    [self signinFirebaseAnonymously];
+    
     // Do any additional setup after loading the view, typically from a nib.
 }
 
@@ -33,6 +26,7 @@
     strain = [strainClass sharedInstance];
     user = [userClass sharedInstance];
     store = [storeClass sharedInstance];
+    objectsArray = [objectsArrayClass sharedInstance];
 }
 
 - (void) signinFirebaseAnonymously {
@@ -51,7 +45,46 @@
             NSLog(@"UID:%@.",user.uid);
             firebaseRef = [FirebaseReferenceClass sharedInstance];
             //NSLog(@"ref %@ strains %@ stores %@ users %@", firebaseRef.ref, firebaseRef.strainsRef, firebaseRef.storesRef, firebaseRef.usersRef);
+            [self loadStrains];
+            [self loadStores];
         }
+    }];
+}
+
+- (void) loadStrains {
+    NSLog(@"Strain object dict");
+    [firebaseRef.strainsRef observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
+        _strainObjectDictionary = snapshot.value; //Creates a dictionary of of the JSON node strains
+        NSArray *keys = [_strainObjectDictionary allKeys]; //Creates an array with only the strain key uID
+        
+        for(int i=0; i<keys.count ; i++){
+            NSString *key = keys[i];
+            NSDictionary *dict = [_strainObjectDictionary valueForKey:key];
+            
+            //you have to delcare a new object instance to load table cells!!!!!!!!!!!!!!!!!!!
+            strainClass *strainLoop = [[strainClass alloc] init];
+            [strainLoop setClassObject:key Values:dict];
+            [objectsArray.strainObjectArray addObject:strainLoop];
+        }
+    }];
+}
+
+- (void) loadStores {
+    [firebaseRef.storesRef observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
+        NSLog(@"Store object dict");
+        _storeObjectDictionary = snapshot.value; //Creates a dictionary of of the JSON node strains
+        NSArray *keys = [_storeObjectDictionary allKeys]; //Creates an array with only the strain key uID
+        
+        for(int i=0; i<keys.count ; i++){
+            NSString *key = keys[i];
+            NSDictionary *dict = [_storeObjectDictionary valueForKey:key];
+            
+            //you have to delcare a new object instance to load table cells!!!!!!!!!!!!!!!!!!!
+            storeClass *storeloop = [[storeClass alloc] init];
+            [storeloop setClassObject:key Values:dict];
+            [objectsArray.storeObjectArray addObject:storeloop];
+        }
+        [self performSegueWithIdentifier:@"successfulAnonymousLoginSegue" sender:self];
     }];
 }
 

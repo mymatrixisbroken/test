@@ -8,7 +8,7 @@
 
 #import "CreateAccountViewController.h"
 
-const static CGFloat frameSizeHeight = 40.0f;
+const static CGFloat frameSizeHeight = 50.0f;
 const static CGFloat frameSizeWidth = 600.0f;
 
 
@@ -33,9 +33,12 @@ const static CGFloat frameSizeWidth = 600.0f;
 }
 
 - (void) setTextFields {
+    [_usernameField.layer addSublayer:[self customUITextField]];
+    _usernameField.layer.masksToBounds = YES;
+    [_usernameField becomeFirstResponder];
+    
     [_emailField.layer addSublayer:[self customUITextField]];
     _emailField.layer.masksToBounds = YES;
-    [_emailField becomeFirstResponder];
     
     [_passwordField.layer addSublayer:[self customUITextField]];
     _passwordField.layer.masksToBounds = YES;
@@ -78,7 +81,7 @@ const static CGFloat frameSizeWidth = 600.0f;
     [userAuth updatePassword:password completion:^(NSError *_Nullable error) { }];
 }
 
--(void) createFirebaseDatabaseValues {
+-(void) updateFirebaseDatabaseValues {
     [self getTodaysDate];
     [[[firebaseRef.usersRef child:user.user_key] child:@"email"] setValue:user.email];
     [[[firebaseRef.usersRef child:user.user_key] child:@"username"] setValue:user.username];
@@ -101,14 +104,16 @@ const static CGFloat frameSizeWidth = 600.0f;
     _todays_date = [dateFormat stringFromDate:today];
 }
 - (IBAction)tappedSignUp:(UIButton *)sender {
-    [user createEmptyUserObject];
     NSString *password;
     
+    
+    
     if([self isValidEmail:_emailField.text]){
-        user.email = _emailField.text;}
+    }
     else {
         [self alertInvalideEmail];
-        return;}
+        return;
+    }
     
     if([self isValidPassword:_passwordField.text]){
         password = _passwordField.text;}
@@ -118,18 +123,19 @@ const static CGFloat frameSizeWidth = 600.0f;
     
     
     [self updateAnonymousUserToSignedUp:password];
+    [user createEmptyUserObject];
     
     user.user_key = [firebaseRef.usersRef childByAutoId].key;
-    [self createFirebaseDatabaseValues];
+    user.email = _emailField.text;
+    user.username = _usernameField.text;
+
+    NSLog(@"user key is %@", user.user_key);
+    NSLog(@"user email is %@", user.email);
+    NSLog(@"user name is %@", user.username);
+    [self updateFirebaseDatabaseValues];
     
     if (user.user_key != nil) {
-        NSLog(@"00 user description is %@ ",user.user_key);
-        
-        [self dismissViewControllerAnimated:YES completion:^{
-            [self performSegueWithIdentifier:@"strainReviewToSignupSegue" sender:self];
-        }];
-        
-        //[self performSegueWithIdentifier:@"SuccessfullyCreatedUser" sender:self];
+        [self performSegueWithIdentifier:@"createAccountToUserProfileSegue" sender:self];
     }
     else {
         NSLog(@"Failed to create account.");

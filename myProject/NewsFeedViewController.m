@@ -1,18 +1,19 @@
 //
-//  FirstViewController.m
+//  SecondViewController.m
 //  myProject
 //
 //  Created by Guy on 6/15/16.
 //  Copyright © 2016 Joaquin. All rights reserved.
 //
 
-#import "HomepageViewController.h"
+#import "NewsFeedViewController.h"
 
-@interface HomepageViewController ()
+@interface NewsFeedViewController ()
 
 @end
 
-@implementation HomepageViewController
+@implementation NewsFeedViewController
+
 - (void)viewDidLoad {
     [super viewDidLoad];
 }
@@ -21,7 +22,5 @@
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
-
-
 
 @end

@@ -88,20 +88,19 @@
         }
     }];
 }
-
-- (IBAction)tappedImageView:(id)sender {
+- (IBAction)tappedImageView:(UITapGestureRecognizer *)sender {
     UIAlertController *actionSheet = [UIAlertController alertControllerWithTitle:@"Select Image" message:nil preferredStyle:UIAlertControllerStyleActionSheet];
     
     NSString *addressFormatted = [NSString stringWithFormat:@"%@%@%@", store.address, store.city, store.state];
-    [self gecodeAddress:addressFormatted];
     
     [actionSheet addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:^(UIAlertAction *action) {
     }]];
     
     [actionSheet addAction:[UIAlertAction actionWithTitle:@"Check Google Place Photos" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+        [self gecodeAddress:addressFormatted];
         [self loadFirstPhotoForPlace:store.google_place_id];
     }]];
-
+    
     [actionSheet addAction:[UIAlertAction actionWithTitle:@"Gallery" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
         picker2 = [[UIImagePickerController alloc] init];
         self->picker2.delegate = self;
@@ -109,7 +108,7 @@
         [self presentViewController:picker2 animated:YES completion:NULL];
         // Distructive button tapped.[self dismissViewControllerAnimated:YES completion:^{}];
     }]];
-
+    
     [actionSheet addAction:[UIAlertAction actionWithTitle:@"Photo" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
         picker = [[UIImagePickerController alloc] init];
         self->picker.delegate = self;
@@ -120,6 +119,7 @@
     
     // Present action sheet.
     [self presentViewController:actionSheet animated:YES completion:nil];
+
 }
 
 - (void) imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary<NSString *,id> *)info{
@@ -172,7 +172,7 @@
 }
 
 - (void) uploadImageToFirebaseStorage {
-    FIRStorageReference *medium_image_ref = [firebaseRef.stores_medium_images_ref child:store.store_key];
+    /*FIRStorageReference *medium_image_ref = [firebaseRef.stores_medium_images_ref child:store.store_key];
     FIRStorageReference *small_image_ref = [firebaseRef.stores_small_images_ref child:store.store_key];
     NSData *medium_data = UIImagePNGRepresentation(store.medium_image); //Converts UIImage to Data for Storage upload
     NSData *small_data = UIImagePNGRepresentation(store.small_image); //Converts UIImage to Data for Storage upload
@@ -180,7 +180,8 @@
     [medium_image_ref putData:medium_data metadata:nil completion:^(FIRStorageMetadata *metadata, NSError *error) {}];
     
     [uploadTask observeStatus:FIRStorageTaskStatusSuccess handler:^(FIRStorageTaskSnapshot *snapshot) {
-    }];
+        [self performSegueWithIdentifier:@"createdStoreSegue" sender:self];
+    }];*/
 }
 - (NSDictionary *)createEmptyStore{
     NSDictionary *dictionaryStoreCreate= @{@"store_name": @"",
@@ -216,22 +217,33 @@
 
 }
 - (IBAction)tapped_submit_button:(UIButton *)sender {
-    NSDictionary *dict1 = [self createEmptyStore];
-    NSDictionary *dict2 = [self createStoreLocation];
-    NSDictionary *dict3 = [self storeStats];
-    NSString *store_key = [firebaseRef.storesRef childByAutoId].key;
-    
-    [store createEmptystoreObject:store_key];
-    [[[firebaseRef.storesRef child:store_key] child:@"store_key" ]setValue:store_key];
-    [[firebaseRef.storesRef child:store_key] setValue:dict1];
-    [[[firebaseRef.storesRef child:store_key] child:@"location"]setValue:dict2];
-    [[[firebaseRef.storesRef child:store_key] child:@"stats"]setValue:dict3];
-    
-    [self updateClassObjectValues];
-    [self updateFirebaseValues];
     if(_imageSelected){
-        [self uploadImageToFirebaseStorage];
-        [self performSegueWithIdentifier:@"createdStoreSegue" sender:self];
+        /*FIRStorageReference *medium_image_ref = [firebaseRef.stores_medium_images_ref child:store.store_key];
+        FIRStorageReference *small_image_ref = [firebaseRef.stores_small_images_ref child:store.store_key];
+        NSData *medium_data = UIImagePNGRepresentation(store.medium_image); //Converts UIImage to Data for Storage upload
+        NSData *small_data = UIImagePNGRepresentation(store.small_image); //Converts UIImage to Data for Storage upload
+        FIRStorageUploadTask *uploadTask = [small_image_ref putData:small_data metadata:nil completion:^(FIRStorageMetadata *metadata, NSError *error) {}];
+        [medium_image_ref putData:medium_data metadata:nil completion:^(FIRStorageMetadata *metadata, NSError *error) {}];
+        
+*/
+        NSDictionary *dict1 = [self createEmptyStore];
+        NSDictionary *dict2 = [self createStoreLocation];
+        NSDictionary *dict3 = [self storeStats];
+        NSString *store_key = [firebaseRef.storesRef childByAutoId].key;
+        
+        [store createEmptystoreObject:store_key];
+        [[[firebaseRef.storesRef child:store_key] child:@"store_key" ]setValue:store_key];
+        [[firebaseRef.storesRef child:store_key] setValue:dict1];
+        [[[firebaseRef.storesRef child:store_key] child:@"location"]setValue:dict2];
+        [[[firebaseRef.storesRef child:store_key] child:@"stats"]setValue:dict3];
+        
+        [self updateClassObjectValues];
+        [self updateFirebaseValues];
+        
+        /*[uploadTask observeStatus:FIRStorageTaskStatusSuccess handler:^(FIRStorageTaskSnapshot *snapshot) {
+            [self performSegueWithIdentifier:@"createdStoreSegue" sender:self];
+        }];*/
+
     }
     else if (!_imageSelected){
         UIAlertController *alertController = [UIAlertController

@@ -24,7 +24,6 @@
 }
 
 - (void) loadImage {
-    [_image_view setImage:strain.medium_image];
 }
 
 - (void) loadLabels {
@@ -34,7 +33,7 @@
     _grower_label.text = strain.grower;
     _flavor_label.text = strain.flavor;
     _aroma_label.text = strain.aroma;
-    _high_type_label.text = strain.high_type;
+    //_high_type_label.text = strain.high_type;
 }
 
 - (void) loadSpeciesTypeControl {
@@ -90,10 +89,6 @@
     [self dismissViewControllerAnimated:YES completion:NULL];
 }
 
-- (void) updateImagesToClassObject{
-    strain.medium_image = [[self class] imageWithImage:image scaledToWidth:1500];
-    strain.small_image = [[self class] imageWithImage:image scaledToWidth:100];
-}
 
 +(UIImage*)imageWithImage: (UIImage*) sourceImage scaledToWidth: (float) i_width
 {
@@ -113,9 +108,7 @@
 - (void) updateStrainProfile {
     [self updateFirebaseDatabase];
     [self updateClassObjectValues];
-    [self updateImagesToClassObject];
     if(_imageSelected){
-        [self updateFirebaseStorage];
     }
     [self dismissViewControllerAnimated:YES completion:^{}];
 
@@ -141,22 +134,7 @@
     strain.grower = _grower_label.text;
     strain.flavor = _flavor_label.text;
     strain.aroma = _aroma_label.text;
-    strain.high_type = _high_type_label.text;
-}
-
-- (void) updateFirebaseStorage {
-    FIRStorageReference *medium_image_ref = [firebaseRef.strains_medium_images_ref child:strain.strain_key];
-    FIRStorageReference *small_image_ref = [firebaseRef.strains_small_images_ref child:strain.strain_key];
-    
-    NSData *medium_data = UIImagePNGRepresentation(strain.medium_image); //Converts UIImage to Data for Storage upload
-    NSData *small_data = UIImagePNGRepresentation(strain.small_image); //Converts UIImage to Data for Storage upload
-    
-    FIRStorageUploadTask *uploadTask = [self uploadImage:small_data ToRef:small_image_ref];
-    [self uploadImage:medium_data ToRef:medium_image_ref];
-    
-    [uploadTask observeStatus:FIRStorageTaskStatusSuccess handler:^(FIRStorageTaskSnapshot *snapshot) {
-        [self dismissViewControllerAnimated:YES completion:^{}];
-    }];
+    //strain.high_type = _high_type_label.text;
 }
 
 - (FIRStorageUploadTask *) uploadImage:(NSData *)data ToRef:(FIRStorageReference *)ref {

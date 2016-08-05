@@ -27,9 +27,12 @@
 
 - (IBAction)speciesTypeController:(UISegmentedControl *)sender {
     if (_speciesType.selectedSegmentIndex == 0){
-        strain.species = @"stevia";}
+        strain.species = @"stevia";
+    }
     else{
-        strain.species = @"indica";}
+        strain.species = @"indica";
+    }
+    NSLog(@"Add Strain Species %@",strain.species);
 }
 
 - (IBAction)tappedImageView:(id)sender {
@@ -64,24 +67,9 @@
     _strainImageView.contentMode  = UIViewContentModeScaleAspectFit;
     [_strainImageView setImage:image];
     _imageSelected = true;
-    [self loadImagesToClassObject];
     [self dismissViewControllerAnimated:YES completion:NULL];
 }
 
-+(UIImage*)imageWithImage: (UIImage*) sourceImage scaledToWidth: (float) i_width
-{
-    float oldWidth = sourceImage.size.width;
-    float scaleFactor = i_width / oldWidth;
-    
-    float newHeight = sourceImage.size.height * scaleFactor;
-    float newWidth = oldWidth * scaleFactor;
-    
-    UIGraphicsBeginImageContext(CGSizeMake(newWidth, newHeight));
-    [sourceImage drawInRect:CGRectMake(0, 0, newWidth, newHeight)];
-    UIImage *newImage = UIGraphicsGetImageFromCurrentImageContext();
-    UIGraphicsEndImageContext();
-    return newImage;
-}
 
 - (void) updateClassValues {
     strain.strain_name = _strainNameField.text;
@@ -90,10 +78,22 @@
     strain.grower = _growerField.text;
     strain.flavor = _flavorField.text;
     strain.aroma = _aromaField.text;
-    strain.high_type = _highTypeField.text;
+    strain.happiness = [NSString stringWithFormat:@"%f", _happinessSlider.value];
+    strain.uplifting = [NSString stringWithFormat:@"%f", _upliftingSlider.value];
+    strain.euphoric = [NSString stringWithFormat:@"%f", _euphoricSlider.value];
+    strain.energetic =[NSString stringWithFormat:@"%f",  _energeticSlider.value];
+    strain.relaxed = [NSString stringWithFormat:@"%f", _relaxedSlider.value];
+    
+
 }
 
 - (void) updateFirDatabase {
+    NSString *happiness = [NSString stringWithFormat:@"%@", strain.happiness];
+    NSString *uplifting = [NSString stringWithFormat:@"%@", strain.uplifting];
+    NSString *euphoric = [NSString stringWithFormat:@"%@", strain.euphoric];
+    NSString *energetic = [NSString stringWithFormat:@"%@", strain.energetic];
+    NSString *relaxed = [NSString stringWithFormat:@"%@", strain.relaxed];
+
     [[[firebaseRef.strainsRef child:strain.strain_key] child:@"strain_name"] setValue:strain.strain_name];
     [[[firebaseRef.strainsRef child:strain.strain_key] child:@"THC"] setValue:strain.thc];
     [[[firebaseRef.strainsRef child:strain.strain_key] child:@"CBD"] setValue:strain.cbd];
@@ -101,25 +101,12 @@
     [[[firebaseRef.strainsRef child:strain.strain_key] child:@"grower"] setValue:strain.grower];
     [[[firebaseRef.strainsRef child:strain.strain_key] child:@"flavor"] setValue:strain.flavor];
     [[[firebaseRef.strainsRef child:strain.strain_key] child:@"aroma"] setValue:strain.aroma];
-    [[[firebaseRef.strainsRef child:strain.strain_key] child:@"high_type"] setValue:strain.high_type];
+    [[[[firebaseRef.strainsRef child:strain.strain_key] child:@"high_type"] child:@"happiness"] setValue:happiness];
+    [[[[firebaseRef.strainsRef child:strain.strain_key] child:@"high_type"] child:@"uplifting"] setValue:uplifting];
+    [[[[firebaseRef.strainsRef child:strain.strain_key] child:@"high_type"] child:@"euphoric"] setValue:euphoric];
+    [[[[firebaseRef.strainsRef child:strain.strain_key] child:@"high_type"] child:@"energetic"] setValue:energetic];
+    [[[[firebaseRef.strainsRef child:strain.strain_key] child:@"high_type"] child:@"relaxed"] setValue:relaxed];
 }
-
-- (void) loadImagesToClassObject{
-    strain.medium_image = [[self class] imageWithImage:image scaledToWidth:1500];
-    strain.small_image = [[self class] imageWithImage:image scaledToWidth:100];
-}
-
-- (FIRStorageUploadTask *) uploadImage:(NSData *)data ToRef:(FIRStorageReference *)ref {
-    FIRStorageUploadTask *uploadTask = [ref putData:data metadata:nil completion:^(FIRStorageMetadata *metadata, NSError *error) {
-        if (error != nil) {
-            // Uh-oh, an error occurred!
-        } else {
-            strain.medium_image = [UIImage imageWithData:data]; //*downloadTask observeStatus:FIRStorageTaskStatusSuccess
-        }
-    }];
-    return uploadTask;
-}
-
 
 - (NSDictionary *)createEmptyStrain{
     NSDictionary *dictionaryStrainCreate= @{@"strain_name": @"",
@@ -129,7 +116,7 @@
                                             @"grower":@"",
                                             @"flavor":@"",
                                             @"aroma":@"",
-                                            @"high_type":@"",
+                                            @"image_name":@"",
                                             @"rating_count":@"0",
                                             @"rating_score":@"",
                                             @"stats":@"",
@@ -138,6 +125,16 @@
                                             @"available_at_venue":@""};
     return dictionaryStrainCreate;
 }
+
+- (NSDictionary *)highType{
+    NSDictionary *highType= @{@"happiness":@"",
+                              @"uplifting":@"",
+                              @"euphoric":@"",
+                              @"energetic":@"",
+                                 @"relaxed":@""};
+    return highType;
+}
+
 
 - (NSDictionary *)strainStats{
     NSDictionary *strainStats= @{@"total_count":@"",
@@ -158,38 +155,89 @@
     [self dismissViewControllerAnimated:YES completion:^{}];
 }
 
++ (UIImage *)imageWithImage:(UIImage *)image scaledToSize:(CGSize)newSize {
+    //UIGraphicsBeginImageContext(newSize);
+    // In next line, pass 0.0 to use the current device's pixel scaling factor (and thus account for Retina resolution).
+    // Pass 1.0 to force exact pixel size.
+    UIGraphicsBeginImageContextWithOptions(newSize, NO, 0.0);
+    [image drawInRect:CGRectMake(0, 0, newSize.width, newSize.height)];
+    UIImage *newImage = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    return newImage;
+}
+
+
 - (IBAction)tappedSubmitButton:(UIButton *)sender {
     if(_imageSelected){
-        FIRStorageReference *medium_image_ref = [firebaseRef.strains_medium_images_ref child:strain.strain_key] ;
-        FIRStorageReference *small_image_ref = [firebaseRef.strains_small_images_ref child:strain.strain_key];
         
-        NSData *medium_data = UIImagePNGRepresentation(strain.medium_image); //Converts UIImage to Data for Storage upload
-        NSData *small_data = UIImagePNGRepresentation(strain.small_image); //Converts UIImage to Data for Storage upload
-        
-        FIRStorageUploadTask *uploadTask = [self uploadImage:medium_data ToRef:medium_image_ref];
-        [self uploadImage:small_data ToRef:small_image_ref];
         
         
         
         NSDictionary *dict1 = [self createEmptyStrain];
-        NSDictionary *dict2 = [self strainStats];
-        NSDictionary *dict3 = [self consumptionForm];
+        NSDictionary *dict2 = [self highType];
+        NSDictionary *dict3 = [self strainStats];
+        NSDictionary *dict4 = [self consumptionForm];
         strain.strain_key = [firebaseRef.strainsRef childByAutoId].key;
         
         [strain createEmptyStrainObject];
         [[[firebaseRef.strainsRef child:strain.strain_key] child:@"strain_key" ]setValue:strain.strain_key];
         [[firebaseRef.strainsRef child:strain.strain_key] setValue:dict1];
-        [[[firebaseRef.strainsRef child:strain.strain_key] child:@"stats" ]setValue:dict2];
-        [[[firebaseRef.strainsRef child:strain.strain_key] child:@"consumption_form" ]setValue:dict3];
+        [[[firebaseRef.strainsRef child:strain.strain_key] child:@"high_type" ]setValue:dict2];
+        [[[firebaseRef.strainsRef child:strain.strain_key] child:@"stats" ]setValue:dict3];
+        [[[firebaseRef.strainsRef child:strain.strain_key] child:@"consumption_form" ]setValue:dict4];
         strain.rating_count = 0;
         
         
         [self updateClassValues];
         [self updateFirDatabase];
         
-        [uploadTask observeStatus:FIRStorageTaskStatusSuccess handler:^(FIRStorageTaskSnapshot *snapshot) {
-            [self performSegueWithIdentifier:@"SubmitStrainSegue" sender:self];
-        }];}
+        
+        
+        
+        CGSize size = CGSizeMake(500, 500);
+        UIImage *sizedImage = [[self class] imageWithImage:self.strainImageView.image scaledToSize:size];
+        //NSString *encodedString = [UIImagePNGRepresentation(self.strainImageView.image) base64EncodedStringWithOptions:NSDataBase64Encoding64CharacterLineLength];
+        NSData *encodedString = UIImagePNGRepresentation(sizedImage);
+        NSLog(@"image encoded= %@", encodedString);
+        
+        NSURL *theURL = [NSURL URLWithString:@"https://api.imgur.com/3/image"];
+        NSMutableURLRequest *theRequest = [NSMutableURLRequest requestWithURL:theURL cachePolicy:NSURLRequestReloadIgnoringCacheData timeoutInterval:20.0f];
+        
+        //Specify method of request(Get or Post)
+        [theRequest setHTTPMethod:@"POST"];
+        
+        //Pass some default parameter(like content-type etc.)
+        [theRequest setValue:@"Client-ID bceb6364428afba" forHTTPHeaderField:@"Authorization"];
+        //[theRequest setValue:encodedString forHTTPHeaderField:@"image"];
+        [theRequest setHTTPBody:encodedString];
+        NSURLResponse *theResponse = NULL;
+        NSError *theError = NULL;
+        NSData *theResponseData = [NSURLConnection sendSynchronousRequest:theRequest returningResponse:&theResponse error:&theError];
+        
+        
+        
+        NSDictionary *dataDictionaryResponse = [NSJSONSerialization JSONObjectWithData:theResponseData options:0 error:&theError];
+        NSLog(@"url to send request= %@",theURL);
+        NSLog(@"%@",dataDictionaryResponse);
+        
+        
+        NSDictionary *output = [dataDictionaryResponse valueForKey:@"data"];
+        //NSString *url = [output valueForKey:@"link"];
+        //NSLog(@"url is %@", url);
+        strain.image_name = [output valueForKey:@"link"];
+        NSLog(@"url is %@", strain.image_name);
+
+        [[[firebaseRef.strainsRef child:strain.strain_key] child:@"image_name"] setValue:strain.image_name];
+
+        
+        [self performSegueWithIdentifier:@"SubmitStrainSegue" sender:self];
+
+        
+        
+        
+
+        
+    }
     else if (!_imageSelected){
         UIAlertController *alertController = [UIAlertController
                                               alertControllerWithTitle:@"Uh-oh!"
