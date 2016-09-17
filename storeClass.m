@@ -21,7 +21,6 @@ storeClass *store;
 @synthesize url;
 @synthesize phone_number;
 @synthesize google_place_id;
-@synthesize image_name;
 @synthesize imageNames;
 @synthesize rating_count;
 @synthesize rating_score;
@@ -56,7 +55,6 @@ storeClass *store;
         self.url = @"";
         self.phone_number = @"";
         self.google_place_id = @"";
-        self.image_name = @"";
         self.rating_count = 0;
         self.rating_score = 0;
         self.total_count = 0;
@@ -64,32 +62,9 @@ storeClass *store;
         self.total_user_count = 0;
         self.small_image = nil;
         self.medium_image = nil;
-        self.imageNames = [[NSArray alloc] init];
+        self.imageNames = [[NSMutableArray alloc] init];
         self.storeObjectArray = [[NSMutableArray alloc] init];
     }
-    return self;
-}
-
--(id)createEmptystoreObject:(NSString *)store_key{
-    self.store_key = store_key;
-    self.store_name = @"";
-    self.address = @"";
-    self.city = @"";
-    self.state = @"";
-    self.latitude = @"";
-    self.longitude = @"";
-    self.url = @"";
-    self.phone_number = @"";
-    self.google_place_id = @"";
-    self.image_name = @"";
-    self.rating_count = 0;
-    self.rating_score = 0;
-    self.total_count = 0;
-    self.monthly_count = 0;
-    self.total_user_count = 0;
-    self.small_image = nil;
-    self.medium_image = nil;
-    
     return self;
 }
 
@@ -103,8 +78,7 @@ storeClass *store;
     self.longitude = [dict valueForKey:@"longitude"];
     self.url = [dict valueForKey:@"url"];
     self.phone_number = [dict valueForKey:@"phone_number"];
-    self.image_name = [dict valueForKey:@"image_name"];
-    self.imageNames = [NSArray arrayWithArray:array];
+    self.imageNames = [NSMutableArray arrayWithArray:array];
     self.longitude = [dict valueForKey:@"google_place_id"];
     self.rating_score = [[dict valueForKey:@"rating_score"] doubleValue];
     self.rating_count = [[dict valueForKey:@"rating_count"] integerValue];

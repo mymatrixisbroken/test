@@ -26,8 +26,7 @@ extern strainClass *strain;
 @property NSString *euphoric;
 @property NSString *energetic;
 @property NSString *relaxed;
-@property NSString *image_name;
-@property NSArray *imageNames;
+@property NSMutableArray *imageNames;
 @property (nonatomic, assign) double rating_score;
 @property (nonatomic, assign) int rating_count;
 @property (nonatomic, assign) int total_count;
@@ -40,6 +39,5 @@ extern strainClass *strain;
 
 
 + (strainClass *)sharedInstance;
--(id) createEmptyStrainObject;
 -(id)setClassObject:key Values:(NSDictionary *)dict Image:(NSArray *) array;
 @end

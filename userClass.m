@@ -58,27 +58,6 @@ userClass *user;
     return self;
 }
 
-/*
--(id)createEmptyUserObject{
-    self.user_key = @"";
-    self.email = @"";
-    self.username = @"";
-    self.date_joined = @"";
-    self.last_signed_in = @"";
-    self.account_type = @"user";
-    self.image_name = @"";
-    self.wish_list = [[NSArray alloc] init];
-    self.friends = [[NSArray alloc] init];
-    self.reviews = [[NSArray alloc] init];
-    self.badges = [[NSArray alloc] init];
-    self.strains_tried = [[NSArray alloc] init];
-    self.stores_visited = [[NSArray alloc] init];
-    self.events = [[NSMutableArray alloc] init];
-
-    
-    return self;
-}*/
-
 -(id)createUser:(NSString *)createAccountEmail SignedUp:(NSString *)createAccountUsername{
     self.email = createAccountEmail;
     self.username = createAccountUsername;

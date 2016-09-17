@@ -11,8 +11,12 @@
 @implementation FindFriendsCell
 
 -(void) uploadCellWithUsername:(NSString *)username imageURL:(NSString *)imageURL{
+    NSInteger length = [imageURL length];
+    NSString *smallImageURL = [imageURL substringWithRange:NSMakeRange(0, length-4)];
+    smallImageURL = [smallImageURL stringByAppendingString:@"b.jpg"];
+    
     dispatch_async(dispatch_get_global_queue(0,0), ^{
-        NSData * data = [[NSData alloc] initWithContentsOfURL: [NSURL URLWithString:imageURL]];
+        NSData * data = [[NSData alloc] initWithContentsOfURL: [NSURL URLWithString:smallImageURL]];
         if( data == nil ){
             NSLog(@"image is nil");
             return;

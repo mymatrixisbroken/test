@@ -53,8 +53,7 @@
     c++;
     NSString *charIncrement = [NSString stringWithCharacters:&c length:1];
     NSString *endString = [_searchBar.text substringWithRange:NSMakeRange(0, length)];
-    endString = [endString stringByAppendingString:charIncrement];
-    
+    endString = [endString stringByAppendingString:charIncrement];    
     
     FIRDatabaseQuery *usernamesQuery = [[[firebaseRef.usersRef queryOrderedByChild:@"username"] queryStartingAtValue:_searchBar.text] queryEndingAtValue:endString];
 

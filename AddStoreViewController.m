@@ -161,7 +161,6 @@
 
 - (void) updateFirebaseValues{
     [[[firebaseRef.storesRef child:store.store_key] child:@"store_name"] setValue:store.store_name];
-    [[[firebaseRef.storesRef child:store.store_key] child:@"image_name"] setValue:store.store_key];
     [[[[firebaseRef.storesRef child:store.store_key] child:@"location"] child:@"address" ] setValue:store.address];
     [[[[firebaseRef.storesRef child:store.store_key] child:@"location"] child:@"city" ] setValue:store.city];
     [[[[firebaseRef.storesRef child:store.store_key] child:@"location"] child:@"state" ] setValue:store.state];
@@ -169,35 +168,14 @@
     [[[[firebaseRef.storesRef child:store.store_key] child:@"location"] child:@"longitude" ] setValue:store.longitude];
     [[[firebaseRef.storesRef child:store.store_key] child:@"phone_number"] setValue:store.phone_number];
     [[[firebaseRef.storesRef child:store.store_key] child:@"google_place_id"] setValue:store.google_place_id];
+    [[[firebaseRef.storesRef child:store.store_key] child:@"url"]  setValue:store.url];
+    [[[firebaseRef.storesRef child:store.store_key] child:@"phone_number"] setValue:store.phone_number];
+    [[[firebaseRef.storesRef child:store.store_key] child:@"rating_count"] setValue:@""];
+    [[[firebaseRef.storesRef child:store.store_key] child:@"rating_score"] setValue:@""];
+    [[[firebaseRef.storesRef child:store.store_key] child:@"sells"] setValue:@""];
 }
 
-- (void) uploadImageToFirebaseStorage {
-    /*FIRStorageReference *medium_image_ref = [firebaseRef.stores_medium_images_ref child:store.store_key];
-    FIRStorageReference *small_image_ref = [firebaseRef.stores_small_images_ref child:store.store_key];
-    NSData *medium_data = UIImagePNGRepresentation(store.medium_image); //Converts UIImage to Data for Storage upload
-    NSData *small_data = UIImagePNGRepresentation(store.small_image); //Converts UIImage to Data for Storage upload
-    FIRStorageUploadTask *uploadTask = [small_image_ref putData:small_data metadata:nil completion:^(FIRStorageMetadata *metadata, NSError *error) {}];
-    [medium_image_ref putData:medium_data metadata:nil completion:^(FIRStorageMetadata *metadata, NSError *error) {}];
-    
-    [uploadTask observeStatus:FIRStorageTaskStatusSuccess handler:^(FIRStorageTaskSnapshot *snapshot) {
-        [self performSegueWithIdentifier:@"createdStoreSegue" sender:self];
-    }];*/
-}
-- (NSDictionary *)createEmptyStore{
-    NSDictionary *dictionaryStoreCreate= @{@"store_name": @"",
-                                           @"image_name":@"",
-                                           @"location":@"",
-                                           @"url":@"",
-                                           @"phone_number":@"",
-                                           @"google_place_id":@"",
-                                           @"rating_count":@"",
-                                           @"rating_score":@"",
-                                           @"stats":@"",
-                                           @"sells":@"",};
-    return dictionaryStoreCreate;
-}
-
-- (NSDictionary *)createStoreLocation{
+- (NSDictionary *)storeLocation{
     NSDictionary *dictionaryLocation= @{@"address": @"",
                                         @"city":@"",
                                         @"state":@"",
@@ -218,28 +196,51 @@
 }
 - (IBAction)tapped_submit_button:(UIButton *)sender {
     if(_imageSelected){
-        /*FIRStorageReference *medium_image_ref = [firebaseRef.stores_medium_images_ref child:store.store_key];
-        FIRStorageReference *small_image_ref = [firebaseRef.stores_small_images_ref child:store.store_key];
-        NSData *medium_data = UIImagePNGRepresentation(store.medium_image); //Converts UIImage to Data for Storage upload
-        NSData *small_data = UIImagePNGRepresentation(store.small_image); //Converts UIImage to Data for Storage upload
-        FIRStorageUploadTask *uploadTask = [small_image_ref putData:small_data metadata:nil completion:^(FIRStorageMetadata *metadata, NSError *error) {}];
-        [medium_image_ref putData:medium_data metadata:nil completion:^(FIRStorageMetadata *metadata, NSError *error) {}];
-        
-*/
-        NSDictionary *dict1 = [self createEmptyStore];
-        NSDictionary *dict2 = [self createStoreLocation];
+        NSDictionary *dict2 = [self storeLocation];
         NSDictionary *dict3 = [self storeStats];
-        NSString *store_key = [firebaseRef.storesRef childByAutoId].key;
-        
-        [store createEmptystoreObject:store_key];
-        [[[firebaseRef.storesRef child:store_key] child:@"store_key" ]setValue:store_key];
-        [[firebaseRef.storesRef child:store_key] setValue:dict1];
-        [[[firebaseRef.storesRef child:store_key] child:@"location"]setValue:dict2];
-        [[[firebaseRef.storesRef child:store_key] child:@"stats"]setValue:dict3];
+        store.store_key = [firebaseRef.storesRef childByAutoId].key;
+  
+        [[[firebaseRef.storesRef child:store.store_key] child:@"location"]setValue:dict2];
+        [[[firebaseRef.storesRef child:store.store_key] child:@"stats"]setValue:dict3];
         
         [self updateClassObjectValues];
         [self updateFirebaseValues];
         
+        CGSize size = CGSizeMake(500, 500);
+        UIImage *sizedImage = [[self class] imageWithImage:self.imageView.image scaledToSize:size];
+        //NSString *encodedString = [UIImagePNGRepresentation(self.strainImageView.image) base64EncodedStringWithOptions:NSDataBase64Encoding64CharacterLineLength];
+        NSData *encodedString = UIImagePNGRepresentation(sizedImage);
+        NSLog(@"image encoded= %@", encodedString);
+        
+        NSURL *theURL = [NSURL URLWithString:@"https://api.imgur.com/3/image"];
+        NSMutableURLRequest *theRequest = [NSMutableURLRequest requestWithURL:theURL cachePolicy:NSURLRequestReloadIgnoringCacheData timeoutInterval:20.0f];
+        
+        //Specify method of request(Get or Post)
+        [theRequest setHTTPMethod:@"POST"];
+        
+        //Pass some default parameter(like content-type etc.)
+        [theRequest setValue:@"Client-ID bceb6364428afba" forHTTPHeaderField:@"Authorization"];
+        
+        //[theRequest setValue:encodedString forHTTPHeaderField:@"image"];
+        [theRequest setHTTPBody:encodedString];
+        NSURLResponse *theResponse = NULL;
+        NSError *theError = NULL;
+        NSData *theResponseData = [NSURLConnection sendSynchronousRequest:theRequest returningResponse:&theResponse error:&theError];
+        
+        NSDictionary *dataDictionaryResponse = [NSJSONSerialization JSONObjectWithData:theResponseData options:0 error:&theError];
+        NSLog(@"url to send request= %@",theURL);
+        NSLog(@"%@",dataDictionaryResponse);
+        
+        NSDictionary *output = [dataDictionaryResponse valueForKey:@"data"];
+        NSString *imageURL = [output valueForKey:@"link"];
+        NSLog(@"url is %@", imageURL);
+        
+        [store.imageNames removeAllObjects];
+        [store.imageNames addObject:imageURL];
+        [[[[firebaseRef.storesRef child:store.store_key] child:@"images"] child:@"1" ] setValue:imageURL];
+
+        [self performSegueWithIdentifier:@"createdStoreSegue" sender:self];
+
         /*[uploadTask observeStatus:FIRStorageTaskStatusSuccess handler:^(FIRStorageTaskSnapshot *snapshot) {
             [self performSegueWithIdentifier:@"createdStoreSegue" sender:self];
         }];*/
@@ -260,5 +261,17 @@
         [self presentViewController:alertController animated:YES completion:nil];
     }
 }
+
++ (UIImage *)imageWithImage:(UIImage *)image scaledToSize:(CGSize)newSize {
+    //UIGraphicsBeginImageContext(newSize);
+    // In next line, pass 0.0 to use the current device's pixel scaling factor (and thus account for Retina resolution).
+    // Pass 1.0 to force exact pixel size.
+    UIGraphicsBeginImageContextWithOptions(newSize, NO, 0.0);
+    [image drawInRect:CGRectMake(0, 0, newSize.width, newSize.height)];
+    UIImage *newImage = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    return newImage;
+}
+
 
 @end

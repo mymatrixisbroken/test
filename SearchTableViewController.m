@@ -56,8 +56,9 @@
             //you have to delcare a new object instance to load table cells!!!!!!!!!!!!!!!!!!!
             strainClass *strainLoop = [[strainClass alloc] init];
             [strainLoop setClassObject:key Values:dict Image:array];
+            [strainLoop.imageNames removeObjectAtIndex:0];
+
             [objectsArray.strainObjectArray addObject:strainLoop];
-            NSLog(@"strain images array %@", strainLoop.imageNames);
         }
         [self performSegueWithIdentifier:@"homepageToListSegue" sender:self];
     }];
@@ -78,6 +79,8 @@
             //you have to delcare a new object instance to load table cells!!!!!!!!!!!!!!!!!!!
             storeClass *storeloop = [[storeClass alloc] init];
             [storeloop setClassObject:key Values:dict Image:array];
+            [storeloop.imageNames removeObjectAtIndex:0];
+            
             [objectsArray.storeObjectArray addObject:storeloop];
         }
         [self performSegueWithIdentifier:@"storeSelectionToListSegue" sender:self];

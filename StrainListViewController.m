@@ -62,7 +62,7 @@
         cell.detailTextLabel.text = [[[@"THC:" stringByAppendingString:strain.thc] stringByAppendingString:@" CBD:" ] stringByAppendingString:strain.cbd];
         if([_strainObjectArray count] > indexPath.row){
             dispatch_async(dispatch_get_global_queue(0,0), ^{
-                NSData * data = [[NSData alloc] initWithContentsOfURL: [NSURL URLWithString:strain.image_name]];
+                NSData * data = [[NSData alloc] initWithContentsOfURL: [NSURL URLWithString:[strain.imageNames objectAtIndex:0]]];
                 if( data == nil ){
                     NSLog(@"image is nil");
                     return;

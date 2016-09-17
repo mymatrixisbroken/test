@@ -29,7 +29,6 @@ extern userClass *user;
 @property NSMutableArray *events;
 
 + (userClass *)sharedInstance;
-//-(id)createEmptyUserObject;
 -(id)createUser:(NSString *)createAccountEmail SignedUp:(NSString *)createAccountUsername;
 -(id)setClassObject:key Values:(NSDictionary *)dict :(NSArray *) array1 :(NSArray *) array2 :(NSArray *) array3 :(NSArray *) array4 :(NSArray *) array5 :(NSArray *) array6;
 

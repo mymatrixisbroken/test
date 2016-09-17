@@ -117,11 +117,13 @@
         if ([objectsArray.storeObjectArray count] > 0) {
             for(int i=1; i<[objectsArray.storeObjectArray count]; i++){
                 storeClass *tempStore = [[storeClass alloc] init];
-                tempStore = [objectsArray.storeObjectArray objectAtIndex:indexPath.row];
-                //cell.label.text = store.store_name;
-                
+                tempStore = [objectsArray.storeObjectArray objectAtIndex:indexPath.row];                
                 dispatch_async(dispatch_get_global_queue(0,0), ^{
-                    NSData * data = [[NSData alloc] initWithContentsOfURL: [NSURL URLWithString:[tempStore.imageNames objectAtIndex:1]]];
+                    NSInteger length = [[tempStore.imageNames objectAtIndex:0] length];
+                    NSString *smallImageURL = [[tempStore.imageNames objectAtIndex:0] substringWithRange:NSMakeRange(0, length-4)];
+                    smallImageURL = [smallImageURL stringByAppendingString:@"m.jpg"];
+                    
+                    NSData * data = [[NSData alloc] initWithContentsOfURL: [NSURL URLWithString:smallImageURL]];
                     if( data == nil ){
                         NSLog(@"image is nil");
                         return;
@@ -139,9 +141,13 @@
             for(int i=1; i<[objectsArray.strainObjectArray count]; i++){
                 strainClass *tempStrain = [[strainClass alloc] init];
                 tempStrain = [objectsArray.strainObjectArray objectAtIndex:indexPath.row];
-                //cell.label.text = strain.strain_name;
+                NSLog(@"strain image name is %@", [tempStrain.imageNames objectAtIndex:0]);
                 dispatch_async(dispatch_get_global_queue(0,0), ^{
-                    NSData * data = [[NSData alloc] initWithContentsOfURL: [NSURL URLWithString:[tempStrain.imageNames objectAtIndex:1]]];
+                    NSInteger length = [[tempStrain.imageNames objectAtIndex:0] length];
+                    NSString *smallImageURL = [[tempStrain.imageNames objectAtIndex:0] substringWithRange:NSMakeRange(0, length-4)];
+                    smallImageURL = [smallImageURL stringByAppendingString:@"m.jpg"];
+                
+                    NSData * data = [[NSData alloc] initWithContentsOfURL: [NSURL URLWithString:smallImageURL]];
                     if( data == nil ){
                         NSLog(@"image is nil");
                         return;
