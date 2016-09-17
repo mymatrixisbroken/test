@@ -37,10 +37,11 @@
         for(int i=0; i<keys.count ; i++){
             NSString *key = keys[i];
             NSDictionary *dict = [_storeObjectDictionary valueForKey:key];
-            
+            NSArray *array = [dict valueForKey:@"images"];
+
             //you have to delcare a new object instance to load table cells!!!!!!!!!!!!!!!!!!!
             storeClass *storeloop = [[storeClass alloc] init];
-            [storeloop setClassObject:key Values:dict];
+            [storeloop setClassObject:key Values:dict Image:array];
             [self getSmallImageFromFirebase:storeloop];
             //**********************************************//
             //NSLog(@"0 Object description is %@ at %d",[ICHObjectPrinter descriptionForObject:[_storeObjectArray objectAtIndex:i]], i);

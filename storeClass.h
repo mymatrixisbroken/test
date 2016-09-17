@@ -25,6 +25,7 @@ extern storeClass *store;
 @property NSString *phone_number;
 @property NSString *google_place_id;
 @property NSString *image_name;
+@property NSArray *imageNames;
 @property (nonatomic, assign) double rating_score;
 @property (nonatomic, assign) int rating_count;
 @property (nonatomic, assign) int total_count;
@@ -37,6 +38,6 @@ extern storeClass *store;
 
 + (storeClass *)sharedInstance;
 -(id)createEmptystoreObject:(NSString *)store_key;
--(id)setClassObject:key Values:(NSDictionary *)dict;
+-(id)setClassObject:key Values:(NSDictionary *)dict Image:(NSArray *)array;
 
 @end

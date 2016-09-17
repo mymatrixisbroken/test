@@ -27,6 +27,7 @@ extern strainClass *strain;
 @property NSString *energetic;
 @property NSString *relaxed;
 @property NSString *image_name;
+@property NSArray *imageNames;
 @property (nonatomic, assign) double rating_score;
 @property (nonatomic, assign) int rating_count;
 @property (nonatomic, assign) int total_count;
@@ -36,11 +37,9 @@ extern strainClass *strain;
 @property BOOL concentrate;
 @property BOOL topical;
 @property BOOL edible;
-@property NSMutableArray *strainObjectArray;
 
 
 + (strainClass *)sharedInstance;
 -(id) createEmptyStrainObject;
--(id)setClassObject:key Values:(NSDictionary *)dict;
-
+-(id)setClassObject:key Values:(NSDictionary *)dict Image:(NSArray *) array;
 @end

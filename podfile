@@ -6,6 +6,7 @@ target 'myProject' do
   use_frameworks!
 
   # Pods for myProject
+  pod 'TLYShyNavBar'
   pod ‘Firebase/Core’
   pod 'Firebase/Auth'
   pod ‘Firebase/Database’
@@ -17,6 +18,13 @@ target 'myProject' do
   pod 'GooglePlaces'
   pod 'GooglePlacePicker'
   pod 'GoogleMaps'
+  pod 'DZNEmptyDataSet'
+
+
+
+
+
+
 target 'myProjectTests' do
     inherit! :search_paths
     # Pods for testing

@@ -16,8 +16,16 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    [self descriptionForEmptyDataSet];
     // Do any additional setup after loading the view, typically from a nib.
 }
+
+- (void)descriptionForEmptyDataSet{
+    _label.text = @"You aren't signed in :(";
+    _label.textColor = [UIColor colorWithHex:@"828587"];
+    _label.font = [UIFont systemFontOfSize:14.0];
+}
+
 - (IBAction)tappedCancelButton:(UIBarButtonItem *)sender {
     [self dismissViewControllerAnimated:YES completion:^{}];
 }

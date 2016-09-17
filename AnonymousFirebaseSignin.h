@@ -13,11 +13,13 @@
 #import "storeClass.h"
 #import "objectsArrayClass.h"
 #import "FirebaseReferenceClass.h"
+#import "findFriendClass.h"
 @import Firebase;
 
 @interface AnonymousFirebaseSignin : UIViewController
+/*
 @property (strong, nonatomic) IBOutlet NSDictionary *storeObjectDictionary;
 @property (strong, nonatomic) IBOutlet NSDictionary *strainObjectDictionary;
-
+*/
 @end
 

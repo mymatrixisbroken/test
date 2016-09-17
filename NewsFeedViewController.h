@@ -12,10 +12,11 @@
 #import "userClass.h"
 #import "newsFeedCell.h"
 #import "FirebaseReferenceClass.h"
+@import Firebase;
 
-@interface NewsFeedViewController : UIViewController <UIScrollViewDelegate, UITableViewDelegate, UITableViewDataSource>
+@interface NewsFeedViewController : UIViewController <UIScrollViewDelegate>
 @property (strong, nonatomic) IBOutlet UIScrollView *scrollView;
-@property (strong, nonatomic) IBOutlet UITableView *tableView;
+//@property (strong, nonatomic) IBOutlet UITableView *tableView;
 
 
 @end

@@ -17,6 +17,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     _usernameLabel.text = user.username;
+    [self loadProfilePicture];
     self.scrollView.contentSize = self.view.bounds.size;
     self.shyNavBarManager.scrollView = self.scrollView;
     
@@ -37,6 +38,20 @@
     _strainsTriedNumber.text = [NSString stringWithFormat:@"%lu", (unsigned long)user.strains_tried.count];
     _storesVisitedNumber.text = [NSString stringWithFormat:@"%lu", (unsigned long)user.stores_visited.count];
 
+}
+
+-(void) loadProfilePicture{
+    dispatch_async(dispatch_get_global_queue(0,0), ^{
+        NSData * data = [[NSData alloc] initWithContentsOfURL: [NSURL URLWithString:user.image_name]];
+        if( data == nil ){
+            NSLog(@"image is nil");
+            return;
+        }
+        dispatch_async(dispatch_get_main_queue(), ^{
+            // WARNING: is the cell still using the same data by this point??
+            self.imageView.image = [UIImage imageWithData: data];
+        });
+    });
 }
 
 
@@ -152,6 +167,7 @@
     UIGraphicsEndImageContext();
     return newImage;
 }
+
 - (IBAction)tappedBadges:(UITapGestureRecognizer *)sender {
     [self performSegueWithIdentifier:@"badgesSegue" sender:self];
 }

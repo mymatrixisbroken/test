@@ -17,6 +17,10 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
+    self.tableView.delegate = self;
+    self.tableView.dataSource = self;
+    self.searchBar.delegate = self;
+    
     self.scrollView.contentSize = self.view.bounds.size;
     self.shyNavBarManager.scrollView = self.scrollView;
     
@@ -30,6 +34,65 @@
 
     [self.shyNavBarManager setExtensionView:extView];
     [self.shyNavBarManager setStickyExtensionView:YES];
+}
+
+
+-(void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText{
+    if(searchBar.text.length == 0){
+        _isFiltered = NO;
+    }
+    else{
+        [self searchFirebaseForUsernames];
+    }
+}
+
+
+-(void) searchFirebaseForUsernames{
+    NSInteger length = [_searchBar.text length] - 1;
+    unichar c = [_searchBar.text characterAtIndex:length];
+    c++;
+    NSString *charIncrement = [NSString stringWithCharacters:&c length:1];
+    NSString *endString = [_searchBar.text substringWithRange:NSMakeRange(0, length)];
+    endString = [endString stringByAppendingString:charIncrement];
+    
+    
+    FIRDatabaseQuery *usernamesQuery = [[[firebaseRef.usersRef queryOrderedByChild:@"username"] queryStartingAtValue:_searchBar.text] queryEndingAtValue:endString];
+
+    [usernamesQuery observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
+        if ([NSNull null] != snapshot.value){
+            _friendsArray = [[NSMutableArray alloc] init];
+            _isFiltered = YES;
+            NSArray *keys = [snapshot.value allKeys];
+            for(int i=0; i<keys.count ; i++){
+                NSString *key = keys[i];
+                NSDictionary *dict = [snapshot.value valueForKey:key];
+                NSString *username = [dict valueForKey:@"username"];
+                NSString *imageURL = [dict valueForKey:@"avatar"];
+                
+                findFriendClass *friend = [[findFriendClass alloc] init];
+                [friend set:key User:username image:imageURL];
+                [_friendsArray addObject:friend];
+                [self.tableView reloadData];
+            }
+        }
+    }];
+}
+
+-(NSInteger) tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
+    return [_friendsArray count];
+}
+
+-(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
+    NSString *cellIdentifier = @"FindFriendsCell";
+    FindFriendsCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier forIndexPath:indexPath];
+
+        for(int i=1; i<=[_friendsArray count]; i++){
+            tempFriend = [findFriendClass sharedInstance];
+            tempFriend = [_friendsArray objectAtIndex:indexPath.row];
+            
+            [cell uploadCellWithUsername:tempFriend.username imageURL:tempFriend.imageURL];
+    }
+    return cell;
 }
 
 
@@ -55,10 +118,19 @@
 }
 
 -(IBAction)userProfileButtonPressed:(UIButton*)btn {
-    UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-    UIViewController *vc = [sb instantiateViewControllerWithIdentifier:@"User Profile Navigation SB ID"];
-    vc.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
-    [self presentViewController:vc animated:YES completion:NULL];
+    FIRUser *user = [FIRAuth auth].currentUser;
+    if(user.anonymous){
+        UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+        UIViewController *vc = [sb instantiateViewControllerWithIdentifier:@"User Not Found SB ID"];
+        vc.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
+        [self presentViewController:vc animated:YES completion:NULL];
+    }
+    else{
+        UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+        UIViewController *vc = [sb instantiateViewControllerWithIdentifier:@"User Profile Navigation SB ID"];
+        vc.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
+        [self presentViewController:vc animated:YES completion:NULL];
+    }
 }
 
 - (void)didReceiveMemoryWarning {

@@ -8,9 +8,12 @@
 
 #import <UIKit/UIKit.h>
 #import "LoginViewController.h"
+#import "UIColor+Hexadecimal.h"
+
 
 @interface UserNotFoundViewController : UIViewController
 
+@property (strong, nonatomic) IBOutlet UILabel *label;
 
 @end
 

@@ -40,44 +40,44 @@ const static CGFloat frameSizeWidth = 600.0f;
                 user.user_key = key;
                 user.email = [userDict valueForKey:@"email"];
                 
-
-                    
-                [firebaseRef.eventsRef observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot) {
-                    NSLog(@"snapshot is %@",snapshot.value);
-                    
-                    NSArray *keys = [[snapshot.value allKeys] sortedArrayUsingSelector:@selector(compare:)];
-                    for (NSString *key in keys) {
-                        id value = [snapshot.value objectForKey:key];
-                        NSString *strValue = value;
-                        //NSLog(@"key is %@ => value is %@",key, value);
-                        
-                        NSString *firebasefriendkey = [value substringWithRange:NSMakeRange(0, 20)];
-                        NSString *message = [value substringWithRange:NSMakeRange(20, (strValue.length-20))];
-                        
-                        for(int i=0; i<user.friends.count ; i++){
-                            NSString *classfriendkey = [user.friends objectAtIndex:i];
-                            
-                            if ([classfriendkey isEqualToString:firebasefriendkey]) {
-                                NSMutableDictionary *keyMessageDict = [[NSMutableDictionary alloc] init];
-                                [keyMessageDict setValue:message forKey:firebasefriendkey];
-                                
-                                NSMutableDictionary *eventDict = [[NSMutableDictionary alloc] init];
-                                [eventDict setObject:keyMessageDict forKey:key];
-                                
-                                [user.events addObject:eventDict];
-                            }
-                        }
-                    }
-                    
-                    NSLog(@"user events is %@", user.events);
-                }];
-                break; //break out of userKeys loop
+                [self loadEventsFromFirebaseDatabse];
+                break; //break loop once sign in email matches firebase email; no need to check remaining users in firebase
             }
         }
+        [self performSegueWithIdentifier:@"loginToProfileSegue" sender:self];
     }];
 }
 
-
+-(void) loadEventsFromFirebaseDatabse{
+    [firebaseRef.eventsRef observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot) {
+        NSLog(@"snapshot is %@",snapshot.value);
+        
+        NSArray *keys = [[snapshot.value allKeys] sortedArrayUsingSelector:@selector(compare:)];
+        for (NSString *key in keys) {
+            id value = [snapshot.value objectForKey:key];
+            NSString *strValue = value;
+            //NSLog(@"key is %@ => value is %@",key, value);
+            
+            NSString *firebasefriendkey = [value substringWithRange:NSMakeRange(0, 20)];
+            NSString *message = [value substringWithRange:NSMakeRange(20, (strValue.length-20))];
+            
+            for(int i=0; i<user.friends.count ; i++){
+                NSString *classfriendkey = [user.friends objectAtIndex:i];
+                
+                if ([classfriendkey isEqualToString:firebasefriendkey]) {
+                    NSMutableDictionary *keyMessageDict = [[NSMutableDictionary alloc] init];
+                    [keyMessageDict setValue:message forKey:firebasefriendkey];
+                    
+                    NSMutableDictionary *eventDict = [[NSMutableDictionary alloc] init];
+                    [eventDict setObject:keyMessageDict forKey:key];
+                    
+                    [user.events addObject:eventDict];
+                }
+            }
+        }
+        NSLog(@"user events is %@", user.events);
+    }];
+}
 
 - (void) setTextFields {
     [_SignInUsername.layer addSublayer:[self customUITextField:70]];
@@ -112,29 +112,16 @@ const static CGFloat frameSizeWidth = 600.0f;
     [self performSegueWithIdentifier:@"CreateAccountSegue" sender:self];
 }
 
-- (IBAction)SignInButtonTapped:(UIButton *)sender
-{
+- (IBAction)SignInButtonTapped:(UIButton *)sender{
     [[FIRAuth auth] signInWithEmail:_SignInUsername.text password:_SignInPassword.text completion:^(FIRUser *user, NSError *error) {
         if (error != nil) {
             NSLog(@"%@", error.localizedDescription);
+            [self alertCouldNotSignInToFirebaseAuthorization];
         }
-        else {}
+        else {
+            [self loadUserFromFirebaseDatabase];
+        }
      }];
-    
-    [self loadUserFromFirebaseDatabase];
-    
-    
-    FIRUser *userAuth = [FIRAuth auth].currentUser;
-    if (userAuth.email != nil) {
-        NSString *email = user.email;
-        NSLog(@"Firebase User is signed in.");
-        NSLog(@"Email:%@.",email);
-        NSLog(@"key user description is %@ ",user.user_key);
-        NSLog(@"key user description is %@ ",user.user_key);
-        [self performSegueWithIdentifier:@"loginToProfileSegue" sender:self];
-    }
-    else {
-        [self alertCouldNotSignInToFirebaseAuthorization];}
 }
          
  -(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender{

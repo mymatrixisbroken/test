@@ -58,7 +58,7 @@ userClass *user;
     return self;
 }
 
-
+/*
 -(id)createEmptyUserObject{
     self.user_key = @"";
     self.email = @"";
@@ -77,6 +77,13 @@ userClass *user;
 
     
     return self;
+}*/
+
+-(id)createUser:(NSString *)createAccountEmail SignedUp:(NSString *)createAccountUsername{
+    self.email = createAccountEmail;
+    self.username = createAccountUsername;
+    
+    return self;
 }
 
 -(id)setClassObject:key Values:(NSDictionary *)dict :(NSArray *)array1 :(NSArray *)array2 :(NSArray *)array3 :(NSArray *)array4 :(NSArray *)array5 :(NSArray *)array6{
@@ -86,7 +93,7 @@ userClass *user;
     self.date_joined = [dict valueForKey:@"date_joined"];
     self.last_signed_in = [dict valueForKey:@"last_signed_in"];
     self.account_type = [dict valueForKey:@"account_type"];
-    self.image_name = [dict valueForKey:@"image_name"];
+    self.image_name = [dict valueForKey:@"avatar"];
     self.wish_list = array1;
     self.friends = array2;
     self.reviews = array3;

@@ -22,6 +22,86 @@ const static CGFloat frameSizeWidth = 600.0f;
     // Do any additional setup after loading the view, typically from a nib.
 }
 
+- (IBAction)tappedSignUp:(UIButton *)sender {
+    if([self isValidUsername]){}
+        else return;
+    
+    if([self isValidEmail]){}
+        else return;
+    
+    if([self isValidPassword]){}
+        else return;
+    
+    FIRDatabaseQuery *myTopPostsQuery = [[firebaseRef.usersRef queryOrderedByChild:@"username"] queryEqualToValue:_usernameField.text];
+    
+    [myTopPostsQuery observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
+        if ([NSNull null] == snapshot.value){
+            user.user_key = [firebaseRef.usersRef childByAutoId].key;
+            [user createUser:_emailField.text SignedUp:_usernameField.text];
+            [self updateAnonymousUserToSignedUp:_passwordField.text];
+            [self updateFirebaseDatabaseValues];
+            
+            if (user.user_key != nil) {
+                [self performSegueWithIdentifier:@"createAccountToUserProfileSegue" sender:self];
+            }
+            else {
+                NSLog(@"Failed to create account.");
+            }
+        }
+        else if ([[snapshot.value allKeys] count] > 0) {
+            NSLog(@"username already taken");
+            [self usernameAlreadyTaken];
+        }
+    }];
+}
+
+-(BOOL) isValidUsername{
+    NSCharacterSet *whitespace = [NSCharacterSet whitespaceAndNewlineCharacterSet];
+    NSRange range = [_usernameField.text rangeOfCharacterFromSet:whitespace];
+    if (range.location == NSNotFound) {
+        return YES;
+    }
+    else {
+        [self alertInvalidUsername];
+        return NO;
+    }
+}
+
+-(BOOL)isValidEmail
+{
+    BOOL stricterFilter = NO;
+    NSString *stricterFilterString = @"^[A-Z0-9a-z\\._%+-]+@([A-Za-z0-9-]+\\.)+[A-Za-z]{2,4}$";
+    NSString *laxString = @"^.+@([A-Za-z0-9-]+\\.)+[A-Za-z]{2}[A-Za-z]*$";
+    NSString *emailRegex = stricterFilter ? stricterFilterString : laxString;
+    NSPredicate *emailTest = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", emailRegex];
+    if ([emailTest evaluateWithObject:_emailField.text])
+    {
+        return YES;
+    }
+    else{
+        [self alertInvalideEmail];
+        return NO;
+    }
+}
+
+-(BOOL)isValidPassword
+{
+    if( (_passwordField.text.length > 4)){
+        return YES;
+    }
+    else{
+        [self alertInvalidPassword];
+        return NO;
+    }
+}
+
+- (void) getTodaysDate {
+    NSDate *today = [NSDate date];
+    NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
+    [dateFormat setDateFormat:@"dd/MM/yyyy"];
+    _todays_date = [dateFormat stringFromDate:today];
+}
+
 - (CALayer *) customUITextField{
     CALayer *border = [CALayer layer];
     UIColor *selectedColor = [UIColor colorWithRed:199.0/255.0 green:199.0/255.0 blue:205.0/255.0 alpha:1];
@@ -48,22 +128,6 @@ const static CGFloat frameSizeWidth = 600.0f;
     _CreateAccountNext.contentEdgeInsets = UIEdgeInsetsMake(5, 22, 5, 0);
 }
 
--(BOOL)isValidEmail:(NSString *)string
-{
-    BOOL stricterFilter = NO;
-    NSString *stricterFilterString = @"^[A-Z0-9a-z\\._%+-]+@([A-Za-z0-9-]+\\.)+[A-Za-z]{2,4}$";
-    NSString *laxString = @"^.+@([A-Za-z0-9-]+\\.)+[A-Za-z]{2}[A-Za-z]*$";
-    NSString *emailRegex = stricterFilter ? stricterFilterString : laxString;
-    NSPredicate *emailTest = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", emailRegex];
-    return [emailTest evaluateWithObject:string];
-}
-
--(BOOL)isValidPassword:(NSString *)string
-{
-    NSInteger characterCount = 4;
-    return (string.length > characterCount);
-}
-
 - (IBAction)CreatePasswordChanged:(id)sender {
     if (_passwordField.text.length > 0) {
         _CreateAccountNext.enabled = YES;
@@ -87,72 +151,48 @@ const static CGFloat frameSizeWidth = 600.0f;
     [[[firebaseRef.usersRef child:user.user_key] child:@"username"] setValue:user.username];
     [[[firebaseRef.usersRef child:user.user_key] child:@"date_joined"] setValue:_todays_date];
     [[[firebaseRef.usersRef child:user.user_key] child:@"last_signed_in"] setValue:@""];
-    [[[firebaseRef.usersRef child:user.user_key] child:@"account_type"] setValue:@""];
+    [[[firebaseRef.usersRef child:user.user_key] child:@"account_type"] setValue:@"user"];
     [[[firebaseRef.usersRef child:user.user_key] child:@"wish_list"] setValue:@""];
     [[[firebaseRef.usersRef child:user.user_key] child:@"friends"] setValue:@""];
     [[[firebaseRef.usersRef child:user.user_key] child:@"reviews"] setValue:@""];
     [[[firebaseRef.usersRef child:user.user_key] child:@"badges"] setValue:@""];
     [[[firebaseRef.usersRef child:user.user_key] child:@"strains_tried"] setValue:@""];
     [[[firebaseRef.usersRef child:user.user_key] child:@"stores_visited"] setValue:@""];
-
-}
-
-- (void) getTodaysDate {
-    NSDate *today = [NSDate date];
-    NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
-    [dateFormat setDateFormat:@"dd/MM/yyyy"];
-    _todays_date = [dateFormat stringFromDate:today];
-}
-- (IBAction)tappedSignUp:(UIButton *)sender {
-    NSString *password;
     
-    
-    
-    if([self isValidEmail:_emailField.text]){
-    }
-    else {
-        [self alertInvalideEmail];
-        return;
-    }
-    
-    if([self isValidPassword:_passwordField.text]){
-        password = _passwordField.text;}
-    else{
-        [self alertInvalidPassword];
-        return;}
-    
-    
-    [self updateAnonymousUserToSignedUp:password];
-    [user createEmptyUserObject];
-    
-    user.user_key = [firebaseRef.usersRef childByAutoId].key;
-    user.email = _emailField.text;
-    user.username = _usernameField.text;
-
-    NSLog(@"user key is %@", user.user_key);
-    NSLog(@"user email is %@", user.email);
-    NSLog(@"user name is %@", user.username);
-    [self updateFirebaseDatabaseValues];
-    
-    if (user.user_key != nil) {
-        [self performSegueWithIdentifier:@"createAccountToUserProfileSegue" sender:self];
-    }
-    else {
-        NSLog(@"Failed to create account.");
-    }
-
 }
 
 - (IBAction)tappedCancelButton:(UIBarButtonItem *)sender {
     [self dismissViewControllerAnimated:YES completion:^{}];
 }
 
+- (void) alertInvalidUsername {
+    UIAlertController *alertController = [UIAlertController
+                                          alertControllerWithTitle:@"Invalid username"
+                                          message:nil
+                                          preferredStyle:UIAlertControllerStyleAlert];
+    UIAlertAction *okAction = [UIAlertAction
+                               actionWithTitle:NSLocalizedString(@"OK", @"OK action")
+                               style:UIAlertActionStyleDefault
+                               handler:^(UIAlertAction *action)
+                               {}];
+    
+    [alertController addAction:okAction];
+    [self presentViewController:alertController animated:YES completion:nil];
+}
 
--(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender{
-    if([segue.identifier isEqualToString:@"strainReviewToSignupSegue"]){
-        //StrainProfileViewController *controller = (StrainProfileViewController *)segue.sourceViewController;
-        //controller.user = user;
-    }
+- (void) usernameAlreadyTaken {
+    UIAlertController *alertController = [UIAlertController
+                                          alertControllerWithTitle:@"Username taken"
+                                          message:nil
+                                          preferredStyle:UIAlertControllerStyleAlert];
+    UIAlertAction *okAction = [UIAlertAction
+                               actionWithTitle:NSLocalizedString(@"OK", @"OK action")
+                               style:UIAlertActionStyleDefault
+                               handler:^(UIAlertAction *action)
+                               {}];
+    
+    [alertController addAction:okAction];
+    [self presentViewController:alertController animated:YES completion:nil];
 }
 
 - (void) alertInvalidPassword {

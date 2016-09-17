@@ -14,6 +14,7 @@
 @implementation SearchTableViewController
 - (void)viewDidLoad {
     [super viewDidLoad];
+    objectsArray = [objectsArrayClass sharedInstance];
     self.tableView.dataSource = self;
     self.tableView.delegate = self;
 }
@@ -22,70 +23,67 @@
 - (void) tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     switch (indexPath.row) {
         case 0:
-        {
-            UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-            ViewController *vc = [sb instantiateViewControllerWithIdentifier:@"View Controller SB ID"];
-            vc.cellSelected = indexPath.row;
-            [self performSegueWithIdentifier:@"homepageToListSegue" sender:self];
+        {            
+            [[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"integer"];
+            [[NSUserDefaults standardUserDefaults] synchronize];
+            [self loadStrains];
             break;
         }
         case 1:
         {
-            UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-            ViewController *vc = [sb instantiateViewControllerWithIdentifier:@"View Controller SB ID"];
-            vc.cellSelected = indexPath.row;
-            [self performSegueWithIdentifier:@"storeSelectionToListSegue" sender:self];
+            [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"integer"];
+            [[NSUserDefaults standardUserDefaults] synchronize];
+            [self loadStores];
             break;
         }
         default:
             break;
     }
+}
 
-    /*if(indexPath.row == 0){
-        NSLog(@"0 index select");
-        _cellSelected = 0;
+- (void) loadStrains {
+    [objectsArray.strainObjectArray removeAllObjects];
+    
+    [firebaseRef.strainsRef observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
+        _strainObjectDictionary = snapshot.value; //Creates a dictionary of of the JSON node strains
+        NSArray *keys = [_strainObjectDictionary allKeys]; //Creates an array with only the strain key uID
+        
+        for(int i=0; i<keys.count ; i++){
+            NSString *key = keys[i];
+            NSDictionary *dict = [_strainObjectDictionary valueForKey:key];
+            NSArray *array = [dict valueForKey:@"images"];
+            
+            //you have to delcare a new object instance to load table cells!!!!!!!!!!!!!!!!!!!
+            strainClass *strainLoop = [[strainClass alloc] init];
+            [strainLoop setClassObject:key Values:dict Image:array];
+            [objectsArray.strainObjectArray addObject:strainLoop];
+            NSLog(@"strain images array %@", strainLoop.imageNames);
+        }
         [self performSegueWithIdentifier:@"homepageToListSegue" sender:self];
-    }
-    else if (indexPath.row ==1){
-        NSLog(@"1 index select");
-        _cellSelected = 1;
+    }];
+}
+
+- (void) loadStores {
+    [objectsArray.storeObjectArray removeAllObjects];
+    
+    [firebaseRef.storesRef observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
+        _storeObjectDictionary = snapshot.value; //Creates a dictionary of of the JSON node strains
+        NSArray *keys = [_storeObjectDictionary allKeys]; //Creates an array with only the strain key uID
+        
+        for(int i=0; i<keys.count ; i++){
+            NSString *key = keys[i];
+            NSDictionary *dict = [_storeObjectDictionary valueForKey:key];
+            NSArray *array = [dict valueForKey:@"images"];
+            
+            //you have to delcare a new object instance to load table cells!!!!!!!!!!!!!!!!!!!
+            storeClass *storeloop = [[storeClass alloc] init];
+            [storeloop setClassObject:key Values:dict Image:array];
+            [objectsArray.storeObjectArray addObject:storeloop];
+        }
         [self performSegueWithIdentifier:@"storeSelectionToListSegue" sender:self];
-    }*/
+    }];
 }
 
-/*-(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender{
-    if([segue.identifier isEqualToString:@"homepageToListSegue"]){
-        UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-        ViewController *vc = [sb instantiateViewControllerWithIdentifier:@"View Controller SB ID"];
-        NSLog(@"1 cell selected is %d", _cellSelected);
-
-        vc.cellSelected = _cellSelected;
-    }
-    else if([segue.identifier isEqualToString:@"storeSelectionToListSegue"]){
-        UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-        ViewController *vc = [sb instantiateViewControllerWithIdentifier:@"View Controller SB ID"];
-        NSLog(@"2 cell selected is %d", _cellSelected);
-
-        vc.cellSelected = _cellSelected;
-    }
-
-}
-/*
-
--(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender{
-    if([segue.identifier isEqualToString:@"homepageToListSegue"]){
-        ViewController *vc = [segue destinationViewController];
-        [vc setCellSelected:0];
-    }
-}
-
--(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender{
-    if([segue.identifier isEqualToString:@"homepageToListSegue"]){
-        ViewController *controller = (ViewController *)segue.destinationViewController;
-        controller.cellSelected = _cellSelected;
-    }
-}
-*/
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];

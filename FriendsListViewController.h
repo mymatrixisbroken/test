@@ -9,10 +9,21 @@
 #import <UIKit/UIKit.h>
 #import <TLYShyNavBar/TLYShyNavBarManager.h>
 #import "extensionViewClass.h"
+#import "FirebaseReferenceClass.h"
+#import "FindFriendsCell.h"
+#import "findFriendClass.h"
+#import "userClass.h"
+@import Firebase;
 
-@interface FriendsListViewController : UIViewController <UITableViewDataSource, UITableViewDelegate>
+@interface FriendsListViewController : UIViewController <UITableViewDataSource, UITableViewDelegate, UISearchBarDelegate, UISearchDisplayDelegate>
 @property (strong, nonatomic) IBOutlet UIScrollView *scrollView;
 @property (strong, nonatomic) IBOutlet UITableView *tableView;
+@property (strong, nonatomic) IBOutlet UISearchBar *searchBar;
+@property (strong, nonatomic) IBOutlet UISearchController *searchController;
+@property (strong, nonatomic) IBOutlet NSMutableArray *friendsArray;
+@property (nonatomic, strong) findFriendClass *puto;
+@property BOOL isFiltered;
+
 
 @end
 

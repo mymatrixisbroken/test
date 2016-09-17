@@ -73,7 +73,7 @@
 
 - (void)viewDidLoad {
   [super viewDidLoad];
-    NSLog(@"cell selected is %d", _cellSelected);
+    _cellSelected  = [[NSUserDefaults standardUserDefaults] boolForKey:@"integer"];
   [self.view addSubview:self.collectionView];
 }
 
@@ -105,7 +105,7 @@
 }
 
 - (NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView {
-  return 2;
+  return 1;
 }
 
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
@@ -114,15 +114,14 @@
                                                                               forIndexPath:indexPath];
 
     if(_cellSelected){
-        NSLog(@"stores selected");
         if ([objectsArray.storeObjectArray count] > 0) {
-            for(int i=0; i<[objectsArray.storeObjectArray count]; i++){
+            for(int i=1; i<[objectsArray.storeObjectArray count]; i++){
                 storeClass *tempStore = [[storeClass alloc] init];
                 tempStore = [objectsArray.storeObjectArray objectAtIndex:indexPath.row];
                 //cell.label.text = store.store_name;
                 
                 dispatch_async(dispatch_get_global_queue(0,0), ^{
-                    NSData * data = [[NSData alloc] initWithContentsOfURL: [NSURL URLWithString:store.image_name]];
+                    NSData * data = [[NSData alloc] initWithContentsOfURL: [NSURL URLWithString:[tempStore.imageNames objectAtIndex:1]]];
                     if( data == nil ){
                         NSLog(@"image is nil");
                         return;
@@ -136,15 +135,13 @@
         }
     }
     else{
-        NSLog(@"strains selected");
-        
         if ([objectsArray.strainObjectArray count] > 0) {
-            for(int i=0; i<[objectsArray.strainObjectArray count]; i++){
+            for(int i=1; i<[objectsArray.strainObjectArray count]; i++){
                 strainClass *tempStrain = [[strainClass alloc] init];
                 tempStrain = [objectsArray.strainObjectArray objectAtIndex:indexPath.row];
                 //cell.label.text = strain.strain_name;
                 dispatch_async(dispatch_get_global_queue(0,0), ^{
-                    NSData * data = [[NSData alloc] initWithContentsOfURL: [NSURL URLWithString:tempStrain.image_name]];
+                    NSData * data = [[NSData alloc] initWithContentsOfURL: [NSURL URLWithString:[tempStrain.imageNames objectAtIndex:1]]];
                     if( data == nil ){
                         NSLog(@"image is nil");
                         return;

@@ -8,10 +8,13 @@
 
 #import <UIKit/UIKit.h>
 #import "ViewController.h"
+#import "objectsArrayClass.h"
 @import Firebase;
 
 @interface SearchTableViewController : UITableViewController  <UITableViewDelegate, UITableViewDataSource>
-@property BOOL cellSelected;
+@property (nonatomic, assign) NSInteger cellSelected;
+@property (strong, nonatomic) IBOutlet NSDictionary *storeObjectDictionary;
+@property (strong, nonatomic) IBOutlet NSDictionary *strainObjectDictionary;
 
 @end
 
