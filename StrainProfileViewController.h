@@ -25,11 +25,11 @@
 @property (strong, nonatomic) IBOutlet UILabel *strainSpeciesLabel;
 @property (strong, nonatomic) IBOutlet UILabel *strainGrowerLabel;
 @property (strong, nonatomic) IBOutlet UIView *infoView;
-@property (strong, nonatomic) IBOutlet UIProgressView *happinessView;
-@property (strong, nonatomic) IBOutlet UIProgressView *upliftedView;
-@property (strong, nonatomic) IBOutlet UIProgressView *energeticView;
-@property (strong, nonatomic) IBOutlet UIProgressView *relaxedView;
-@property (strong, nonatomic) IBOutlet UIProgressView *euphoricView;
+@property (strong, nonatomic) IBOutlet YLProgressBar *happinessView;
+@property (strong, nonatomic) IBOutlet YLProgressBar *upliftedView;
+@property (strong, nonatomic) IBOutlet YLProgressBar *euphoricView;
+@property (strong, nonatomic) IBOutlet YLProgressBar *energeticView;
+@property (strong, nonatomic) IBOutlet YLProgressBar *relaxedView;
 @property (strong, nonatomic) IBOutlet UILabel *ratingCount;
 @end
 

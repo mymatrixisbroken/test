@@ -51,11 +51,12 @@
         for(int i=0; i<keys.count ; i++){
             NSString *key = keys[i];
             NSDictionary *dict = [_strainObjectDictionary valueForKey:key];
+            NSDictionary *dict2 = [dict valueForKey:@"high_type"];
             NSArray *array = [dict valueForKey:@"images"];
             
             //you have to delcare a new object instance to load table cells!!!!!!!!!!!!!!!!!!!
             strainClass *strainLoop = [[strainClass alloc] init];
-            [strainLoop setClassObject:key Values:dict Image:array];
+            [strainLoop setClassObject:key Values:dict Image:array highType:dict2];
             [strainLoop.imageNames removeObjectAtIndex:0];
 
             [objectsArray.strainObjectArray addObject:strainLoop];

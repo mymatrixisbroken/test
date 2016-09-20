@@ -16,11 +16,63 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
+    UIRefreshControl *refresh = [[UIRefreshControl alloc] init];
+    refresh.attributedTitle = [[NSAttributedString alloc] initWithString:@"Pull to Refresh"];
+    [self.tableView addSubview:refresh];
+    [refresh addTarget:self action:@selector(refreshTable:) forControlEvents:UIControlEventValueChanged];
+    self.refreshControl = refresh;
+    
     self.tableView.emptyDataSetSource = self;
     self.tableView.emptyDataSetDelegate = self;
-    
     self.tableView.tableFooterView = [UIView new];
 }
+
+- (void)refreshTable:(UIRefreshControl *)refresh {
+    refresh.attributedTitle = [[NSAttributedString alloc] initWithString:@"Refreshing data..."];
+    [user.friends removeAllObjects];
+    _array = [[NSMutableArray alloc] init];
+    _dict = [[NSMutableDictionary alloc] init];
+
+    
+    FIRDatabaseQuery *friendsQuery = [[[firebaseRef.usersRef child:user.user_key] child:@"friends"] queryOrderedByKey];
+    [friendsQuery observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
+        NSArray *keys = [snapshot.value allKeys];
+        NSArray *sortedKeys = [keys sortedArrayUsingSelector:@selector(compare:)];
+        
+        for (id key in sortedKeys) {
+            [user.friends addObject:key];
+        }
+        
+        for (int i = 0; i<[user.friends count]; i++) {
+            FIRDatabaseQuery *eventQuery = [[firebaseRef.eventsRef queryOrderedByChild:@"uid"] queryEqualToValue:[user.friends objectAtIndex:i]];
+            [_array addObject:eventQuery];
+        }
+        
+        for (int i = 0; i<_array.count; i++) {
+            [[_array objectAtIndex:i] observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
+                if (snapshot.value == [NSNull null]) {}
+                else{
+                    [user.events removeAllObjects];
+                    [_dict addEntriesFromDictionary:snapshot.value];
+                                    
+                    NSArray *keys = [_dict allKeys];
+                    NSArray *sortedKeys = [keys sortedArrayUsingSelector:@selector(compare:)];
+                    
+                    for (id key in sortedKeys) {
+                        NSMutableDictionary *tempDict = [[NSMutableDictionary alloc] init];
+                        NSMutableDictionary *value = [[NSMutableDictionary alloc] init];
+                        value = [_dict valueForKey:key];
+                        [tempDict setObject:value forKey:key ];
+                        [user.events addObject:tempDict];
+                    }
+                }
+            }];
+        }
+        [self.tableView reloadData];
+        [refresh endRefreshing];
+    }];
+}
+
 
 - (NSAttributedString *)titleForEmptyDataSet:(UIScrollView *)scrollView
 {
@@ -83,32 +135,17 @@
     NSString *cellIdentifier = @"newsFeedCell";
     newsFeedCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier forIndexPath:indexPath];
     
-    NSString *friendKey;
-    NSString *event;
-    __block NSString *imageURL;
-    if (user.events.count ==nil){
-        //[cell uploadCellWithUsername:@"lskdjgas" event:@"lsdkjgs" imageURL:@"http://i.imgur.com/H2nQOo4.jpg"];
-    }
-    else{
-        NSDictionary *dict1 = [user.events objectAtIndex:indexPath.row];
-        
-        for (id key in dict1) {
-            id value = [dict1 objectForKey:key];
-            NSDictionary *dict2 = value;
-            
-            for (id key in dict2) {
-                id value = [dict2 objectForKey:key];
-                friendKey = key;
-                event = value;
-            }
-        }
-        
-        [[firebaseRef.usersRef child:friendKey] observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot) {
-            imageURL = [snapshot.value valueForKey:@"avatar"];
-            NSString *username = [snapshot.value valueForKey:@"username"];
-            [cell uploadCellWithUsername:username event:event imageURL:imageURL];
-        }];
-    }
+    NSArray *keys = [[user.events objectAtIndex:indexPath.row] allKeys];
+    NSString *key = [keys objectAtIndex:0];
+    NSDictionary *dict = [user.events objectAtIndex:indexPath.row];
+    NSDictionary *dict1 = [dict valueForKey:key];
+
+    NSString *event = [dict1 valueForKey:@"message"];
+    NSString *username = [dict1 valueForKey:@"username"];
+    NSString *imageURL = [dict1 valueForKey:@"imageURL"];
+    
+    [cell uploadCellWithUsername:username event:event imageURL:imageURL];
+
     return cell;
 }
 

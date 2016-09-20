@@ -15,5 +15,7 @@
 
 
 @interface NewsFeedTableViewController : UITableViewController <DZNEmptyDataSetSource, DZNEmptyDataSetDelegate>
+@property (strong, nonatomic) IBOutlet NSMutableArray *array;
+@property (strong, nonatomic) IBOutlet NSMutableDictionary *dict;
 
 @end

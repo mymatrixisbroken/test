@@ -37,7 +37,7 @@
             
             //you have to delcare a new object instance to load table cells!!!!!!!!!!!!!!!!!!!
             strainClass *strainLoop = [[strainClass alloc] init];
-            [strainLoop setClassObject:key Values:dict Image:array];
+            //[strainLoop setClassObject:key Values:dict Image:array];
 
             //**********************************************//
             //NSLog(@"0 Object description is %@ at %d",[ICHObjectPrinter descriptionForObject:[_strainObjectArray objectAtIndex:i]], i);

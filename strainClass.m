@@ -75,7 +75,7 @@ strainClass *strain;
     return self;
 }
 
--(id)setClassObject:key Values:(NSDictionary *)dict Image:(NSArray *) array{
+-(id)setClassObject:key Values:(NSDictionary *)dict Image:(NSArray *) array highType:(NSDictionary *)dict2{
     self.strain_key = key;
     self.strain_name = [dict valueForKey:@"strain_name"];
     self.thc = [dict valueForKey:@"THC"];
@@ -84,11 +84,11 @@ strainClass *strain;
     self.grower = [dict valueForKey:@"grower"];
     self.flavor = [dict valueForKey:@"flavor"];
     self.aroma = [dict valueForKey:@"aroma"];
-    self.happiness = [dict valueForKey:@"happiness"];
-    self.uplifting = [dict valueForKey:@"uplifting"];
-    self.euphoric = [dict valueForKey:@"euphoric"];
-    self.energetic = [dict valueForKey:@"energetic"];
-    self.relaxed = [dict valueForKey:@"relaxed"];
+    self.happiness = [dict2 valueForKey:@"happiness"];
+    self.uplifting = [dict2 valueForKey:@"uplifting"];
+    self.euphoric = [dict2 valueForKey:@"euphoric"];
+    self.energetic = [dict2 valueForKey:@"energetic"];
+    self.relaxed = [dict2 valueForKey:@"relaxed"];
     self.imageNames = [NSMutableArray arrayWithArray:array];
     self.rating_score = [[dict valueForKey:@"rating_score"] doubleValue];
     self.rating_count = [[dict valueForKey:@"rating_count"] integerValue];

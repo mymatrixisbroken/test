@@ -20,5 +20,9 @@
 @property (weak, nonatomic) IBOutlet JVFloatLabeledTextField *SignInPassword;
 @property (strong, nonatomic) IBOutlet UIView *signInVIew;
 @property (weak, nonatomic) IBOutlet UIButton *SignInButton;
+@property (strong, nonatomic) IBOutlet NSMutableArray *array;
+@property (strong, nonatomic) IBOutlet NSMutableDictionary *dict;
+
+
 @end
 

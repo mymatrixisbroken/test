@@ -21,7 +21,7 @@ extern userClass *user;
 @property NSString *account_type;
 @property NSString *image_name;
 @property NSArray *wish_list;
-@property NSArray *friends;
+@property NSMutableArray *friends;
 @property NSArray *reviews;
 @property NSArray *badges;
 @property NSArray *strains_tried;

@@ -39,5 +39,5 @@ extern strainClass *strain;
 
 
 + (strainClass *)sharedInstance;
--(id)setClassObject:key Values:(NSDictionary *)dict Image:(NSArray *) array;
+-(id)setClassObject:key Values:(NSDictionary *)dict Image:(NSArray *) array highType:(NSDictionary *)dict2;
 @end

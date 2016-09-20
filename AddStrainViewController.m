@@ -16,13 +16,96 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    [self loadSliders];
+    
+    
+    
     [_strainNameField becomeFirstResponder];
     _imageSelected = false;
 }
 
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
+- (IBAction)tappedSubmitButton:(UIButton *)sender {
+    if(_imageSelected){
+        NSDictionary *dict2 = [self highType];
+        NSDictionary *dict3 = [self strainStats];
+        NSDictionary *dict4 = [self consumptionForm];
+        
+        strain.strain_key = [firebaseRef.strainsRef childByAutoId].key;
+        
+        [[[firebaseRef.strainsRef child:strain.strain_key] child:@"strain_key" ]setValue:strain.strain_key];
+        [[[firebaseRef.strainsRef child:strain.strain_key] child:@"high_type" ]setValue:dict2];
+        [[[firebaseRef.strainsRef child:strain.strain_key] child:@"stats" ]setValue:dict3];
+        [[[firebaseRef.strainsRef child:strain.strain_key] child:@"consumption_form" ]setValue:dict4];
+        strain.rating_count = 0;
+        
+        [self updateClassValues];
+        [self updateFirDatabase];
+        
+        CGSize size = CGSizeMake(500, 500);
+        UIImage *sizedImage = [[self class] imageWithImage:self.strainImageView.image scaledToSize:size];
+        //NSString *encodedString = [UIImagePNGRepresentation(self.strainImageView.image) base64EncodedStringWithOptions:NSDataBase64Encoding64CharacterLineLength];
+        NSData *encodedString = UIImagePNGRepresentation(sizedImage);
+        NSLog(@"image encoded= %@", encodedString);
+        
+        NSURL *theURL = [NSURL URLWithString:@"https://api.imgur.com/3/image"];
+        NSMutableURLRequest *theRequest = [NSMutableURLRequest requestWithURL:theURL cachePolicy:NSURLRequestReloadIgnoringCacheData timeoutInterval:20.0f];
+        
+        //Specify method of request(Get or Post)
+        [theRequest setHTTPMethod:@"POST"];
+        
+        //Pass some default parameter(like content-type etc.)
+        [theRequest setValue:@"Client-ID bceb6364428afba" forHTTPHeaderField:@"Authorization"];
+        
+        //[theRequest setValue:encodedString forHTTPHeaderField:@"image"];
+        [theRequest setHTTPBody:encodedString];
+        NSURLResponse *theResponse = NULL;
+        NSError *theError = NULL;
+        NSData *theResponseData = [NSURLConnection sendSynchronousRequest:theRequest returningResponse:&theResponse error:&theError];
+        
+        NSDictionary *dataDictionaryResponse = [NSJSONSerialization JSONObjectWithData:theResponseData options:0 error:&theError];
+        NSLog(@"url to send request= %@",theURL);
+        NSLog(@"%@",dataDictionaryResponse);
+        
+        NSDictionary *output = [dataDictionaryResponse valueForKey:@"data"];
+        NSString *imageURL = [output valueForKey:@"link"];
+        NSLog(@"url is %@", imageURL);
+        
+        [strain.imageNames removeAllObjects];
+        [strain.imageNames addObject:imageURL];
+        [[[[firebaseRef.strainsRef child:strain.strain_key] child:@"images"] child:@"1" ] setValue:imageURL];
+        
+        [self performSegueWithIdentifier:@"SubmitStrainSegue" sender:self];
+    }
+    else if (!_imageSelected){
+        UIAlertController *alertController = [UIAlertController
+                                              alertControllerWithTitle:@"Uh-oh!"
+                                              message:@"Image not selected."
+                                              preferredStyle:UIAlertControllerStyleAlert];
+        UIAlertAction *okAction = [UIAlertAction
+                                   actionWithTitle:NSLocalizedString(@"OK", @"OK action")
+                                   style:UIAlertActionStyleDefault
+                                   handler:^(UIAlertAction *action)
+                                   {}];
+        
+        [alertController addAction:okAction];
+        [self presentViewController:alertController animated:YES completion:nil];
+    }
+    
+}
+
+- (void) loadSliders{
+    NSArray *array = [NSArray arrayWithObjects:_happinessSlider, _upliftingSlider, _euphoricSlider,_energeticSlider,_relaxedSlider,nil];
+
+    for (int i = 0; i < 5; i++) {
+        ASValueTrackingSlider *str = [array objectAtIndex:i];
+        str.maximumValue = 100.0;
+        str.popUpViewCornerRadius = 12.0;
+        [str setMaxFractionDigitsDisplayed:0];
+        str.popUpViewColor = [UIColor colorWithRed:19.0/255.0 green:128.0/255.0 blue:0.0/255.0 alpha:1];
+        str.font = [UIFont fontWithName:@"GillSans-Bold" size:22];
+        str.textColor = [UIColor colorWithRed:199.0/255.0 green:199.0/255.0 blue:205.0/255.0 alpha:1];
+
+    }
 }
 
 - (IBAction)speciesTypeController:(UISegmentedControl *)sender {
@@ -166,73 +249,8 @@
     return newImage;
 }
 
-
-- (IBAction)tappedSubmitButton:(UIButton *)sender {
-    if(_imageSelected){
-        NSDictionary *dict2 = [self highType];
-        NSDictionary *dict3 = [self strainStats];
-        NSDictionary *dict4 = [self consumptionForm];
-        
-        strain.strain_key = [firebaseRef.strainsRef childByAutoId].key;
-        
-        [[[firebaseRef.strainsRef child:strain.strain_key] child:@"strain_key" ]setValue:strain.strain_key];
-        [[[firebaseRef.strainsRef child:strain.strain_key] child:@"high_type" ]setValue:dict2];
-        [[[firebaseRef.strainsRef child:strain.strain_key] child:@"stats" ]setValue:dict3];
-        [[[firebaseRef.strainsRef child:strain.strain_key] child:@"consumption_form" ]setValue:dict4];
-        strain.rating_count = 0;
-        
-        [self updateClassValues];
-        [self updateFirDatabase];
-        
-        CGSize size = CGSizeMake(500, 500);
-        UIImage *sizedImage = [[self class] imageWithImage:self.strainImageView.image scaledToSize:size];
-        //NSString *encodedString = [UIImagePNGRepresentation(self.strainImageView.image) base64EncodedStringWithOptions:NSDataBase64Encoding64CharacterLineLength];
-        NSData *encodedString = UIImagePNGRepresentation(sizedImage);
-        NSLog(@"image encoded= %@", encodedString);
-        
-        NSURL *theURL = [NSURL URLWithString:@"https://api.imgur.com/3/image"];
-        NSMutableURLRequest *theRequest = [NSMutableURLRequest requestWithURL:theURL cachePolicy:NSURLRequestReloadIgnoringCacheData timeoutInterval:20.0f];
-        
-        //Specify method of request(Get or Post)
-        [theRequest setHTTPMethod:@"POST"];
-        
-        //Pass some default parameter(like content-type etc.)
-        [theRequest setValue:@"Client-ID bceb6364428afba" forHTTPHeaderField:@"Authorization"];
-        
-        //[theRequest setValue:encodedString forHTTPHeaderField:@"image"];
-        [theRequest setHTTPBody:encodedString];
-        NSURLResponse *theResponse = NULL;
-        NSError *theError = NULL;
-        NSData *theResponseData = [NSURLConnection sendSynchronousRequest:theRequest returningResponse:&theResponse error:&theError];
-        
-        NSDictionary *dataDictionaryResponse = [NSJSONSerialization JSONObjectWithData:theResponseData options:0 error:&theError];
-        NSLog(@"url to send request= %@",theURL);
-        NSLog(@"%@",dataDictionaryResponse);
-        
-        NSDictionary *output = [dataDictionaryResponse valueForKey:@"data"];
-        NSString *imageURL = [output valueForKey:@"link"];
-        NSLog(@"url is %@", imageURL);
-        
-        [strain.imageNames removeAllObjects];
-        [strain.imageNames addObject:imageURL];
-        [[[[firebaseRef.strainsRef child:strain.strain_key] child:@"images"] child:@"1" ] setValue:imageURL];
-        
-        [self performSegueWithIdentifier:@"SubmitStrainSegue" sender:self];
-    }
-    else if (!_imageSelected){
-        UIAlertController *alertController = [UIAlertController
-                                              alertControllerWithTitle:@"Uh-oh!"
-                                              message:@"Image not selected."
-                                              preferredStyle:UIAlertControllerStyleAlert];
-        UIAlertAction *okAction = [UIAlertAction
-                                   actionWithTitle:NSLocalizedString(@"OK", @"OK action")
-                                   style:UIAlertActionStyleDefault
-                                   handler:^(UIAlertAction *action)
-                                   {}];
-        
-        [alertController addAction:okAction];
-        [self presentViewController:alertController animated:YES completion:nil];
-    }
-    
+- (void)didReceiveMemoryWarning {
+    [super didReceiveMemoryWarning];
+    // Dispose of any resources that can be recreated.
 }
 @end

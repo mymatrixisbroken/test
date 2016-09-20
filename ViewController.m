@@ -141,7 +141,6 @@
             for(int i=1; i<[objectsArray.strainObjectArray count]; i++){
                 strainClass *tempStrain = [[strainClass alloc] init];
                 tempStrain = [objectsArray.strainObjectArray objectAtIndex:indexPath.row];
-                NSLog(@"strain image name is %@", [tempStrain.imageNames objectAtIndex:0]);
                 dispatch_async(dispatch_get_global_queue(0,0), ^{
                     NSInteger length = [[tempStrain.imageNames objectAtIndex:0] length];
                     NSString *smallImageURL = [[tempStrain.imageNames objectAtIndex:0] substringWithRange:NSMakeRange(0, length-4)];

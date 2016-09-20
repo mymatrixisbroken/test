@@ -48,7 +48,7 @@ userClass *user;
         self.account_type = @"user";
         self.image_name = @"";
         self.wish_list = [[NSArray alloc] init];
-        self.friends = [[NSArray alloc] init];
+        self.friends = [[NSMutableArray alloc] init];
         self.reviews = [[NSArray alloc] init];
         self.badges = [[NSArray alloc] init];
         self.strains_tried = [[NSArray alloc] init];
@@ -65,7 +65,7 @@ userClass *user;
     return self;
 }
 
--(id)setClassObject:key Values:(NSDictionary *)dict :(NSArray *)array1 :(NSArray *)array2 :(NSArray *)array3 :(NSArray *)array4 :(NSArray *)array5 :(NSArray *)array6{
+-(id)setClassObject:key Values:(NSDictionary *)dict :(NSArray *)array1 :(NSMutableArray *)array2 :(NSArray *)array3 :(NSArray *)array4 :(NSArray *)array5 :(NSArray *)array6{
     self.user_key = key;
     self.email = [dict valueForKey:@"email"];
     self.username = [dict valueForKey:@"username"];
