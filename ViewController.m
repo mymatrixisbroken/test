@@ -141,6 +141,17 @@
             for(int i=1; i<[objectsArray.strainObjectArray count]; i++){
                 strainClass *tempStrain = [[strainClass alloc] init];
                 tempStrain = [objectsArray.strainObjectArray objectAtIndex:indexPath.row];
+                cell.label.text = tempStrain.strain_name;
+                
+
+                
+                if ([tempStrain.species isEqual:@"stevia"]) {
+                    cell.steviaImageView.image = [UIImage imageNamed:@"stevia"];
+                }
+                else if ([tempStrain.species isEqual:@"indica"]){
+                    cell.indicaImageView.image = [UIImage imageNamed:@"indica"];
+                }
+
                 dispatch_async(dispatch_get_global_queue(0,0), ^{
                     NSInteger length = [[tempStrain.imageNames objectAtIndex:0] length];
                     NSString *smallImageURL = [[tempStrain.imageNames objectAtIndex:0] substringWithRange:NSMakeRange(0, length-4)];

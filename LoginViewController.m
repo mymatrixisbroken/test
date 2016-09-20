@@ -32,25 +32,49 @@ const static CGFloat frameSizeWidth = 600.0f;
             NSString *key = userKeys[i];
             NSDictionary *userDict = [usersSnapshot valueForKey:key];
             if ([_SignInUsername.text isEqual:[userDict valueForKey:@"email"]]){
-                NSArray *arr1 = [[userDict valueForKey:@"wishlist"] allKeys];
-                __block NSMutableArray *arr2 = [[NSMutableArray alloc] init]; // = [[userDict valueForKey:@"friends"] allKeys];
-                NSArray *arr3 = [[userDict valueForKey:@"reviews"] allKeys];
-                NSArray *arr4 = [[userDict valueForKey:@"badges"] allKeys];
-                NSArray *arr5 = [[userDict valueForKey:@"strains_tried"] allKeys];
-                NSArray *arr6 = [[userDict valueForKey:@"stores_visited"] allKeys];
+                NSArray *arr1 = [[NSMutableArray alloc] init];
+                if (!([[userDict valueForKey:@"reviews"]  isEqual: @""])) {
+                    arr1 = [[userDict valueForKey:@"wishlist"] allKeys];
+                }
+                __block NSMutableArray *arr2 = [[NSMutableArray alloc] init];
+                
+                NSArray *arr3 = [[NSMutableArray alloc] init];
+                if (!([[userDict valueForKey:@"reviews"]  isEqual: @""])) {
+                    arr3 = [[userDict valueForKey:@"reviews"] allKeys];
+                }
+                
+                NSArray *arr4 = [[NSMutableArray alloc] init];
+                if (!([[userDict valueForKey:@"badges"]  isEqual: @""])) {
+                    arr4 = [[userDict valueForKey:@"badges"] allKeys];
+                }
+                
+                NSArray *arr5 = [[NSMutableArray alloc] init];
+                if (!([[userDict valueForKey:@"strains_tried"]  isEqual: @""])) {
+                    arr5 = [[userDict valueForKey:@"strains_tried"] allKeys];
+                }
+                
+                NSArray *arr6 = [[NSMutableArray alloc] init];
+                if (!([[userDict valueForKey:@"stores_visited"]  isEqual: @""])) {
+                    arr6 = [[userDict valueForKey:@"stores_visited"] allKeys];
+                }
                 [user setClassObject:key Values:userDict :arr1 :arr2 :arr3 :arr4 :arr5 :arr6];
                 user.user_key = key;
                 user.email = [userDict valueForKey:@"email"];
                 
                 FIRDatabaseQuery *friendsQuery = [[[firebaseRef.usersRef child:key] child:@"friends"] queryOrderedByKey];
                 [friendsQuery observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
-                    NSArray *keys = [snapshot.value allKeys];
-                    NSArray *sortedKeys = [keys sortedArrayUsingSelector:@selector(compare:)];
-                    
-                    for (id key in sortedKeys) {
-                        [arr2 addObject:key];
+                    if (![snapshot.value isEqual:@""]) {
+                        NSArray *keys = [snapshot.value allKeys];
+                        NSArray *sortedKeys = [keys sortedArrayUsingSelector:@selector(compare:)];
+                        
+                        for (id key in sortedKeys) {
+                            [arr2 addObject:key];
+                        }
+                        [self newLoadEventsFromFirebaseDatabse];
                     }
-                    [self newLoadEventsFromFirebaseDatabse];
+                    else{
+                        [self performSegueWithIdentifier:@"loginToProfileSegue" sender:self];
+                    }
                 }];
             }
         }

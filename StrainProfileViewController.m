@@ -86,39 +86,61 @@
     [self loadRatingCount];
     
     
+    NSArray *array = [NSArray arrayWithObjects:_happinessView, _upliftedView, _energeticView,_euphoricView,_relaxedView,nil];
+    NSArray *array1 = @[@(strain.happiness), @(strain.uplifting), @(strain.energetic), @(strain.euphoric), @(strain.relaxed)];
+    
+    for (int i = 0; i < 5; i++) {
+        YLProgressBar *str = [array objectAtIndex:i];
+        int x = [[array1 objectAtIndex:i] intValue];
+        str.progressTintColor        = [UIColor colorWithRed:19.0/255.0 green:128.0/255.0 blue:0.0/255.0 alpha:1];
+        [str setProgress: x*.01];
+        str.indicatorTextLabel.text = [NSString stringWithFormat:@"%@", [array1 objectAtIndex:i]];
+        str.indicatorTextDisplayMode = YLProgressBarIndicatorTextDisplayModeProgress;
+        str.hideStripes = YES;
+        str.trackTintColor = [UIColor colorWithRed:199.0/255.0 green:199.0/255.0 blue:205.0/255.0 alpha:1];
+        
+    }
+
+    
+    /*
     _happinessView.progressTintColor        = [UIColor colorWithRed:19.0/255.0 green:128.0/255.0 blue:0.0/255.0 alpha:1];
-    [_happinessView setProgress: [strain.happiness floatValue]];
+    [_happinessView setProgress:strain.happiness *.01];
+    _happinessView.indicatorTextLabel.text = [NSString stringWithFormat:@"%d", strain.happiness];
     _happinessView.indicatorTextDisplayMode = YLProgressBarIndicatorTextDisplayModeProgress;
     _happinessView.hideStripes = YES;
     _happinessView.trackTintColor = [UIColor colorWithRed:199.0/255.0 green:199.0/255.0 blue:205.0/255.0 alpha:1];
 
     _upliftedView.progressTintColor        = [UIColor colorWithRed:19.0/255.0 green:128.0/255.0 blue:0.0/255.0 alpha:1];
-    [_upliftedView setProgress: [strain.uplifting floatValue]];
+    [_upliftedView setProgress: strain.uplifting *.01];
+    _upliftedView.indicatorTextLabel.text = [NSString stringWithFormat:@"%d", strain.uplifting];
     _upliftedView.indicatorTextDisplayMode = YLProgressBarIndicatorTextDisplayModeProgress;
     _upliftedView.hideStripes = YES;
     _upliftedView.trackTintColor = [UIColor colorWithRed:199.0/255.0 green:199.0/255.0 blue:205.0/255.0 alpha:1];
 
     _energeticView.progressTintColor        = [UIColor colorWithRed:19.0/255.0 green:128.0/255.0 blue:0.0/255.0 alpha:1];
-    [_energeticView setProgress: [strain.energetic floatValue]];
+    [_energeticView setProgress: strain.energetic *.01];
+    _energeticView.indicatorTextLabel.text = [NSString stringWithFormat:@"%d", strain.energetic];
     _energeticView.indicatorTextDisplayMode = YLProgressBarIndicatorTextDisplayModeProgress;
     _energeticView.hideStripes = YES;
     _energeticView.trackTintColor = [UIColor colorWithRed:199.0/255.0 green:199.0/255.0 blue:205.0/255.0 alpha:1];
 
     _euphoricView.progressTintColor        = [UIColor colorWithRed:19.0/255.0 green:128.0/255.0 blue:0.0/255.0 alpha:1];
-    [_euphoricView setProgress: [strain.euphoric floatValue]];
+    [_euphoricView setProgress: strain.euphoric *.01];
+    _euphoricView.indicatorTextLabel.text = [NSString stringWithFormat:@"%d", strain.euphoric];
     _euphoricView.indicatorTextDisplayMode = YLProgressBarIndicatorTextDisplayModeProgress;
     _euphoricView.hideStripes = YES;
     _euphoricView.trackTintColor = [UIColor colorWithRed:199.0/255.0 green:199.0/255.0 blue:205.0/255.0 alpha:1];
 
     _relaxedView.progressTintColor        = [UIColor colorWithRed:19.0/255.0 green:128.0/255.0 blue:0.0/255.0 alpha:1];
-    [_relaxedView setProgress: [strain.relaxed floatValue]];
+    [_relaxedView setProgress: strain.relaxed *.01];
+    _relaxedView.indicatorTextLabel.text = [NSString stringWithFormat:@"%d", strain.relaxed];
     _relaxedView.indicatorTextDisplayMode = YLProgressBarIndicatorTextDisplayModeProgress;
     _relaxedView.hideStripes = YES;
     _relaxedView.trackTintColor = [UIColor colorWithRed:199.0/255.0 green:199.0/255.0 blue:205.0/255.0 alpha:1];
 
     
 
-    
+    */
     
 }
 

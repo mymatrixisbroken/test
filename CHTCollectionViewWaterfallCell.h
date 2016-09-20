@@ -11,4 +11,7 @@
 
 @interface CHTCollectionViewWaterfallCell : UICollectionViewCell
 @property (nonatomic, strong) UIImageView *imageView;
+@property (nonatomic, strong) UIImageView *steviaImageView;
+@property (nonatomic, strong) UIImageView *indicaImageView;
+@property (nonatomic, strong) UILabel *label;
 @end

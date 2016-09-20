@@ -18,8 +18,6 @@
     [super viewDidLoad];
     [self loadSliders];
     
-    
-    
     [_strainNameField becomeFirstResponder];
     _imageSelected = false;
 }
@@ -74,6 +72,7 @@
         [strain.imageNames addObject:imageURL];
         [[[[firebaseRef.strainsRef child:strain.strain_key] child:@"images"] child:@"1" ] setValue:imageURL];
         
+
         [self performSegueWithIdentifier:@"SubmitStrainSegue" sender:self];
     }
     else if (!_imageSelected){
@@ -161,21 +160,21 @@
     strain.grower = _growerField.text;
     strain.flavor = _flavorField.text;
     strain.aroma = _aromaField.text;
-    strain.happiness = [NSString stringWithFormat:@"%f", _happinessSlider.value];
-    strain.uplifting = [NSString stringWithFormat:@"%f", _upliftingSlider.value];
-    strain.euphoric = [NSString stringWithFormat:@"%f", _euphoricSlider.value];
-    strain.energetic =[NSString stringWithFormat:@"%f",  _energeticSlider.value];
-    strain.relaxed = [NSString stringWithFormat:@"%f", _relaxedSlider.value];
+    strain.happiness = (int)_happinessSlider.value;
+    strain.uplifting = (int)_upliftingSlider.value;
+    strain.euphoric = (int)_euphoricSlider.value;
+    strain.energetic =(int)_energeticSlider.value;
+    strain.relaxed = (int)_relaxedSlider.value;
     
 
 }
 
 - (void) updateFirDatabase {
-    NSString *happiness = [NSString stringWithFormat:@"%@", strain.happiness];
-    NSString *uplifting = [NSString stringWithFormat:@"%@", strain.uplifting];
-    NSString *euphoric = [NSString stringWithFormat:@"%@", strain.euphoric];
-    NSString *energetic = [NSString stringWithFormat:@"%@", strain.energetic];
-    NSString *relaxed = [NSString stringWithFormat:@"%@", strain.relaxed];
+    NSString *happiness = [NSString stringWithFormat:@"%d", strain.happiness];
+    NSString *uplifting = [NSString stringWithFormat:@"%d", strain.uplifting];
+    NSString *euphoric = [NSString stringWithFormat:@"%d", strain.euphoric];
+    NSString *energetic = [NSString stringWithFormat:@"%d", strain.energetic];
+    NSString *relaxed = [NSString stringWithFormat:@"%d", strain.relaxed];
 
     [[[firebaseRef.strainsRef child:strain.strain_key] child:@"strain_name"] setValue:strain.strain_name];
     [[[firebaseRef.strainsRef child:strain.strain_key] child:@"THC"] setValue:strain.thc];
