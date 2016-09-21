@@ -24,36 +24,6 @@
     // Do any additional setup after loading the view, typically from a nib.
 }
 
-- (void) loadStarRating{
-    [_star_rating.layer addSublayer:[self customUITextField]];
-    _star_rating.layer.masksToBounds = YES;
-}
-
-- (void) updateFirebaseVaslues:review_key {
-    NSLog(@"3 entered update firebase is %@ ",user.user_key);
-
-    [[[[firebaseRef.reviewsRef child:@"strains"] child:review_key] child:@"message"] setValue:_review_text.text];
-    [[[[firebaseRef.reviewsRef child:@"strains"] child:review_key] child:@"strain_key"] setValue:strain.strain_key];
-    [[[[firebaseRef.reviewsRef child:@"strains"] child:review_key]  child:@"user_key"] setValue:user.user_key];
-    
-    [[[firebaseRef.strainsRef child:strain.strain_key] child:@"rating_count" ] observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot) {
-        NSString *current_count = snapshot.value;
-        NSLog(@"current count is %@",current_count);
-        NSInteger x = [current_count integerValue];
-        x = x+1;
-        NSLog(@"x count is %ld",(long)x);
-
-        NSString *string = [NSString stringWithFormat:@"%ld", (long)x];
-        NSLog(@"string count is %@",string);
-
-        [[[firebaseRef.strainsRef child:strain.strain_key] child:@"rating_count"] setValue:string];
-    }];
-    
-    [[[[firebaseRef.strainsRef child:strain.strain_key] child:@"reviews"] child:review_key] setValue:@"review_key"];
-
-    [[[[firebaseRef.usersRef child:user.user_key] child:@"reviews"] child:review_key] setValue:@"review_key"];
-    [[[[firebaseRef.usersRef child:user.user_key] child:@"strains_tried"] child:strain.strain_key] setValue:strain.strain_name];
-}
 - (IBAction)tappedPostReview:(UIBarButtonItem *)sender {
     NSLog(@"2 submit button tapped is %@ ",user.user_key);
     NSString *review_key = [firebaseRef.reviewsRef childByAutoId].key;
@@ -63,6 +33,41 @@
 
 - (IBAction)tappedCancel:(UIBarButtonItem *)sender {
     [self dismissViewControllerAnimated:YES completion:^{}];
+}
+
+- (void) loadStarRating{
+    [_star_rating.layer addSublayer:[self customUITextField]];
+    _star_rating.layer.masksToBounds = YES;
+}
+
+- (void) updateFirebaseVaslues:review_key {
+    NSLog(@"3 entered update firebase is %@ ",user.user_key);
+    
+    [[[[firebaseRef.reviewsRef child:@"strains"] child:review_key] child:@"message"] setValue:_review_text.text];
+    [[[[firebaseRef.reviewsRef child:@"strains"] child:review_key] child:@"strain_key"] setValue:strain.strain_key];
+    [[[[firebaseRef.reviewsRef child:@"strains"] child:review_key]  child:@"user_key"] setValue:user.user_key];
+    
+   /* [[[firebaseRef.strainsRef child:strain.strain_key] child:@"rating_count" ] observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot) {
+        NSString *current_count = snapshot.value;
+        NSLog(@"current count is %@",current_count);
+        NSInteger x = [current_count integerValue];
+        x = x+1;
+        NSLog(@"x count is %ld",(long)x);
+        
+        NSString *string = [NSString stringWithFormat:@"%ld", (long)x];
+        NSLog(@"string count is %@",string);
+        
+    }];*/
+    
+    NSString *rating = [NSString stringWithFormat:@"%d", (int)_star_rating.rating];
+    
+    [[[[firebaseRef.strainsRef child:strain.strain_key] child:@"rating_count"] child:user.user_key] setValue:rating];
+
+    
+    [[[[firebaseRef.strainsRef child:strain.strain_key] child:@"reviews"] child:review_key] setValue:@"review_key"];
+    
+    [[[[firebaseRef.usersRef child:user.user_key] child:@"reviews"] child:review_key] setValue:@"review_key"];
+    [[[[firebaseRef.usersRef child:user.user_key] child:@"strains_tried"] child:strain.strain_key] setValue:strain.strain_name];
 }
 
 

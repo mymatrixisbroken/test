@@ -56,7 +56,7 @@
             
             //you have to delcare a new object instance to load table cells!!!!!!!!!!!!!!!!!!!
             strainClass *strainLoop = [[strainClass alloc] init];
-            [strainLoop setClassObject:key Values:dict Image:array highType:dict2];
+            [strainLoop setClassObject:key Values:dict Image:array highType:dict2 :0 :0];
             [strainLoop.imageNames removeObjectAtIndex:0];
 
             [objectsArray.strainObjectArray addObject:strainLoop];

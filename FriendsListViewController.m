@@ -21,8 +21,8 @@
     self.tableView.dataSource = self;
     self.searchBar.delegate = self;
     
-    self.scrollView.contentSize = self.view.bounds.size;
-    self.shyNavBarManager.scrollView = self.scrollView;
+    //self.scrollView.contentSize = self.view.bounds.size;
+    self.shyNavBarManager.scrollView = self.tableView;
     
     extensionViewClass *extView = [[extensionViewClass alloc] init];
     [extView setView:CGRectGetWidth(self.view.bounds)];

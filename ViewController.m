@@ -34,8 +34,13 @@
     layout.footerHeight = 0;
     layout.minimumColumnSpacing = 1;
     layout.minimumInteritemSpacing = 1;
-
-    _collectionView = [[UICollectionView alloc] initWithFrame:self.view.bounds collectionViewLayout:layout];
+      
+      
+    CGRect frame = CGRectMake(0, self.view.bounds.origin.y + 200, CGRectGetWidth(self.view.bounds), CGRectGetHeight(self.view.bounds) -64);
+    //_collectionView = [[UICollectionView alloc] initWithFrame:frame collectionViewLayout:layout];
+    
+      
+      _collectionView = [[UICollectionView alloc] initWithFrame:self.view.bounds collectionViewLayout:layout];
     _collectionView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
     _collectionView.dataSource = self;
     _collectionView.delegate = self;
@@ -73,17 +78,36 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    [self.view addSubview:self.collectionView];
-}
-
-- (void)viewDidAppear:(BOOL)animated {
-    [super viewDidAppear:animated];
+    
     if (objectsArray.selection == 0){
         [self loadstrains];
     }
     else if (objectsArray.selection == 1){
         [self loadStores];
     }
+
+    
+    self.shyNavBarManager.scrollView = self.collectionView;
+     
+     extensionViewClass *extView = [[extensionViewClass alloc] init];
+     [extView setView:CGRectGetWidth(self.view.bounds)];
+     [extView addButtons:CGRectGetWidth(self.view.bounds)];
+     [extView.newsFeedButton addTarget:self action:@selector(newsFeedButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
+     [extView.friendsButton addTarget:self action:@selector(friendsButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
+     [extView.strainButton addTarget:self action:@selector(strainButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
+     [extView.storeButton addTarget:self action:@selector(storeButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
+     [extView.userProfileButton addTarget:self action:@selector(userProfileButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
+     
+     //[self.shyNavBarManager setExtensionView:extView];
+     //[self.shyNavBarManager setStickyExtensionView:YES];
+    
+    
+    
+    [self.view addSubview:self.collectionView];
+}
+
+- (void)viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
     
     [self updateLayoutForOrientation:[UIApplication sharedApplication].statusBarOrientation];
 }
@@ -103,11 +127,24 @@
             NSDictionary *dict2 = [dict valueForKey:@"high_type"];
             NSArray *array = [dict valueForKey:@"images"];
             
+            NSDictionary *dict3 = [dict valueForKey:@"rating_count"];
+            _ratingScore = 0.0;
+            _ratingCount = 0;
+            NSArray *arr = [dict3 allValues];
+            _ratingCount = arr.count;
+            for (int i =0; i < _ratingCount; i++) {
+                _ratingScore += [[arr objectAtIndex:i] floatValue];
+            }
+            _ratingScore = _ratingScore / (float)_ratingCount;
+            
+
+            
             //you have to delcare a new object instance to load table cells!!!!!!!!!!!!!!!!!!!
             strainClass *strainLoop = [[strainClass alloc] init];
-            [strainLoop setClassObject:key Values:dict Image:array highType:dict2];
+            [strainLoop setClassObject:key Values:dict Image:array highType:dict2 :_ratingCount :_ratingScore];
+
             [strainLoop.imageNames removeObjectAtIndex:0];
-            
+                        
             [objectsArray.strainObjectArray addObject:strainLoop];
         }
         [_activity stopAnimating];
@@ -184,7 +221,7 @@
                 dispatch_async(dispatch_get_global_queue(0,0), ^{
                     NSInteger length = [[tempStore.imageNames objectAtIndex:0] length];
                     NSString *smallImageURL = [[tempStore.imageNames objectAtIndex:0] substringWithRange:NSMakeRange(0, length-4)];
-                    smallImageURL = [smallImageURL stringByAppendingString:@"m.jpg"];
+                    smallImageURL = [smallImageURL stringByAppendingString:@"b.jpg"];
                     
                     NSData * data = [[NSData alloc] initWithContentsOfURL: [NSURL URLWithString:smallImageURL]];
                     if( data == nil ){
@@ -206,8 +243,6 @@
                 tempStrain = [objectsArray.strainObjectArray objectAtIndex:indexPath.row];
                 cell.label.text = tempStrain.strain_name;
                 
-
-                
                 if ([tempStrain.species isEqual:@"stevia"]) {
                     cell.steviaImageView.image = [UIImage imageNamed:@"stevia"];
                 }
@@ -218,7 +253,7 @@
                 dispatch_async(dispatch_get_global_queue(0,0), ^{
                     NSInteger length = [[tempStrain.imageNames objectAtIndex:0] length];
                     NSString *smallImageURL = [[tempStrain.imageNames objectAtIndex:0] substringWithRange:NSMakeRange(0, length-4)];
-                    smallImageURL = [smallImageURL stringByAppendingString:@"m.jpg"];
+                    smallImageURL = [smallImageURL stringByAppendingString:@"b.jpg"];
                 
                     NSData * data = [[NSData alloc] initWithContentsOfURL: [NSURL URLWithString:smallImageURL]];
                     if( data == nil ){

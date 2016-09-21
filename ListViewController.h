@@ -13,10 +13,14 @@
 #import "objectsArrayClass.h"
 #import "FirebaseReferenceClass.h"
 #import "CustomCollectionViewCell.h"
+#import <TLYShyNavBar/TLYShyNavBarManager.h>
+#import "extensionViewClass.h"
+
 @import Firebase;
 
 @interface ListViewController : UIViewController
 @property BOOL cellSelected;
+
 
 @end
 

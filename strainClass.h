@@ -27,7 +27,7 @@ extern strainClass *strain;
 @property int energetic;
 @property int relaxed;
 @property NSMutableArray *imageNames;
-@property (nonatomic, assign) double rating_score;
+@property float rating_score;
 @property int rating_count;
 @property int total_count;
 @property int monthly_count;
@@ -39,5 +39,5 @@ extern strainClass *strain;
 
 
 + (strainClass *)sharedInstance;
--(id)setClassObject:key Values:(NSDictionary *)dict Image:(NSArray *) array highType:(NSDictionary *)dict2;
+-(id)setClassObject:key Values:(NSDictionary *)dict Image:(NSArray *) array highType:(NSDictionary *)dict2 :(NSInteger)x :(float)y;
 @end

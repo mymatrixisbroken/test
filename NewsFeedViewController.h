@@ -14,10 +14,17 @@
 #import "FirebaseReferenceClass.h"
 #import "ViewController.h"
 #import "objectsArrayClass.h"
+
+#import "UIScrollView+EmptyDataSet.h"
+#import "UIColor+Hexadecimal.h"
+
 @import Firebase;
 
-@interface NewsFeedViewController : UIViewController <UIScrollViewDelegate>
-@property (strong, nonatomic) IBOutlet UIScrollView *scrollView;
+@interface NewsFeedViewController : UIViewController <UITableViewDelegate, UITableViewDataSource>
+//@property (strong, nonatomic) IBOutlet UIScrollView *scrollView;
+@property (strong, nonatomic) IBOutlet UITableView *tableView;
+@property (strong, nonatomic) IBOutlet NSMutableArray *array;
+@property (strong, nonatomic) IBOutlet NSMutableDictionary *dict;
 
 @end
 
