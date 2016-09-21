@@ -11,6 +11,7 @@
 #import "FirebaseReferenceClass.h"
 #import <TLYShyNavBar/TLYShyNavBarManager.h>
 #import "extensionViewClass.h"
+#import "objectsArrayClass.h"
 
 @import Firebase;
 

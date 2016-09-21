@@ -13,6 +13,7 @@
 #import "FindFriendsCell.h"
 #import "findFriendClass.h"
 #import "userClass.h"
+#import "objectsArrayClass.h"
 @import Firebase;
 
 @interface FriendsListViewController : UIViewController <UITableViewDataSource, UITableViewDelegate, UISearchBarDelegate, UISearchDisplayDelegate>

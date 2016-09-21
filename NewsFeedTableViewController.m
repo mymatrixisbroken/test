@@ -36,40 +36,47 @@
     
     FIRDatabaseQuery *friendsQuery = [[[firebaseRef.usersRef child:user.user_key] child:@"friends"] queryOrderedByKey];
     [friendsQuery observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
-        NSArray *keys = [snapshot.value allKeys];
-        NSArray *sortedKeys = [keys sortedArrayUsingSelector:@selector(compare:)];
-        
-        for (id key in sortedKeys) {
-            [user.friends addObject:key];
-        }
-        
-        for (int i = 0; i<[user.friends count]; i++) {
-            FIRDatabaseQuery *eventQuery = [[firebaseRef.eventsRef queryOrderedByChild:@"uid"] queryEqualToValue:[user.friends objectAtIndex:i]];
-            [_array addObject:eventQuery];
-        }
-        
-        for (int i = 0; i<_array.count; i++) {
-            [[_array objectAtIndex:i] observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
-                if (snapshot.value == [NSNull null]) {}
-                else{
-                    [user.events removeAllObjects];
-                    [_dict addEntriesFromDictionary:snapshot.value];
-                                    
-                    NSArray *keys = [_dict allKeys];
-                    NSArray *sortedKeys = [keys sortedArrayUsingSelector:@selector(compare:)];
-                    
-                    for (id key in sortedKeys) {
-                        NSMutableDictionary *tempDict = [[NSMutableDictionary alloc] init];
-                        NSMutableDictionary *value = [[NSMutableDictionary alloc] init];
-                        value = [_dict valueForKey:key];
-                        [tempDict setObject:value forKey:key ];
-                        [user.events addObject:tempDict];
+        if (![snapshot.value isEqual:@""]) {
+            NSArray *keys = [snapshot.value allKeys];
+            NSArray *sortedKeys = [keys sortedArrayUsingSelector:@selector(compare:)];
+            
+            for (id key in sortedKeys) {
+                [user.friends addObject:key];
+            }
+            
+            for (int i = 0; i<[user.friends count]; i++) {
+                FIRDatabaseQuery *eventQuery = [[firebaseRef.eventsRef queryOrderedByChild:@"uid"] queryEqualToValue:[user.friends objectAtIndex:i]];
+                [_array addObject:eventQuery];
+            }
+            
+            for (int i = 0; i<_array.count; i++) {
+                [[_array objectAtIndex:i] observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
+                    if (snapshot.value == [NSNull null]) {}
+                    else{
+                        [user.events removeAllObjects];
+                        [_dict addEntriesFromDictionary:snapshot.value];
+                                        
+                        NSArray *keys = [_dict allKeys];
+                        NSArray *sortedKeys = [keys sortedArrayUsingSelector:@selector(compare:)];
+                        
+                        for (id key in sortedKeys) {
+                            NSMutableDictionary *tempDict = [[NSMutableDictionary alloc] init];
+                            NSMutableDictionary *value = [[NSMutableDictionary alloc] init];
+                            value = [_dict valueForKey:key];
+                            [tempDict setObject:value forKey:key ];
+                            [user.events addObject:tempDict];
+                        }
                     }
-                }
-            }];
+                }];
+            }
+            [self.tableView reloadData];
+            [refresh endRefreshing];
         }
-        [self.tableView reloadData];
-        [refresh endRefreshing];
+        else{
+            [user.events removeAllObjects];
+            [refresh endRefreshing];
+            [self.tableView reloadData];
+        }
     }];
 }
 

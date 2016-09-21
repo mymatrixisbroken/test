@@ -44,6 +44,7 @@
         _label.tag = 200;
         /*important--------- */_label.textColor = [UIColor blackColor];
         _label.backgroundColor=[UIColor clearColor];
+        _label.shadowColor=[UIColor blackColor];
         _label.textColor=[UIColor whiteColor];
         _label.userInteractionEnabled=NO;
     }

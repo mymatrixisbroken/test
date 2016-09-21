@@ -15,7 +15,13 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
+    _count = [[NSString alloc] initWithString:[NSString stringWithFormat:@"%lu", (unsigned long)store.imageNames.count]];
     [self loadImageIntoView];
+    
+    _label.backgroundColor = [UIColor clearColor];
+    _label.textColor = [UIColor whiteColor];
+    _label.shadowColor = [UIColor blackColor];
     
     UISwipeGestureRecognizer *swipeLeft = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(screenSwipedLeft)];
     swipeLeft.numberOfTouchesRequired = 1;
@@ -30,6 +36,7 @@
 
 -(void) loadImageIntoView{
     _i = 0;
+    _label.text = [[NSString stringWithFormat:@"%ld / ", (long)_i+1] stringByAppendingString:_count];
     dispatch_async(dispatch_get_global_queue(0,0), ^{
         NSData * data = [[NSData alloc] initWithContentsOfURL: [NSURL URLWithString:[store.imageNames objectAtIndex:_i]]];
         if( data == nil ){
@@ -45,6 +52,8 @@
 
 -(void) screenSwipedLeft{
     if(_i < (store.imageNames.count -1)){
+        _label.text = [[NSString stringWithFormat:@"%ld / ", (long)_i+2] stringByAppendingString:_count];
+        
         dispatch_async(dispatch_get_global_queue(0,0), ^{
             NSData * data = [[NSData alloc] initWithContentsOfURL: [NSURL URLWithString:[store.imageNames objectAtIndex:_i+= 1] ]];
             if( data == nil ){
@@ -61,6 +70,7 @@
 
 -(void) screenSwipedRight{
     if(_i > 0){
+        _label.text = [[NSString stringWithFormat:@"%ld / ", (long)_i] stringByAppendingString:_count];
         dispatch_async(dispatch_get_global_queue(0,0), ^{
             NSData * data = [[NSData alloc] initWithContentsOfURL: [NSURL URLWithString:[store.imageNames objectAtIndex:_i-= 1] ]];
             if( data == nil ){

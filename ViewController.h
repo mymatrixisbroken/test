@@ -8,9 +8,14 @@
 
 #import <UIKit/UIKit.h>
 #import "CHTCollectionViewWaterfallLayout.h"
+#import "strainClass.h"
+#import "storeClass.h"
+#import "objectsArrayClass.h"
 
 @interface ViewController : UIViewController <UICollectionViewDataSource, CHTCollectionViewDelegateWaterfallLayout>
 @property (nonatomic, strong) IBOutlet UICollectionView *collectionView;
-@property BOOL cellSelected;
+@property (strong, nonatomic) IBOutlet NSDictionary *storeObjectDictionary;
+@property (strong, nonatomic) IBOutlet NSDictionary *strainObjectDictionary;
+@property (strong, nonatomic) IBOutlet UIActivityIndicatorView *activity;
 
 @end

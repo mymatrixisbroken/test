@@ -11,7 +11,8 @@
 @implementation extensionViewClass
 @synthesize newsFeedButton;
 @synthesize friendsButton;
-@synthesize searchButton;
+@synthesize strainButton;
+@synthesize storeButton;
 @synthesize userProfileButton;
 
 - (id)init {
@@ -23,6 +24,7 @@
 
         self.backgroundColor = [UIColor colorWithRed:rd green:gr blue:bl alpha:1.0];
     }
+    
     return self;
 }
 
@@ -33,29 +35,35 @@
 
 - (id) addButtons:(CGFloat ) width{
     newsFeedButton = [UIButton buttonWithType:UIButtonTypeSystem];
-    newsFeedButton.frame = CGRectMake(0, 0, width/4, 40.f);
+    newsFeedButton.frame = CGRectMake(0, 0, width/5, 40.f);
     [newsFeedButton setImage:[UIImage imageNamed:@"newsFeed"] forState:UIControlStateNormal];
     [newsFeedButton setTintColor:[UIColor lightGrayColor]];
     
     friendsButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    friendsButton.frame = CGRectMake(width/4, 0, width/4, 40.f);
+    friendsButton.frame = CGRectMake(width/5, 0, width/5, 40.f);
     [friendsButton setImage:[UIImage imageNamed:@"friends"] forState:UIControlStateNormal];
     [friendsButton setTintColor:[UIColor lightGrayColor]];
     
-    searchButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    searchButton.frame = CGRectMake((width/4)*2, 0, (width/4), 40.f);
-    [searchButton setImage:[UIImage imageNamed:@"Search"] forState:UIControlStateNormal];
-    [searchButton setTintColor:[UIColor lightGrayColor]];
-    
+    strainButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    strainButton.frame = CGRectMake((width/5)*2, 0, (width/5), 40.f);
+    [strainButton setImage:[UIImage imageNamed:@"species"] forState:UIControlStateNormal];
+    [strainButton setTintColor:[UIColor lightGrayColor]];
+
+    storeButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    storeButton.frame = CGRectMake((width/5)*3, 0, (width/5), 40.f);
+    [storeButton setImage:[UIImage imageNamed:@"store"] forState:UIControlStateNormal];
+    [storeButton setTintColor:[UIColor lightGrayColor]];
+
     userProfileButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    userProfileButton.frame = CGRectMake((width/4)*3, 0, (width/4), 40.f);
+    userProfileButton.frame = CGRectMake((width/5)*4, 0, (width/5), 40.f);
     [userProfileButton setImage:[UIImage imageNamed:@"user"] forState:UIControlStateNormal];
     [userProfileButton setTintColor:[UIColor lightGrayColor]];
     
     
     [self addSubview:newsFeedButton];
     [self addSubview:friendsButton];
-    [self addSubview:searchButton];
+    [self addSubview:strainButton];
+    [self addSubview:storeButton];
     [self addSubview:userProfileButton];
 
     return self;

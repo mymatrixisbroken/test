@@ -72,15 +72,76 @@
 }
 
 - (void)viewDidLoad {
-  [super viewDidLoad];
-    _cellSelected  = [[NSUserDefaults standardUserDefaults] boolForKey:@"integer"];
-  [self.view addSubview:self.collectionView];
+    [super viewDidLoad];
+    [self.view addSubview:self.collectionView];
 }
 
 - (void)viewDidAppear:(BOOL)animated {
-  [super viewDidAppear:animated];
-  [self updateLayoutForOrientation:[UIApplication sharedApplication].statusBarOrientation];
+    [super viewDidAppear:animated];
+    if (objectsArray.selection == 0){
+        [self loadstrains];
+    }
+    else if (objectsArray.selection == 1){
+        [self loadStores];
+    }
+    
+    [self updateLayoutForOrientation:[UIApplication sharedApplication].statusBarOrientation];
 }
+
+-(void) loadstrains{
+    _activity = [[UIActivityIndicatorView alloc] init];
+    [_activity startAnimating];
+    
+    [objectsArray.strainObjectArray removeAllObjects];
+    [firebaseRef.strainsRef observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
+        _strainObjectDictionary = snapshot.value; //Creates a dictionary of of the JSON node strains
+        NSArray *keys = [_strainObjectDictionary allKeys]; //Creates an array with only the strain key uID
+        
+        for(int i=0; i<keys.count ; i++){
+            NSString *key = keys[i];
+            NSDictionary *dict = [_strainObjectDictionary valueForKey:key];
+            NSDictionary *dict2 = [dict valueForKey:@"high_type"];
+            NSArray *array = [dict valueForKey:@"images"];
+            
+            //you have to delcare a new object instance to load table cells!!!!!!!!!!!!!!!!!!!
+            strainClass *strainLoop = [[strainClass alloc] init];
+            [strainLoop setClassObject:key Values:dict Image:array highType:dict2];
+            [strainLoop.imageNames removeObjectAtIndex:0];
+            
+            [objectsArray.strainObjectArray addObject:strainLoop];
+        }
+        [_activity stopAnimating];
+        [self.collectionView reloadData];
+    }];
+}
+
+- (void) loadStores {
+    _activity = [[UIActivityIndicatorView alloc] init];
+    [_activity startAnimating];
+    [objectsArray.storeObjectArray removeAllObjects];
+    
+    [firebaseRef.storesRef observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
+        _storeObjectDictionary = snapshot.value; //Creates a dictionary of of the JSON node strains
+        NSArray *keys = [_storeObjectDictionary allKeys]; //Creates an array with only the strain key uID
+        
+        for(int i=0; i<keys.count ; i++){
+            NSString *key = keys[i];
+            NSDictionary *dict = [_storeObjectDictionary valueForKey:key];
+            NSArray *array = [dict valueForKey:@"images"];
+            
+            //you have to delcare a new object instance to load table cells!!!!!!!!!!!!!!!!!!!
+            storeClass *storeloop = [[storeClass alloc] init];
+            [storeloop setClassObject:key Values:dict Image:array];
+            [storeloop.imageNames removeObjectAtIndex:0];
+            
+            [objectsArray.storeObjectArray addObject:storeloop];
+        }
+        [_activity stopAnimating];
+        [self.collectionView reloadData];
+    }];
+
+}
+
 
 - (void)willAnimateRotationToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration {
   [super willAnimateRotationToInterfaceOrientation:toInterfaceOrientation duration:duration];
@@ -96,7 +157,7 @@
 #pragma mark - UICollectionViewDataSource
 
 - (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
-    if(_cellSelected){
+    if (objectsArray.selection == 1){
         return [objectsArray.storeObjectArray count];
     }
     else{
@@ -110,14 +171,16 @@
 
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
   CHTCollectionViewWaterfallCell *cell =
-  (CHTCollectionViewWaterfallCell *)[collectionView dequeueReusableCellWithReuseIdentifier:CELL_IDENTIFIER
-                                                                              forIndexPath:indexPath];
+  (CHTCollectionViewWaterfallCell *)[collectionView dequeueReusableCellWithReuseIdentifier:CELL_IDENTIFIER forIndexPath:indexPath];
 
-    if(_cellSelected){
+
+    if (objectsArray.selection == 1){
         if ([objectsArray.storeObjectArray count] > 0) {
             for(int i=1; i<[objectsArray.storeObjectArray count]; i++){
                 storeClass *tempStore = [[storeClass alloc] init];
-                tempStore = [objectsArray.storeObjectArray objectAtIndex:indexPath.row];                
+                tempStore = [objectsArray.storeObjectArray objectAtIndex:indexPath.row];
+                cell.label.text = tempStore.store_name;
+
                 dispatch_async(dispatch_get_global_queue(0,0), ^{
                     NSInteger length = [[tempStore.imageNames objectAtIndex:0] length];
                     NSString *smallImageURL = [[tempStore.imageNames objectAtIndex:0] substringWithRange:NSMakeRange(0, length-4)];
@@ -136,7 +199,7 @@
             }
         }
     }
-    else{
+    else if (objectsArray.selection == 0){
         if ([objectsArray.strainObjectArray count] > 0) {
             for(int i=1; i<[objectsArray.strainObjectArray count]; i++){
                 strainClass *tempStrain = [[strainClass alloc] init];
@@ -174,11 +237,11 @@
 }
 
 - (void) collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath{
-    if(_cellSelected){
+    if (objectsArray.selection == 1){
         store = [objectsArray.storeObjectArray objectAtIndex:indexPath.row];
         [self performSegueWithIdentifier:@"listToStoreProfileSegue" sender:self];
     }
-    else if (!_cellSelected){
+    if (objectsArray.selection == 0){
         strain = [objectsArray.strainObjectArray objectAtIndex:indexPath.row];
         [self performSegueWithIdentifier:@"listToStrainProfileSegue" sender:self];
     }

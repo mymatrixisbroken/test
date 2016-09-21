@@ -24,7 +24,8 @@
     [extView addButtons:CGRectGetWidth(self.view.bounds)];
     [extView.newsFeedButton addTarget:self action:@selector(newsFeedButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
     [extView.friendsButton addTarget:self action:@selector(friendsButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
-    [extView.searchButton addTarget:self action:@selector(searchButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
+    [extView.strainButton addTarget:self action:@selector(strainButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
+    [extView.storeButton addTarget:self action:@selector(storeButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
     [extView.userProfileButton addTarget:self action:@selector(userProfileButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
  
     [self.shyNavBarManager setExtensionView:extView];
@@ -46,10 +47,19 @@
     [self presentViewController:vc animated:YES completion:NULL];
 }
 
--(IBAction)searchButtonPressed:(UIButton*)btn {
+-(IBAction)strainButtonPressed:(UIButton*)btn {
     UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-    UIViewController *vc = [sb instantiateViewControllerWithIdentifier:@"Search Navigation SB ID"];
+    UIViewController *vc = [sb instantiateViewControllerWithIdentifier:@"List View Controller  SB ID"];
     vc.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
+    objectsArray.selection = 0;
+    [self presentViewController:vc animated:YES completion:NULL];
+}
+
+-(IBAction)storeButtonPressed:(UIButton*)btn {
+    UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+    UIViewController *vc = [sb instantiateViewControllerWithIdentifier:@"List View Controller  SB ID"];
+    vc.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
+    objectsArray.selection = 1;
     [self presentViewController:vc animated:YES completion:NULL];
 }
 

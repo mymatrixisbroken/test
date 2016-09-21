@@ -15,7 +15,7 @@ extern objectsArrayClass *objectsArray;
 @interface objectsArrayClass : NSObject
 @property NSMutableArray *strainObjectArray;
 @property NSMutableArray *storeObjectArray;
-
+@property (assign, nonatomic) BOOL selection;
 
 + (objectsArrayClass *)sharedInstance;
 

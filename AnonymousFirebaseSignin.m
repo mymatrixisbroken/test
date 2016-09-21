@@ -26,6 +26,7 @@
     strain = [strainClass sharedInstance];
     user = [userClass sharedInstance];
     store = [storeClass sharedInstance];
+    objectsArray = [objectsArrayClass sharedInstance];
 }
 
 - (void) signinFirebaseAnonymously {

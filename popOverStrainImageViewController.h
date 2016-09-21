@@ -12,6 +12,8 @@
 @interface popOverStrainImageViewController : UIViewController
 @property (strong, nonatomic) IBOutlet UIImageView *imageView;
 @property (nonatomic, assign) NSInteger i;
+@property (strong, nonatomic) IBOutlet NSString *count;
+@property (strong, nonatomic) IBOutlet UILabel *label;
 
 @end
 

@@ -13,7 +13,8 @@
 - (id) addButtons:(CGFloat ) width;
 @property UIButton *newsFeedButton;
 @property UIButton *friendsButton;
-@property UIButton *searchButton;
+@property UIButton *strainButton;
+@property UIButton *storeButton;
 @property UIButton *userProfileButton;
 
 @end

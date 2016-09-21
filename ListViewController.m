@@ -15,10 +15,11 @@
     [super viewDidLoad];
 }
 
-- (IBAction)tappedCancelButton:(UIBarButtonItem *)sender {
-    
-    [self performSegueWithIdentifier:@"listToHomepageSegue" sender:self];
+- (IBAction)backButtonTapped:(UIBarButtonItem *)sender {
+    UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+    UIViewController *vc = [sb instantiateViewControllerWithIdentifier:@"News Feed Navigation SB ID"];
+    vc.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
+    [self presentViewController:vc animated:YES completion:NULL];
 }
-
 
 @end
