@@ -36,6 +36,8 @@
     
     FIRDatabaseQuery *friendsQuery = [[[firebaseRef.usersRef child:user.user_key] child:@"friends"] queryOrderedByKey];
     [friendsQuery observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
+        NSLog(@"snapshot is %@", snapshot.value);
+        
         if (![snapshot.value isEqual:@""]) {
             NSArray *keys = [snapshot.value allKeys];
             NSArray *sortedKeys = [keys sortedArrayUsingSelector:@selector(compare:)];

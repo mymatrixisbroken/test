@@ -55,6 +55,37 @@
     });
 }
 
+- (IBAction)signOutButtonTapped:(UIButton *)sender {
+    NSError *error;
+    user = [userClass sharedInstance];
+
+    
+    [[FIRAuth auth] signOut:&error];
+    if (!error) {
+        // Sign-out succeeded
+        [[FIRAuth auth] signInAnonymouslyWithCompletion:^(FIRUser * _Nullable user, NSError * _Nullable error) {
+            if (error != nil) {
+                // Uh-oh, an error occurred!
+                NSLog(@"Anonymous Firebase User is NOT signed in..");
+                NSLog(@"%@", error.localizedDescription);
+            }
+            else {
+                //Assign current Firebase user to a variable called user
+                FIRUser *u = [FIRAuth auth].currentUser;
+                BOOL isAnonymous = u.anonymous;  // YES
+                NSLog(@"Anonymous Firebase User is signed in.. ");
+                NSLog(isAnonymous ? @"Yes" : @"No");
+                NSLog(@"UID:%@.",user.uid);
+                if(u.anonymous){
+                    UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+                    UIViewController *vc = [sb instantiateViewControllerWithIdentifier:@"Login View SB ID"];
+                    vc.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
+                    [self presentViewController:vc animated:YES completion:NULL];
+                }
+            }
+        }];
+    }
+}
 
 -(IBAction)newsFeedButtonPressed:(UIButton*)btn {
     UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];

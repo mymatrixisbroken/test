@@ -156,7 +156,10 @@ const static CGFloat frameSizeWidth = 600.0f;
 }
 
 - (IBAction)cancelButtonTapped:(UIBarButtonItem *)sender {
-    [self dismissViewControllerAnimated:YES completion:^{}];
+    UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+    UIViewController *vc = [sb instantiateViewControllerWithIdentifier:@"News Feed Navigation SB ID"];
+    vc.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
+    [self presentViewController:vc animated:YES completion:NULL];
 }
 
 - (void) alertCouldNotSignInToFirebaseAuthorization {
