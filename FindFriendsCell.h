@@ -16,6 +16,5 @@
 @property (strong, nonatomic) IBOutlet UILabel *usernameLabel;
 @property (strong, nonatomic) IBOutlet UIButton *addButton;
 
--(void) uploadCellWithUsername:(NSString *)username imageURL:(NSString *)imageURL;
-
+-(void) uploadCellWithUsername:(NSString *)username imageURL:(NSString *)imageURL :(NSData *)data;
 @end

@@ -15,6 +15,7 @@ extern findFriendClass *tempFriend;
 @property NSString *key;
 @property NSString *username;
 @property NSString *imageURL;
+@property NSData *data;
 
 + (findFriendClass *)sharedInstance;
 -(id)set:(NSString *)uid User:(NSString *)name image:(NSString *)url;

@@ -26,6 +26,8 @@ strainClass *strain;
 @synthesize energetic;
 @synthesize relaxed;
 @synthesize imageNames;
+@synthesize data;
+@synthesize availableAt;
 @synthesize rating_score;
 @synthesize rating_count;
 @synthesize total_count;
@@ -62,6 +64,8 @@ strainClass *strain;
         self.energetic = 0;
         self.relaxed = 0;
         self.imageNames = [[NSMutableArray alloc] init];
+        self.data = [[NSData alloc] init];
+        self.availableAt = [[NSMutableArray alloc] init];
         self.rating_count = 0;
         self.rating_score = 0.0;
         self.total_count = 0;
@@ -75,7 +79,7 @@ strainClass *strain;
     return self;
 }
 
--(id)setClassObject:key Values:(NSDictionary *)dict Image:(NSArray *) array highType:(NSDictionary *)dict2 :(NSInteger)x :(float)y{
+-(id)setClassObject:key Values:(NSDictionary *)dict Image:(NSArray *) array highType:(NSDictionary *)dict2 :(NSInteger)x :(float)y :(NSArray *)array2{
     self.strain_key = key;
     self.strain_name = [dict valueForKey:@"strain_name"];
     self.thc = [dict valueForKey:@"THC"];
@@ -90,6 +94,7 @@ strainClass *strain;
     self.energetic = [[dict2 valueForKey:@"energetic"] intValue];
     self.relaxed = [[dict2 valueForKey:@"relaxed"] intValue];
     self.imageNames = [NSMutableArray arrayWithArray:array];
+    self.availableAt = [NSMutableArray arrayWithArray:array2];
     self.rating_score = y;
     self.rating_count = x;
     self.total_count = [[dict valueForKey:@"total_count"] integerValue];

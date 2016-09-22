@@ -25,6 +25,8 @@
 @property (strong, nonatomic) IBOutlet UITableView *tableView;
 @property (strong, nonatomic) IBOutlet NSMutableArray *array;
 @property (strong, nonatomic) IBOutlet NSMutableDictionary *dict;
+@property (strong, nonatomic) IBOutlet NSMutableArray *arr2;
+
 
 @end
 

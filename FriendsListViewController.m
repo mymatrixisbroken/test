@@ -71,6 +71,27 @@
                 
                 findFriendClass *friend = [[findFriendClass alloc] init];
                 [friend set:key User:username image:imageURL];
+                
+                
+                dispatch_async(dispatch_get_global_queue(0,0), ^{
+                    NSInteger length = [imageURL length];
+                    NSString *smallImageURL = [imageURL substringWithRange:NSMakeRange(0, length-4)];
+                    smallImageURL = [smallImageURL stringByAppendingString:@"b.jpg"];
+                    
+                    NSData * data = [[NSData alloc] initWithContentsOfURL: [NSURL URLWithString:smallImageURL]];
+                    if( data == nil ){
+                        NSLog(@"image is nil");
+                        return;
+                    }
+                    else{
+                        friend.data = data;
+                    }
+                    
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        [self.tableView reloadData];
+                    });
+                });
+
                 [_friendsArray addObject:friend];
                 [self.tableView reloadData];
             }
@@ -90,7 +111,7 @@
             tempFriend = [findFriendClass sharedInstance];
             tempFriend = [_friendsArray objectAtIndex:indexPath.row];
             
-            [cell uploadCellWithUsername:tempFriend.username imageURL:tempFriend.imageURL];
+            [cell uploadCellWithUsername:tempFriend.username imageURL:tempFriend.imageURL :tempFriend.data];
     }
     return cell;
 }

@@ -22,6 +22,7 @@ storeClass *store;
 @synthesize phone_number;
 @synthesize google_place_id;
 @synthesize imageNames;
+@synthesize data;
 @synthesize rating_count;
 @synthesize rating_score;
 @synthesize total_count;
@@ -62,6 +63,7 @@ storeClass *store;
         self.total_user_count = 0;
         self.small_image = nil;
         self.medium_image = nil;
+        self.data = [[NSData alloc] init];
         self.imageNames = [[NSMutableArray alloc] init];
         self.storeObjectArray = [[NSMutableArray alloc] init];
     }

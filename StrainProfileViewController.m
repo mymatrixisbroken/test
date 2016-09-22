@@ -64,13 +64,16 @@
 }
 
 - (void)loadRatingScore {
-    _starRating.rating = strain.rating_score;
+    if( !(isnan(strain.rating_score))){
+        _starRating.rating = strain.rating_score;
+    }
 }
 
 - (void)loadRatingCount{
-    if(strain.rating_count != nil)
-    _ratingCount.text = [[NSString stringWithFormat:@"%lu", (unsigned long)strain.rating_count] stringByAppendingString:@" reviews"];
+    if( !(isnan(strain.rating_score)))
+        _ratingCount.text = [[NSString stringWithFormat:@"%lu", (unsigned long)strain.rating_count] stringByAppendingString:@" reviews"];
 }
+
 - (IBAction)tappedBackButton:(UIBarButtonItem *)sender {
     [self performSegueWithIdentifier:@"strainProfileToListSegue" sender:self];
 }
@@ -83,6 +86,9 @@
     _strainGrowerLabel.text = [@"By: " stringByAppendingString:strain.grower];
     _strainFlavorLabel.text = strain.flavor;
     _strainAromaLabel.text = strain.aroma;
+    if (!(strain.availableAt.count == 0)) {
+        _availableAtLabel.text = [strain.availableAt objectAtIndex:0];
+    }
     [self loadRatingCount];
     
     

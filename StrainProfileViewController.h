@@ -29,6 +29,7 @@
 @property (strong, nonatomic) IBOutlet YLProgressBar *upliftedView;
 @property (strong, nonatomic) IBOutlet YLProgressBar *euphoricView;
 @property (strong, nonatomic) IBOutlet YLProgressBar *energeticView;
+@property (strong, nonatomic) IBOutlet UILabel *availableAtLabel;
 @property (strong, nonatomic) IBOutlet YLProgressBar *relaxedView;
 @property (strong, nonatomic) IBOutlet UILabel *ratingCount;
 @end

@@ -7,8 +7,6 @@
 //
 
 #import <UIKit/UIKit.h>
-@import Cosmos;
-
 
 @interface CHTCollectionViewWaterfallCell : UICollectionViewCell
 @property (nonatomic, strong) UIImageView *imageView;

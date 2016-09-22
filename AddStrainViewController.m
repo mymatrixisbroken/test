@@ -204,7 +204,7 @@
                                             @"stats":@"",
                                             @"consumption_form":@"",
                                             @"image_name":@"",
-                                            @"available_at_venue":@""};
+                                            @"available_at":@""};
     return dictionaryStrainCreate;
 }
 

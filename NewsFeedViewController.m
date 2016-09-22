@@ -16,13 +16,20 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    //self.tableView.emptyDataSetSource = _tableView;
+    
+    UIRefreshControl *refresh = [[UIRefreshControl alloc] init];
+    refresh.attributedTitle = [[NSAttributedString alloc] initWithString:@"Pull to Refresh"];
+    [self.tableView addSubview:refresh];
+    [refresh addTarget:self action:@selector(refreshTable:) forControlEvents:UIControlEventValueChanged];
+    //self.refreshControl = refresh;
+
+    
+    //self.tableView.emptyDataSetSource = self;
     //self.tableView.emptyDataSetDelegate = self;
     self.tableView.tableFooterView = [UIView new];
     self.tableView.delegate = self;
     self.tableView.dataSource = self;
     
-
     
     //self.scrollView.contentSize = self.view.bounds.size;
     self.shyNavBarManager.scrollView = self.tableView;
@@ -38,8 +45,140 @@
 
     [self.shyNavBarManager setExtensionView:extView];
     [self.shyNavBarManager setStickyExtensionView:YES];
+    
+    
+    
+    
+    FIRUser *u = [FIRAuth auth].currentUser;
+    if (!(u.isAnonymous)) {
+        [self newLoadEventsFromFirebaseDatabse];
+    }
+  /*  if (!(u.isAnonymous)) {
+        _arr2 = [[NSMutableArray alloc] init];
+        FIRDatabaseQuery *friendsQuery = [[[firebaseRef.usersRef child:user.user_key] child:@"friends"] queryOrderedByKey];
+        [friendsQuery observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
+            if (![snapshot.value isEqual:@""]) {
+                NSArray *keys = [snapshot.value allKeys];
+                NSArray *sortedKeys = [keys sortedArrayUsingSelector:@selector(compare:)];
+                
+                for (id key in sortedKeys) {
+                    [_arr2 addObject:key];
+                }
+            }
+        }];
+    }*/
 }
 
+-(void) newLoadEventsFromFirebaseDatabse{
+    dispatch_async(dispatch_get_global_queue(0,0), ^{
+        [user.friends removeAllObjects];
+        _array = [[NSMutableArray alloc] init];
+        _dict = [[NSMutableDictionary alloc] init];
+        FIRDatabaseQuery *friendsQuery = [[[firebaseRef.usersRef child:user.user_key] child:@"friends"] queryOrderedByKey];
+        [friendsQuery observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
+            NSLog(@"snapshot is %@", snapshot.value);
+            
+            if (![snapshot.value isEqual:@""]) {
+                NSArray *keys = [snapshot.value allKeys];
+                NSArray *sortedKeys = [keys sortedArrayUsingSelector:@selector(compare:)];
+                
+                for (id key in sortedKeys) {
+                    [user.friends addObject:key];
+                }
+                
+                for (int i = 0; i<[user.friends count]; i++) {
+                    FIRDatabaseQuery *eventQuery = [[firebaseRef.eventsRef queryOrderedByChild:@"uid"] queryEqualToValue:[user.friends objectAtIndex:i]];
+                    NSLog(@"query is %@", eventQuery);
+                    [_array addObject:eventQuery];
+                }
+                for (int i = 0; i<_array.count; i++) {
+                    [[_array objectAtIndex:i] observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
+                        if (snapshot.value == [NSNull null]) {}
+                        else{
+                            [user.events removeAllObjects];
+                            [_dict addEntriesFromDictionary:snapshot.value];
+                            
+                            NSArray *keys = [_dict allKeys];
+                            NSArray *sortedKeys = [keys sortedArrayUsingSelector:@selector(compare:)];
+                            
+                            for (id key in sortedKeys) {
+                                NSMutableDictionary *tempDict = [[NSMutableDictionary alloc] init];
+                                NSMutableDictionary *value = [[NSMutableDictionary alloc] init];
+                                value = [_dict valueForKey:key];
+                                [tempDict setObject:value forKey:key ];
+                                NSLog(@"temp dict is %@", value);
+                                [user.events addObject:tempDict];
+                            }
+                        }
+                    }];
+                }
+            }
+            else{
+                [user.events removeAllObjects];
+            }
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [self.tableView reloadData];
+            });
+
+        }];
+    });
+}
+
+
+- (void)refreshTable:(UIRefreshControl *)refresh {
+    refresh.attributedTitle = [[NSAttributedString alloc] initWithString:@"Refreshing data..."];
+    [user.friends removeAllObjects];
+    _array = [[NSMutableArray alloc] init];
+    _dict = [[NSMutableDictionary alloc] init];
+    
+    
+    FIRDatabaseQuery *friendsQuery = [[[firebaseRef.usersRef child:user.user_key] child:@"friends"] queryOrderedByKey];
+    [friendsQuery observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
+        NSLog(@"snapshot is %@", snapshot.value);
+        
+        if (![snapshot.value isEqual:@""]) {
+            NSArray *keys = [snapshot.value allKeys];
+            NSArray *sortedKeys = [keys sortedArrayUsingSelector:@selector(compare:)];
+            
+            for (id key in sortedKeys) {
+                [user.friends addObject:key];
+            }
+            
+            for (int i = 0; i<[user.friends count]; i++) {
+                FIRDatabaseQuery *eventQuery = [[firebaseRef.eventsRef queryOrderedByChild:@"uid"] queryEqualToValue:[user.friends objectAtIndex:i]];
+                [_array addObject:eventQuery];
+            }
+            
+            for (int i = 0; i<_array.count; i++) {
+                [[_array objectAtIndex:i] observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
+                    if (snapshot.value == [NSNull null]) {}
+                    else{
+                        [user.events removeAllObjects];
+                        [_dict addEntriesFromDictionary:snapshot.value];
+                        
+                        NSArray *keys = [_dict allKeys];
+                        NSArray *sortedKeys = [keys sortedArrayUsingSelector:@selector(compare:)];
+                        
+                        for (id key in sortedKeys) {
+                            NSMutableDictionary *tempDict = [[NSMutableDictionary alloc] init];
+                            NSMutableDictionary *value = [[NSMutableDictionary alloc] init];
+                            value = [_dict valueForKey:key];
+                            [tempDict setObject:value forKey:key ];
+                            [user.events addObject:tempDict];
+                        }
+                    }
+                }];
+            }
+            [self.tableView reloadData];
+            [refresh endRefreshing];
+        }
+        else{
+            [user.events removeAllObjects];
+            [refresh endRefreshing];
+            [self.tableView reloadData];
+        }
+    }];
+}
 
 
 - (NSAttributedString *)titleForEmptyDataSet:(UIScrollView *)scrollView
@@ -116,9 +255,6 @@
     
     return cell;
 }
-
-
-
 
 -(IBAction)newsFeedButtonPressed:(UIButton*)btn {
     UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];

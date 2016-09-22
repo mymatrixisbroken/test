@@ -25,6 +25,7 @@ extern storeClass *store;
 @property NSString *phone_number;
 @property NSString *google_place_id;
 @property NSMutableArray *imageNames;
+@property NSData *data;
 @property (nonatomic, assign) double rating_score;
 @property (nonatomic, assign) int rating_count;
 @property (nonatomic, assign) int total_count;

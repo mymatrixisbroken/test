@@ -36,11 +36,11 @@
     layout.minimumInteritemSpacing = 1;
       
       
-    CGRect frame = CGRectMake(0, self.view.bounds.origin.y + 200, CGRectGetWidth(self.view.bounds), CGRectGetHeight(self.view.bounds) -64);
+    CGRect frame = CGRectMake(0, 63, CGRectGetWidth(self.view.bounds), CGRectGetHeight(self.view.bounds) -64);
     //_collectionView = [[UICollectionView alloc] initWithFrame:frame collectionViewLayout:layout];
     
       
-      _collectionView = [[UICollectionView alloc] initWithFrame:self.view.bounds collectionViewLayout:layout];
+    _collectionView = [[UICollectionView alloc] initWithFrame:self.view.bounds collectionViewLayout:layout];
     _collectionView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
     _collectionView.dataSource = self;
     _collectionView.delegate = self;
@@ -78,7 +78,8 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    
+    _activity = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge]; [self.view addSubview:_activity];
+
     if (objectsArray.selection == 0){
         [self loadstrains];
     }
@@ -86,36 +87,16 @@
         [self loadStores];
     }
 
-    
     self.shyNavBarManager.scrollView = self.collectionView;
-     
-     extensionViewClass *extView = [[extensionViewClass alloc] init];
-     [extView setView:CGRectGetWidth(self.view.bounds)];
-     [extView addButtons:CGRectGetWidth(self.view.bounds)];
-     [extView.newsFeedButton addTarget:self action:@selector(newsFeedButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
-     [extView.friendsButton addTarget:self action:@selector(friendsButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
-     [extView.strainButton addTarget:self action:@selector(strainButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
-     [extView.storeButton addTarget:self action:@selector(storeButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
-     [extView.userProfileButton addTarget:self action:@selector(userProfileButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
-     
-     //[self.shyNavBarManager setExtensionView:extView];
-     //[self.shyNavBarManager setStickyExtensionView:YES];
-    
-    
-    
     [self.view addSubview:self.collectionView];
 }
 
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
-    
     [self updateLayoutForOrientation:[UIApplication sharedApplication].statusBarOrientation];
 }
 
 -(void) loadstrains{
-    _activity = [[UIActivityIndicatorView alloc] init];
-    [_activity startAnimating];
-    
     [objectsArray.strainObjectArray removeAllObjects];
     [firebaseRef.strainsRef observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
         _strainObjectDictionary = snapshot.value; //Creates a dictionary of of the JSON node strains
@@ -127,6 +108,10 @@
             NSDictionary *dict2 = [dict valueForKey:@"high_type"];
             NSArray *array = [dict valueForKey:@"images"];
             
+            NSDictionary *dict4 = [dict valueForKey:@"available_at"];
+            NSArray *array2 = [dict4 allKeys];
+
+            
             NSDictionary *dict3 = [dict valueForKey:@"rating_count"];
             _ratingScore = 0.0;
             _ratingCount = 0;
@@ -137,26 +122,36 @@
             }
             _ratingScore = _ratingScore / (float)_ratingCount;
             
-
-            
             //you have to delcare a new object instance to load table cells!!!!!!!!!!!!!!!!!!!
             strainClass *strainLoop = [[strainClass alloc] init];
-            [strainLoop setClassObject:key Values:dict Image:array highType:dict2 :_ratingCount :_ratingScore];
-
+            [strainLoop setClassObject:key Values:dict Image:array highType:dict2 :_ratingCount :_ratingScore :array2];
             [strainLoop.imageNames removeObjectAtIndex:0];
-                        
+            
+            dispatch_async(dispatch_get_global_queue(0,0), ^{
+                NSInteger length = [[strainLoop.imageNames objectAtIndex:0] length];
+                NSString *smallImageURL = [[strainLoop.imageNames objectAtIndex:0] substringWithRange:NSMakeRange(0, length-4)];
+                smallImageURL = [smallImageURL stringByAppendingString:@"m.jpg"];
+
+                NSData * data = [[NSData alloc] initWithContentsOfURL: [NSURL URLWithString:smallImageURL]];
+                if( data == nil ){
+                    NSLog(@"image is nil");
+                    return;
+                }
+                else{
+                    strainLoop.data = data;
+                }
+
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [self.collectionView reloadData];
+                });
+            });
             [objectsArray.strainObjectArray addObject:strainLoop];
         }
-        [_activity stopAnimating];
-        [self.collectionView reloadData];
     }];
 }
 
 - (void) loadStores {
-    _activity = [[UIActivityIndicatorView alloc] init];
-    [_activity startAnimating];
     [objectsArray.storeObjectArray removeAllObjects];
-    
     [firebaseRef.storesRef observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
         _storeObjectDictionary = snapshot.value; //Creates a dictionary of of the JSON node strains
         NSArray *keys = [_storeObjectDictionary allKeys]; //Creates an array with only the strain key uID
@@ -170,15 +165,27 @@
             storeClass *storeloop = [[storeClass alloc] init];
             [storeloop setClassObject:key Values:dict Image:array];
             [storeloop.imageNames removeObjectAtIndex:0];
-            
+            dispatch_async(dispatch_get_global_queue(0,0), ^{
+                NSInteger length = [[storeloop.imageNames objectAtIndex:0] length];
+                NSString *smallImageURL = [[storeloop.imageNames objectAtIndex:0] substringWithRange:NSMakeRange(0, length-4)];
+                smallImageURL = [smallImageURL stringByAppendingString:@"m.jpg"];
+                
+                NSData * data = [[NSData alloc] initWithContentsOfURL: [NSURL URLWithString:smallImageURL]];
+                if( data == nil ){
+                    NSLog(@"image is nil");
+                    return;
+                }
+                else{
+                    storeloop.data = data;
+                }
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [self.collectionView reloadData];
+                });
+            });
             [objectsArray.storeObjectArray addObject:storeloop];
         }
-        [_activity stopAnimating];
-        [self.collectionView reloadData];
     }];
-
 }
-
 
 - (void)willAnimateRotationToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration {
   [super willAnimateRotationToInterfaceOrientation:toInterfaceOrientation duration:duration];
@@ -216,23 +223,9 @@
             for(int i=1; i<[objectsArray.storeObjectArray count]; i++){
                 storeClass *tempStore = [[storeClass alloc] init];
                 tempStore = [objectsArray.storeObjectArray objectAtIndex:indexPath.row];
+                
+                cell.imageView.image = [UIImage imageWithData:tempStore.data];
                 cell.label.text = tempStore.store_name;
-
-                dispatch_async(dispatch_get_global_queue(0,0), ^{
-                    NSInteger length = [[tempStore.imageNames objectAtIndex:0] length];
-                    NSString *smallImageURL = [[tempStore.imageNames objectAtIndex:0] substringWithRange:NSMakeRange(0, length-4)];
-                    smallImageURL = [smallImageURL stringByAppendingString:@"b.jpg"];
-                    
-                    NSData * data = [[NSData alloc] initWithContentsOfURL: [NSURL URLWithString:smallImageURL]];
-                    if( data == nil ){
-                        NSLog(@"image is nil");
-                        return;
-                    }
-                    dispatch_async(dispatch_get_main_queue(), ^{
-                        // WARNING: is the cell still using the same data by this point??
-                        cell.imageView.image = [UIImage imageWithData: data];
-                    });
-                });
             }
         }
     }
@@ -241,6 +234,8 @@
             for(int i=1; i<[objectsArray.strainObjectArray count]; i++){
                 strainClass *tempStrain = [[strainClass alloc] init];
                 tempStrain = [objectsArray.strainObjectArray objectAtIndex:indexPath.row];
+                
+                cell.imageView.image = [UIImage imageWithData:tempStrain.data];
                 cell.label.text = tempStrain.strain_name;
                 
                 if ([tempStrain.species isEqual:@"stevia"]) {
@@ -249,22 +244,6 @@
                 else if ([tempStrain.species isEqual:@"indica"]){
                     cell.indicaImageView.image = [UIImage imageNamed:@"indica"];
                 }
-
-                dispatch_async(dispatch_get_global_queue(0,0), ^{
-                    NSInteger length = [[tempStrain.imageNames objectAtIndex:0] length];
-                    NSString *smallImageURL = [[tempStrain.imageNames objectAtIndex:0] substringWithRange:NSMakeRange(0, length-4)];
-                    smallImageURL = [smallImageURL stringByAppendingString:@"b.jpg"];
-                
-                    NSData * data = [[NSData alloc] initWithContentsOfURL: [NSURL URLWithString:smallImageURL]];
-                    if( data == nil ){
-                        NSLog(@"image is nil");
-                        return;
-                    }
-                    dispatch_async(dispatch_get_main_queue(), ^{
-                        // WARNING: is the cell still using the same data by this point??
-                        cell.imageView.image = [UIImage imageWithData: data];
-                    });
-                });
             }
         }
     }
