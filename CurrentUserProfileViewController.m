@@ -33,17 +33,32 @@
     [self.shyNavBarManager setExtensionView:extView];
     [self.shyNavBarManager setStickyExtensionView:YES];
     
-    _badgesNumber.text = [NSString stringWithFormat:@"%lu", (unsigned long)user.badges.count];
     _myFriendsNumber.text = [NSString stringWithFormat:@"%lu", (unsigned long)user.friends.count];
     _myReviewsNumber.text = [NSString stringWithFormat:@"%lu", (unsigned long)user.reviews.count];
     _strainsTriedNumber.text = [NSString stringWithFormat:@"%lu", (unsigned long)user.strains_tried.count];
     _storesVisitedNumber.text = [NSString stringWithFormat:@"%lu", (unsigned long)user.stores_visited.count];
-
+    
+    
+    
+    
+    
+    
+    
+    [[[firebaseRef.usersRef child:user.user_key] child:@"badges"] observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
+        [user.badges removeAllObjects];
+        for (id key in snapshot.value) {
+            NSString *value = [snapshot.value valueForKey:key];
+            if ([value isEqualToString:@"true"]) {
+                [user.badges addObject:key];
+            }
+        }
+        _badgesNumber.text = [NSString stringWithFormat:@"%lu", (unsigned long)user.badges.count];
+     }];
 }
 
 -(void) loadProfilePicture{
     dispatch_async(dispatch_get_global_queue(0,0), ^{
-        NSData * data = [[NSData alloc] initWithContentsOfURL: [NSURL URLWithString:user.image_name]];
+        NSData * data = [[NSData alloc] initWithContentsOfURL: [NSURL URLWithString:user.avatarURL]];
         if( data == nil ){
             NSLog(@"image is nil");
             return;
@@ -188,10 +203,10 @@
     
     
     NSDictionary *output = [dataDictionaryResponse valueForKey:@"data"];
-    user.image_name = [output valueForKey:@"link"];
-    NSLog(@"url is %@", user.image_name);
+    user.avatarURL = [output valueForKey:@"link"];
+    NSLog(@"url is %@", user.avatarURL);
     
-    [[[firebaseRef.usersRef child:user.user_key] child:@"image_name"] setValue:user.image_name];
+    [[[firebaseRef.usersRef child:user.user_key] child:@"avatar"] setValue:user.avatarURL];
 
     
     

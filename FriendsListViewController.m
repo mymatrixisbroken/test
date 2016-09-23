@@ -60,7 +60,7 @@
 
     [usernamesQuery observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
         if ([NSNull null] != snapshot.value){
-            _friendsArray = [[NSMutableArray alloc] init];
+            _searchArray = [[NSMutableArray alloc] init];
             _isFiltered = YES;
             NSArray *keys = [snapshot.value allKeys];
             for(int i=0; i<keys.count ; i++){
@@ -92,7 +92,7 @@
                     });
                 });
 
-                [_friendsArray addObject:friend];
+                [_searchArray addObject:friend];
                 [self.tableView reloadData];
             }
         }
@@ -100,18 +100,18 @@
 }
 
 -(NSInteger) tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
-    return [_friendsArray count];
+    return [_searchArray count];
 }
 
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
     NSString *cellIdentifier = @"FindFriendsCell";
     FindFriendsCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier forIndexPath:indexPath];
 
-        for(int i=1; i<=[_friendsArray count]; i++){
+        for(int i=1; i<=[_searchArray count]; i++){
             tempFriend = [findFriendClass sharedInstance];
-            tempFriend = [_friendsArray objectAtIndex:indexPath.row];
+            tempFriend = [_searchArray objectAtIndex:indexPath.row];
             
-            [cell uploadCellWithUsername:tempFriend.username imageURL:tempFriend.imageURL :tempFriend.data];
+            [cell uploadCell:tempFriend.key WithUsername:tempFriend.username imageURL:tempFriend.imageURL :tempFriend.data];
     }
     return cell;
 }

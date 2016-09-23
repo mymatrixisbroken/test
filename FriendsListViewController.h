@@ -21,7 +21,7 @@
 @property (strong, nonatomic) IBOutlet UITableView *tableView;
 @property (strong, nonatomic) IBOutlet UISearchBar *searchBar;
 @property (strong, nonatomic) IBOutlet UISearchController *searchController;
-@property (strong, nonatomic) IBOutlet NSMutableArray *friendsArray;
+@property (strong, nonatomic) IBOutlet NSMutableArray *searchArray;
 @property (nonatomic, strong) findFriendClass *puto;
 @property BOOL isFiltered;
 

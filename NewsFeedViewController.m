@@ -76,8 +76,6 @@
         _dict = [[NSMutableDictionary alloc] init];
         FIRDatabaseQuery *friendsQuery = [[[firebaseRef.usersRef child:user.user_key] child:@"friends"] queryOrderedByKey];
         [friendsQuery observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
-            NSLog(@"snapshot is %@", snapshot.value);
-            
             if (![snapshot.value isEqual:@""]) {
                 NSArray *keys = [snapshot.value allKeys];
                 NSArray *sortedKeys = [keys sortedArrayUsingSelector:@selector(compare:)];
@@ -88,7 +86,6 @@
                 
                 for (int i = 0; i<[user.friends count]; i++) {
                     FIRDatabaseQuery *eventQuery = [[firebaseRef.eventsRef queryOrderedByChild:@"uid"] queryEqualToValue:[user.friends objectAtIndex:i]];
-                    NSLog(@"query is %@", eventQuery);
                     [_array addObject:eventQuery];
                 }
                 for (int i = 0; i<_array.count; i++) {
@@ -106,7 +103,6 @@
                                 NSMutableDictionary *value = [[NSMutableDictionary alloc] init];
                                 value = [_dict valueForKey:key];
                                 [tempDict setObject:value forKey:key ];
-                                NSLog(@"temp dict is %@", value);
                                 [user.events addObject:tempDict];
                             }
                         }

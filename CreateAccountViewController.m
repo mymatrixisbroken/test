@@ -155,10 +155,26 @@ const static CGFloat frameSizeWidth = 600.0f;
     [[[firebaseRef.usersRef child:user.user_key] child:@"wish_list"] setValue:@""];
     [[[firebaseRef.usersRef child:user.user_key] child:@"friends"] setValue:@""];
     [[[firebaseRef.usersRef child:user.user_key] child:@"reviews"] setValue:@""];
-    [[[firebaseRef.usersRef child:user.user_key] child:@"badges"] setValue:@""];
     [[[firebaseRef.usersRef child:user.user_key] child:@"strains_tried"] setValue:@""];
     [[[firebaseRef.usersRef child:user.user_key] child:@"stores_visited"] setValue:@""];
     
+    [[[[firebaseRef.usersRef child:user.user_key] child:@"badges"] child:@"fiveStevias"] setValue:@"false"];
+    [[[[firebaseRef.usersRef child:user.user_key] child:@"badges"] child:@"fiveIndicas"] setValue:@"false"];
+    [[[[firebaseRef.usersRef child:user.user_key] child:@"badges"] child:@"fiveCheckIns"] setValue:@"false"];
+    [[[[firebaseRef.usersRef child:user.user_key] child:@"badges"] child:@"fiveStoresVisited"] setValue:@"false"];
+    [[[[firebaseRef.usersRef child:user.user_key] child:@"badges"] child:@"fiveStrainsTried"] setValue:@"false"];
+    [[[[firebaseRef.usersRef child:user.user_key] child:@"badges"] child:@"fiveFriends"] setValue:@"false"];
+    [[[[firebaseRef.usersRef child:user.user_key] child:@"badges"] child:@"fiveReviews"] setValue:@"false"];
+    [[[[firebaseRef.usersRef child:user.user_key] child:@"badges"] child:@"fiveWishList"] setValue:@"false"];
+    
+    [[[firebaseRef.usersRef child:user.user_key] child:@"badgeCount"] setValue:@""];
+    [[[firebaseRef.usersRef child:user.user_key] child:@"checkInCount"] setValue:@""];
+    [[[firebaseRef.usersRef child:user.user_key] child:@"friendsCount"] setValue:@""];
+    [[[firebaseRef.usersRef child:user.user_key] child:@"reviewsCount"] setValue:@""];
+    [[[firebaseRef.usersRef child:user.user_key] child:@"storesVisitedCount"] setValue:@""];
+    [[[firebaseRef.usersRef child:user.user_key] child:@"strainsTriedCount"] setValue:@""];
+    [[[firebaseRef.usersRef child:user.user_key] child:@"wishListCount"] setValue:@""];
+
 }
 
 - (IBAction)tappedCancelButton:(UIBarButtonItem *)sender {

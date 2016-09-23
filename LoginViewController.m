@@ -43,9 +43,16 @@ const static CGFloat frameSizeWidth = 600.0f;
                     arr3 = [[userDict valueForKey:@"reviews"] allKeys];
                 }
                 
-                NSArray *arr4 = [[NSMutableArray alloc] init];
+                NSMutableArray *arr4 = [[NSMutableDictionary alloc] init];
                 if (!([[userDict valueForKey:@"badges"]  isEqual: @""])) {
-                    arr4 = [[userDict valueForKey:@"badges"] allKeys];
+                    arr4 = [userDict valueForKey:@"badges"];
+                    for (id key in arr4) {
+                        NSString *value = [arr4 valueForKey:key];
+                        NSLog(@"value is %@",value);
+                        if ([value isEqualToString:@"true"]) {
+                            [user.badges addObject:key];
+                        }
+                    }
                 }
                 
                 NSArray *arr5 = [[NSMutableArray alloc] init];

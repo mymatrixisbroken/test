@@ -17,14 +17,23 @@ userClass *user;
 @synthesize date_joined;
 @synthesize last_signed_in;
 @synthesize account_type;
-@synthesize image_name;
+@synthesize avatarURL;
 @synthesize wish_list ;
 @synthesize friends;
 @synthesize reviews;
 @synthesize badges;
 @synthesize strains_tried;
 @synthesize stores_visited;
+@synthesize checkIns;
 @synthesize events;
+@synthesize badgeCount;
+@synthesize checkInCount;
+@synthesize friendsCount;
+@synthesize reviewsCount;
+@synthesize storesVisitedCount;
+@synthesize strainsTriedCount;
+@synthesize wishListCount;
+
 
 
 + (userClass *)sharedInstance {
@@ -46,14 +55,23 @@ userClass *user;
         self.date_joined = @"";
         self.last_signed_in = @"";
         self.account_type = @"user";
-        self.image_name = @"";
+        self.avatarURL = @"";
         self.wish_list = [[NSArray alloc] init];
         self.friends = [[NSMutableArray alloc] init];
         self.reviews = [[NSArray alloc] init];
-        self.badges = [[NSArray alloc] init];
+        self.badges = [[NSMutableArray alloc] init];
         self.strains_tried = [[NSArray alloc] init];
         self.stores_visited = [[NSArray alloc] init];
         self.events = [[NSMutableArray alloc] init];
+        self.checkIns = [[NSMutableArray alloc] init];
+        self.badgeCount = 0;
+        self.checkInCount = 0;
+        self.friendsCount = 0;
+        self.reviewsCount = 0;
+        self.storesVisitedCount = 0;
+        self.strainsTriedCount = 0;
+        self.wishListCount = 0;
+
     }
     return self;
 }
@@ -72,13 +90,19 @@ userClass *user;
     self.date_joined = [dict valueForKey:@"date_joined"];
     self.last_signed_in = [dict valueForKey:@"last_signed_in"];
     self.account_type = [dict valueForKey:@"account_type"];
-    self.image_name = [dict valueForKey:@"avatar"];
+    self.avatarURL = [dict valueForKey:@"avatar"];
     self.wish_list = array1;
     self.friends = array2;
     self.reviews = array3;
-    self.badges = array4;
     self.strains_tried = array5;
     self.stores_visited = array6;
+    self.badgeCount = array4.count;
+    //self.checkInCount = array6.count;
+    self.friendsCount = array2.count;
+    self.reviewsCount = array3.count;
+    self.storesVisitedCount = array6.count;
+    self.strainsTriedCount = array5.count;
+    self.wishListCount = array1.count;
     
     return self;
 }
