@@ -14,8 +14,8 @@ extern storeClass *store;
 
 
 @interface storeClass : NSObject
-@property NSString *store_key;
-@property NSString *store_name;
+@property NSString *storeKey;
+@property NSString *storeName;
 @property NSString *address;
 @property NSString *city;
 @property NSString *state;
@@ -23,20 +23,18 @@ extern storeClass *store;
 @property NSString *longitude;
 @property NSString *url;
 @property NSString *phone_number;
-@property NSString *google_place_id;
+@property NSString *googlePlaceID;
 @property NSMutableArray *imageNames;
 @property NSData *data;
-@property (nonatomic, assign) double rating_score;
-@property (nonatomic, assign) int rating_count;
-@property (nonatomic, assign) int total_count;
-@property (nonatomic, assign) int monthly_count;
-@property (nonatomic, assign) int total_user_count;
-@property UIImage *small_image;
-@property UIImage *medium_image;
-@property NSMutableArray *storeObjectArray;
+@property (nonatomic, assign) double ratingScore;
+@property (nonatomic, assign) NSInteger ratingCount;
+@property (nonatomic, assign) NSInteger totalCount;
+@property (nonatomic, assign) NSInteger monthlyCount;
+@property (nonatomic, assign) NSInteger totalUserCount;
 
 
 + (storeClass *)sharedInstance;
--(id)setClassObject:key Values:(NSDictionary *)dict Image:(NSArray *)array;
-
+-(id)setStoreObject:key
+     fromDictionary:(NSDictionary *)dict
+             images:(NSArray *)array;
 @end

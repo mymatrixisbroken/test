@@ -12,9 +12,11 @@
 #import "userClass.h"
 
 @interface FindFriendsCell : UITableViewCell
-@property (strong, nonatomic) IBOutlet UIImageView *image_View;
+@property (strong, nonatomic) IBOutlet UIImageView *imageview;
 @property (strong, nonatomic) IBOutlet UILabel *usernameLabel;
 @property (strong, nonatomic) IBOutlet UIButton *addButton;
 
--(void) uploadCell:(NSString *)key WithUsername:(NSString *)username imageURL:(NSString *)imageURL :(NSData *)data;
+-(void) uploadCell:(NSString *)key
+      withUsername:(NSString *)username
+              data:(NSData *)data;
 @end

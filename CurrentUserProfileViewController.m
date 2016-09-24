@@ -20,32 +20,17 @@
     [self loadProfilePicture];
     self.scrollView.contentSize = self.view.bounds.size;
     self.shyNavBarManager.scrollView = self.scrollView;
-    
-    extensionViewClass *extView = [[extensionViewClass alloc] init];
-    [extView setView:CGRectGetWidth(self.view.bounds)];
-    [extView addButtons:CGRectGetWidth(self.view.bounds)];
-    [extView.newsFeedButton addTarget:self action:@selector(newsFeedButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
-    [extView.friendsButton addTarget:self action:@selector(friendsButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
-    [extView.strainButton addTarget:self action:@selector(strainButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
-    [extView.storeButton addTarget:self action:@selector(storeButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
-    [extView.userProfileButton addTarget:self action:@selector(userProfileButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
-    
-    [self.shyNavBarManager setExtensionView:extView];
-    [self.shyNavBarManager setStickyExtensionView:YES];
+    [self loadExtView];
     
     _myFriendsNumber.text = [NSString stringWithFormat:@"%lu", (unsigned long)user.friends.count];
     _myReviewsNumber.text = [NSString stringWithFormat:@"%lu", (unsigned long)user.reviews.count];
-    _strainsTriedNumber.text = [NSString stringWithFormat:@"%lu", (unsigned long)user.strains_tried.count];
-    _storesVisitedNumber.text = [NSString stringWithFormat:@"%lu", (unsigned long)user.stores_visited.count];
+    _strainsTriedNumber.text = [NSString stringWithFormat:@"%lu", (unsigned long)user.strainsTried.count];
+    _storesVisitedNumber.text = [NSString stringWithFormat:@"%lu", (unsigned long)user.storesVisited.count];
     
-    
-    
-    
-    
-    
-    
-    [[[firebaseRef.usersRef child:user.user_key] child:@"badges"] observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
+    [[[firebaseRef.usersRef child:user.userKey] child:@"badges"] observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
+        
         [user.badges removeAllObjects];
+        
         for (id key in snapshot.value) {
             NSString *value = [snapshot.value valueForKey:key];
             if ([value isEqualToString:@"true"]) {
@@ -56,29 +41,59 @@
      }];
 }
 
+- (void) loadExtView{
+    extensionViewClass *extView = [[extensionViewClass alloc] init];
+    [extView setView:CGRectGetWidth(self.view.bounds)];
+    [extView addButtons:CGRectGetWidth(self.view.bounds)];
+    [extView.newsFeedButton addTarget:self action:@selector(newsFeedButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
+    [extView.searchFriendsButton addTarget:self action:@selector(searchFriendsButton:) forControlEvents:UIControlEventTouchUpInside];
+    [extView.strainButton addTarget:self action:@selector(strainButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
+    [extView.storeButton addTarget:self action:@selector(storeButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
+    [extView.userProfileButton addTarget:self action:@selector(userProfileButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
+    [self.shyNavBarManager setExtensionView:extView];
+    [self.shyNavBarManager setStickyExtensionView:YES];
+}
+
+-(IBAction)newsFeedButtonPressed:(UIButton*)btn {
+    [user goToNewsFeedViewController:self];
+}
+
+-(IBAction)searchFriendsButton:(UIButton*)btn {
+    [user goToSearchViewController:self];
+}
+
+-(IBAction)strainButtonPressed:(UIButton*)btn {
+    objectsArray.selection = NO;
+    [user goToStrainsViewController:self];
+}
+
+-(IBAction)storeButtonPressed:(UIButton*)btn {
+    objectsArray.selection = YES;
+    [user goToStoresViewController:self];
+}
+
+-(IBAction)userProfileButtonPressed:(UIButton*)btn {
+    FIRUser *youser = [FIRAuth auth].currentUser;
+    if(youser.anonymous){
+        [user goToUserNotSignedInViewController:self];
+    }
+    else{
+        [user goToCurrentUserProfileViewController:self];
+    }
+}
+
+
 -(void) loadProfilePicture{
-    dispatch_async(dispatch_get_global_queue(0,0), ^{
-        NSData * data = [[NSData alloc] initWithContentsOfURL: [NSURL URLWithString:user.avatarURL]];
-        if( data == nil ){
-            NSLog(@"image is nil");
-            return;
-        }
-        dispatch_async(dispatch_get_main_queue(), ^{
-            // WARNING: is the cell still using the same data by this point??
-            self.imageView.image = [UIImage imageWithData: data];
-        });
-    });
+    self.imageView.image = [UIImage imageWithData:user.data];
 }
 
 - (IBAction)signOutButtonTapped:(UIButton *)sender {
     NSError *error;
-    user = [userClass sharedInstance];
-
-    
+    [user init];
     [[FIRAuth auth] signOut:&error];
     if (!error) {
         // Sign-out succeeded
-        [[FIRAuth auth] signInAnonymouslyWithCompletion:^(FIRUser * _Nullable user, NSError * _Nullable error) {
+        [[FIRAuth auth] signInAnonymouslyWithCompletion:^(FIRUser * _Nullable youser, NSError * _Nullable error) {
             if (error != nil) {
                 // Uh-oh, an error occurred!
                 NSLog(@"Anonymous Firebase User is NOT signed in..");
@@ -86,58 +101,14 @@
             }
             else {
                 //Assign current Firebase user to a variable called user
-                FIRUser *u = [FIRAuth auth].currentUser;
-                BOOL isAnonymous = u.anonymous;  // YES
-                NSLog(@"Anonymous Firebase User is signed in.. ");
-                NSLog(isAnonymous ? @"Yes" : @"No");
-                NSLog(@"UID:%@.",user.uid);
-                if(u.anonymous){
-                    UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-                    UIViewController *vc = [sb instantiateViewControllerWithIdentifier:@"Login View SB ID"];
-                    vc.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
-                    [self presentViewController:vc animated:YES completion:NULL];
+                if([FIRAuth auth].currentUser.anonymous){
+                    [user goToLoginViewController:self];
                 }
             }
         }];
     }
 }
 
--(IBAction)newsFeedButtonPressed:(UIButton*)btn {
-    UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-    UIViewController *vc = [sb instantiateViewControllerWithIdentifier:@"News Feed Navigation SB ID"];
-    vc.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
-    [self presentViewController:vc animated:YES completion:NULL];
-}
-
--(IBAction)friendsButtonPressed:(UIButton*)btn {
-    UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-    UIViewController *vc = [sb instantiateViewControllerWithIdentifier:@"Friends Navigation SB ID"];
-    vc.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
-    [self presentViewController:vc animated:YES completion:NULL];
-}
-
--(IBAction)strainButtonPressed:(UIButton*)btn {
-    UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-    UIViewController *vc = [sb instantiateViewControllerWithIdentifier:@"List View Controller  SB ID"];
-    vc.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
-    objectsArray.selection = 0;
-    [self presentViewController:vc animated:YES completion:NULL];
-}
-
--(IBAction)storeButtonPressed:(UIButton*)btn {
-    UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-    UIViewController *vc = [sb instantiateViewControllerWithIdentifier:@"List View Controller  SB ID"];
-    vc.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
-    objectsArray.selection = 1;
-    [self presentViewController:vc animated:YES completion:NULL];
-}
-
--(IBAction)userProfileButtonPressed:(UIButton*)btn {
-    UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-    UIViewController *vc = [sb instantiateViewControllerWithIdentifier:@"User Profile Navigation SB ID"];
-    vc.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
-    [self presentViewController:vc animated:YES completion:NULL];
-}
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
@@ -196,7 +167,7 @@
     NSData *theResponseData = [NSURLConnection sendSynchronousRequest:theRequest returningResponse:&theResponse error:&theError];
     
     
-    
+
     NSDictionary *dataDictionaryResponse = [NSJSONSerialization JSONObjectWithData:theResponseData options:0 error:&theError];
     NSLog(@"url to send request= %@",theURL);
     NSLog(@"%@",dataDictionaryResponse);
@@ -206,9 +177,9 @@
     user.avatarURL = [output valueForKey:@"link"];
     NSLog(@"url is %@", user.avatarURL);
     
-    [[[firebaseRef.usersRef child:user.user_key] child:@"avatar"] setValue:user.avatarURL];
+    [[[firebaseRef.usersRef child:user.userKey] child:@"avatarURL"] setValue:user.avatarURL];
 
-    
+
     
     [self dismissViewControllerAnimated:YES completion:NULL];
 }

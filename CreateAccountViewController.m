@@ -36,12 +36,12 @@ const static CGFloat frameSizeWidth = 600.0f;
     
     [myTopPostsQuery observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
         if ([NSNull null] == snapshot.value){
-            user.user_key = [firebaseRef.usersRef childByAutoId].key;
+            user.userKey = [firebaseRef.usersRef childByAutoId].key;
             [user createUser:_emailField.text SignedUp:_usernameField.text];
             [self updateAnonymousUserToSignedUp:_passwordField.text];
             [self updateFirebaseDatabaseValues];
             
-            if (user.user_key != nil) {
+            if (user.userKey != nil) {
                 [self performSegueWithIdentifier:@"createAccountToUserProfileSegue" sender:self];
             }
             else {
@@ -50,7 +50,7 @@ const static CGFloat frameSizeWidth = 600.0f;
         }
         else if ([[snapshot.value allKeys] count] > 0) {
             NSLog(@"username already taken");
-            [self usernameAlreadyTaken];
+            [user presentUsernameTakenAlert:self];
         }
     }];
 }
@@ -62,7 +62,7 @@ const static CGFloat frameSizeWidth = 600.0f;
         return YES;
     }
     else {
-        [self alertInvalidUsername];
+        [user presentUsernameInvalidAlert:self];
         return NO;
     }
 }
@@ -79,7 +79,7 @@ const static CGFloat frameSizeWidth = 600.0f;
         return YES;
     }
     else{
-        [self alertInvalideEmail];
+        [user presentEmailInvalidAlert:self];
         return NO;
     }
 }
@@ -90,7 +90,7 @@ const static CGFloat frameSizeWidth = 600.0f;
         return YES;
     }
     else{
-        [self alertInvalidPassword];
+        [user presentPasswordInvalidAlert:self];
         return NO;
     }
 }
@@ -99,7 +99,7 @@ const static CGFloat frameSizeWidth = 600.0f;
     NSDate *today = [NSDate date];
     NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
     [dateFormat setDateFormat:@"dd/MM/yyyy"];
-    _todays_date = [dateFormat stringFromDate:today];
+    _todaysDate = [dateFormat stringFromDate:today];
 }
 
 - (CALayer *) customUITextField{
@@ -123,19 +123,20 @@ const static CGFloat frameSizeWidth = 600.0f;
     [_passwordField.layer addSublayer:[self customUITextField]];
     _passwordField.layer.masksToBounds = YES;
     
-    _CreateAccountNext.enabled = NO;
-    _CreateAccountNext.alpha = 0.5;
-    _CreateAccountNext.contentEdgeInsets = UIEdgeInsetsMake(5, 22, 5, 0);
+    _createAccountButton.enabled = NO;
+    _createAccountButton.alpha = 0.5;
+    _createAccountButton.contentEdgeInsets = UIEdgeInsetsMake(5, 22, 5, 0);
 }
 
-- (IBAction)CreatePasswordChanged:(id)sender {
+- (IBAction)passwordFieldChanged
+:(id)sender {
     if (_passwordField.text.length > 0) {
-        _CreateAccountNext.enabled = YES;
-        _CreateAccountNext.alpha = 1.0;
+        _createAccountButton.enabled = YES;
+        _createAccountButton.alpha = 1.0;
     }
     else{
-        _CreateAccountNext.enabled = NO;
-        _CreateAccountNext.alpha = 0.5;
+        _createAccountButton.enabled = NO;
+        _createAccountButton.alpha = 0.5;
     }
 }
 
@@ -147,33 +148,33 @@ const static CGFloat frameSizeWidth = 600.0f;
 
 -(void) updateFirebaseDatabaseValues {
     [self getTodaysDate];
-    [[[firebaseRef.usersRef child:user.user_key] child:@"email"] setValue:user.email];
-    [[[firebaseRef.usersRef child:user.user_key] child:@"username"] setValue:user.username];
-    [[[firebaseRef.usersRef child:user.user_key] child:@"date_joined"] setValue:_todays_date];
-    [[[firebaseRef.usersRef child:user.user_key] child:@"last_signed_in"] setValue:@""];
-    [[[firebaseRef.usersRef child:user.user_key] child:@"account_type"] setValue:@"user"];
-    [[[firebaseRef.usersRef child:user.user_key] child:@"wish_list"] setValue:@""];
-    [[[firebaseRef.usersRef child:user.user_key] child:@"friends"] setValue:@""];
-    [[[firebaseRef.usersRef child:user.user_key] child:@"reviews"] setValue:@""];
-    [[[firebaseRef.usersRef child:user.user_key] child:@"strains_tried"] setValue:@""];
-    [[[firebaseRef.usersRef child:user.user_key] child:@"stores_visited"] setValue:@""];
+    [[[firebaseRef.usersRef child:user.userKey] child:@"email"] setValue:user.email];
+    [[[firebaseRef.usersRef child:user.userKey] child:@"username"] setValue:user.username];
+    [[[firebaseRef.usersRef child:user.userKey] child:@"dateJoined"] setValue:_todaysDate];
+    [[[firebaseRef.usersRef child:user.userKey] child:@"lastSignedIn"] setValue:@""];
+    [[[firebaseRef.usersRef child:user.userKey] child:@"accountType"] setValue:@"user"];
+    [[[firebaseRef.usersRef child:user.userKey] child:@"wishList"] setValue:@""];
+    [[[firebaseRef.usersRef child:user.userKey] child:@"friends"] setValue:@""];
+    [[[firebaseRef.usersRef child:user.userKey] child:@"reviews"] setValue:@""];
+    [[[firebaseRef.usersRef child:user.userKey] child:@"strainsTried"] setValue:@""];
+    [[[firebaseRef.usersRef child:user.userKey] child:@"storesVisited"] setValue:@""];
     
-    [[[[firebaseRef.usersRef child:user.user_key] child:@"badges"] child:@"fiveStevias"] setValue:@"false"];
-    [[[[firebaseRef.usersRef child:user.user_key] child:@"badges"] child:@"fiveIndicas"] setValue:@"false"];
-    [[[[firebaseRef.usersRef child:user.user_key] child:@"badges"] child:@"fiveCheckIns"] setValue:@"false"];
-    [[[[firebaseRef.usersRef child:user.user_key] child:@"badges"] child:@"fiveStoresVisited"] setValue:@"false"];
-    [[[[firebaseRef.usersRef child:user.user_key] child:@"badges"] child:@"fiveStrainsTried"] setValue:@"false"];
-    [[[[firebaseRef.usersRef child:user.user_key] child:@"badges"] child:@"fiveFriends"] setValue:@"false"];
-    [[[[firebaseRef.usersRef child:user.user_key] child:@"badges"] child:@"fiveReviews"] setValue:@"false"];
-    [[[[firebaseRef.usersRef child:user.user_key] child:@"badges"] child:@"fiveWishList"] setValue:@"false"];
+    [[[[firebaseRef.usersRef child:user.userKey] child:@"badges"] child:@"fiveStevias"] setValue:@"false"];
+    [[[[firebaseRef.usersRef child:user.userKey] child:@"badges"] child:@"fiveIndicas"] setValue:@"false"];
+    [[[[firebaseRef.usersRef child:user.userKey] child:@"badges"] child:@"fiveCheckIns"] setValue:@"false"];
+    [[[[firebaseRef.usersRef child:user.userKey] child:@"badges"] child:@"fiveStoresVisited"] setValue:@"false"];
+    [[[[firebaseRef.usersRef child:user.userKey] child:@"badges"] child:@"fiveStrainsTried"] setValue:@"false"];
+    [[[[firebaseRef.usersRef child:user.userKey] child:@"badges"] child:@"fiveFriends"] setValue:@"false"];
+    [[[[firebaseRef.usersRef child:user.userKey] child:@"badges"] child:@"fiveReviews"] setValue:@"false"];
+    [[[[firebaseRef.usersRef child:user.userKey] child:@"badges"] child:@"fiveWishList"] setValue:@"false"];
     
-    [[[firebaseRef.usersRef child:user.user_key] child:@"badgeCount"] setValue:@""];
-    [[[firebaseRef.usersRef child:user.user_key] child:@"checkInCount"] setValue:@""];
-    [[[firebaseRef.usersRef child:user.user_key] child:@"friendsCount"] setValue:@""];
-    [[[firebaseRef.usersRef child:user.user_key] child:@"reviewsCount"] setValue:@""];
-    [[[firebaseRef.usersRef child:user.user_key] child:@"storesVisitedCount"] setValue:@""];
-    [[[firebaseRef.usersRef child:user.user_key] child:@"strainsTriedCount"] setValue:@""];
-    [[[firebaseRef.usersRef child:user.user_key] child:@"wishListCount"] setValue:@""];
+    [[[firebaseRef.usersRef child:user.userKey] child:@"badgeCount"] setValue:@""];
+    [[[firebaseRef.usersRef child:user.userKey] child:@"checkInCount"] setValue:@""];
+    [[[firebaseRef.usersRef child:user.userKey] child:@"friendsCount"] setValue:@""];
+    [[[firebaseRef.usersRef child:user.userKey] child:@"reviewsCount"] setValue:@""];
+    [[[firebaseRef.usersRef child:user.userKey] child:@"storesVisitedCount"] setValue:@""];
+    [[[firebaseRef.usersRef child:user.userKey] child:@"strainsTriedCount"] setValue:@""];
+    [[[firebaseRef.usersRef child:user.userKey] child:@"wishListCount"] setValue:@""];
 
 }
 
@@ -181,65 +182,6 @@ const static CGFloat frameSizeWidth = 600.0f;
     [self dismissViewControllerAnimated:YES completion:^{}];
 }
 
-- (void) alertInvalidUsername {
-    UIAlertController *alertController = [UIAlertController
-                                          alertControllerWithTitle:@"Invalid username"
-                                          message:nil
-                                          preferredStyle:UIAlertControllerStyleAlert];
-    UIAlertAction *okAction = [UIAlertAction
-                               actionWithTitle:NSLocalizedString(@"OK", @"OK action")
-                               style:UIAlertActionStyleDefault
-                               handler:^(UIAlertAction *action)
-                               {}];
-    
-    [alertController addAction:okAction];
-    [self presentViewController:alertController animated:YES completion:nil];
-}
-
-- (void) usernameAlreadyTaken {
-    UIAlertController *alertController = [UIAlertController
-                                          alertControllerWithTitle:@"Username taken"
-                                          message:nil
-                                          preferredStyle:UIAlertControllerStyleAlert];
-    UIAlertAction *okAction = [UIAlertAction
-                               actionWithTitle:NSLocalizedString(@"OK", @"OK action")
-                               style:UIAlertActionStyleDefault
-                               handler:^(UIAlertAction *action)
-                               {}];
-    
-    [alertController addAction:okAction];
-    [self presentViewController:alertController animated:YES completion:nil];
-}
-
-- (void) alertInvalidPassword {
-    UIAlertController *alertController = [UIAlertController
-                                          alertControllerWithTitle:@"Invalid password"
-                                          message:@"Please use minimum 5 characters"
-                                          preferredStyle:UIAlertControllerStyleAlert];
-    UIAlertAction *okAction = [UIAlertAction
-                               actionWithTitle:NSLocalizedString(@"OK", @"OK action")
-                               style:UIAlertActionStyleDefault
-                               handler:^(UIAlertAction *action)
-                               {}];
-    
-    [alertController addAction:okAction];
-    [self presentViewController:alertController animated:YES completion:nil];
-}
-
-- (void) alertInvalideEmail {
-    UIAlertController *alertController = [UIAlertController
-                                          alertControllerWithTitle:@"Invalid email"
-                                          message:@"Please use format email@domain.com"
-                                          preferredStyle:UIAlertControllerStyleAlert];
-    UIAlertAction *okAction = [UIAlertAction
-                               actionWithTitle:NSLocalizedString(@"OK", @"OK action")
-                               style:UIAlertActionStyleDefault
-                               handler:^(UIAlertAction *action)
-                               {}];
-    
-    [alertController addAction:okAction];
-    [self presentViewController:alertController animated:YES completion:nil];
-}
 
 
 - (void)didReceiveMemoryWarning {

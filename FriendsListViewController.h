@@ -17,12 +17,10 @@
 @import Firebase;
 
 @interface FriendsListViewController : UIViewController <UITableViewDataSource, UITableViewDelegate, UISearchBarDelegate, UISearchDisplayDelegate>
-//@property (strong, nonatomic) IBOutlet UIScrollView *scrollView;
 @property (strong, nonatomic) IBOutlet UITableView *tableView;
 @property (strong, nonatomic) IBOutlet UISearchBar *searchBar;
 @property (strong, nonatomic) IBOutlet UISearchController *searchController;
 @property (strong, nonatomic) IBOutlet NSMutableArray *searchArray;
-@property (nonatomic, strong) findFriendClass *puto;
 @property BOOL isFiltered;
 
 

@@ -13,27 +13,27 @@
 extern strainClass *strain;
 
 @interface strainClass : NSObject
-@property NSString *strain_key;
-@property NSString *strain_name;
+@property NSString *strainKey;
+@property NSString *strainName;
 @property NSString *thc;
 @property NSString *cbd;
 @property NSString *species;
 @property NSString *grower;
 @property NSString *flavor;
 @property NSString *aroma;
-@property int happiness;
-@property int uplifting;
-@property int euphoric;
-@property int energetic;
-@property int relaxed;
-@property NSMutableArray *imageNames;
 @property NSData *data;
+@property NSMutableArray *imageNames;
 @property NSMutableArray *availableAt;
-@property float rating_score;
-@property int rating_count;
-@property int total_count;
-@property int monthly_count;
-@property int total_user_count;
+@property NSInteger happiness;
+@property NSInteger uplifting;
+@property NSInteger euphoric;
+@property NSInteger energetic;
+@property NSInteger relaxed;
+@property float ratingScore;
+@property NSInteger ratingCount;
+@property NSInteger totalCount;
+@property NSInteger monthlyCount;
+@property NSInteger totalUserCount;
 @property BOOL flower;
 @property BOOL concentrate;
 @property BOOL topical;
@@ -41,5 +41,11 @@ extern strainClass *strain;
 
 
 + (strainClass *)sharedInstance;
--(id)setClassObject:key Values:(NSDictionary *)dict Image:(NSArray *) array highType:(NSDictionary *)dict2 :(NSInteger)x :(float)y :(NSArray *)array2;
+-(id)setStrainObject:key
+      fromDictionary:(NSDictionary *)dict
+            highType:(NSDictionary *)dict2
+              images:(NSArray *)array
+         availableAt:(NSArray *)array2
+         ratingCount:(NSInteger)count
+         ratingScore:(float) score;
 @end

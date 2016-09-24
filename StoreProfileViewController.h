@@ -9,6 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "storeClass.h"
 #import "FirebaseReferenceClass.h"
+#import "userClass.h"
 @import Cosmos;
 @import Firebase;
 
@@ -25,6 +26,7 @@
 @property (strong, nonatomic) IBOutlet UILabel *store_state_label;
 @property (strong, nonatomic) IBOutlet UILabel *store_url_label;
 @property (strong, nonatomic) IBOutlet UILabel *store_phone_number_label;
+@property (strong, nonatomic) IBOutlet UIButton *checkInButton;
 
 
 @end

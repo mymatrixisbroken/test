@@ -10,7 +10,7 @@
 
 @implementation extensionViewClass
 @synthesize newsFeedButton;
-@synthesize friendsButton;
+@synthesize searchFriendsButton;
 @synthesize strainButton;
 @synthesize storeButton;
 @synthesize userProfileButton;
@@ -39,10 +39,10 @@
     [newsFeedButton setImage:[UIImage imageNamed:@"newsFeed"] forState:UIControlStateNormal];
     [newsFeedButton setTintColor:[UIColor lightGrayColor]];
     
-    friendsButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    friendsButton.frame = CGRectMake(width/5, 0, width/5, 40.f);
-    [friendsButton setImage:[UIImage imageNamed:@"friends"] forState:UIControlStateNormal];
-    [friendsButton setTintColor:[UIColor lightGrayColor]];
+    searchFriendsButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    searchFriendsButton.frame = CGRectMake(width/5, 0, width/5, 40.f);
+    [searchFriendsButton setImage:[UIImage imageNamed:@"friends"] forState:UIControlStateNormal];
+    [searchFriendsButton setTintColor:[UIColor lightGrayColor]];
     
     strainButton = [UIButton buttonWithType:UIButtonTypeCustom];
     strainButton.frame = CGRectMake((width/5)*2, 0, (width/5), 40.f);
@@ -61,7 +61,7 @@
     
     
     [self addSubview:newsFeedButton];
-    [self addSubview:friendsButton];
+    [self addSubview:searchFriendsButton];
     [self addSubview:strainButton];
     [self addSubview:storeButton];
     [self addSubview:userProfileButton];

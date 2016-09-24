@@ -58,7 +58,7 @@
     NSDictionary *location = [geometry objectForKey:@"location"];
     store.latitude = [location objectForKey:@"lat"];
     store.longitude = [location objectForKey:@"lng"];
-    store.google_place_id = [result objectForKey:@"place_id"];
+    store.googlePlaceID = [result objectForKey:@"place_id"];
 }
 
 - (void)loadFirstPhotoForPlace:(NSString *)placeID {
@@ -91,18 +91,11 @@
 - (IBAction)tappedImageView:(UITapGestureRecognizer *)sender {
     UIAlertController *actionSheet = [UIAlertController alertControllerWithTitle:@"Select Image" message:nil preferredStyle:UIAlertControllerStyleActionSheet];
     
-    NSString *addressFormatted = [NSString stringWithFormat:@"%@%@%@", store.address, store.city, store.state];
-    
-    [actionSheet addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:^(UIAlertAction *action) {
-    }]];
-    
-    [actionSheet addAction:[UIAlertAction actionWithTitle:@"Check Google Place Photos" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
-        [self gecodeAddress:addressFormatted];
-        [self loadFirstPhotoForPlace:store.google_place_id];
-    }]];
+    picker2 = [[UIImagePickerController alloc] init];
+    picker = [[UIImagePickerController alloc] init];
+
     
     [actionSheet addAction:[UIAlertAction actionWithTitle:@"Gallery" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
-        picker2 = [[UIImagePickerController alloc] init];
         self->picker2.delegate = self;
         [picker2 setSourceType:UIImagePickerControllerSourceTypePhotoLibrary];
         [self presentViewController:picker2 animated:YES completion:NULL];
@@ -110,7 +103,6 @@
     }]];
     
     [actionSheet addAction:[UIAlertAction actionWithTitle:@"Photo" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
-        picker = [[UIImagePickerController alloc] init];
         self->picker.delegate = self;
         [picker setSourceType:UIImagePickerControllerSourceTypeCamera];
         [self presentViewController:picker animated:YES completion:NULL];
@@ -132,8 +124,8 @@
 }
 
 - (void) loadImagesToClassObject:(UIImage *)Image{
-    store.medium_image = [[self class] imageWithImage:Image scaledToWidth:1500];
-    store.small_image = [[self class] imageWithImage:Image scaledToWidth:100];
+    //store.medium_image = [[self class] imageWithImage:Image scaledToWidth:1500];
+    //store.small_image = [[self class] imageWithImage:Image scaledToWidth:100];
 }
 
 +(UIImage*)imageWithImage: (UIImage*) sourceImage scaledToWidth: (float) i_width
@@ -152,7 +144,7 @@
 }
 
 - (void) updateClassObjectValues {
-    store.store_name = _store_name_field.text;
+    store.storeName = _store_name_field.text;
     store.address = _address_field.text;
     store.city = _city_field.text;
     store.state = _state_field.text;
@@ -160,19 +152,19 @@
 }
 
 - (void) updateFirebaseValues{
-    [[[firebaseRef.storesRef child:store.store_key] child:@"store_name"] setValue:store.store_name];
-    [[[[firebaseRef.storesRef child:store.store_key] child:@"location"] child:@"address" ] setValue:store.address];
-    [[[[firebaseRef.storesRef child:store.store_key] child:@"location"] child:@"city" ] setValue:store.city];
-    [[[[firebaseRef.storesRef child:store.store_key] child:@"location"] child:@"state" ] setValue:store.state];
-    [[[[firebaseRef.storesRef child:store.store_key] child:@"location"] child:@"latitude" ] setValue:store.latitude];
-    [[[[firebaseRef.storesRef child:store.store_key] child:@"location"] child:@"longitude" ] setValue:store.longitude];
-    [[[firebaseRef.storesRef child:store.store_key] child:@"phone_number"] setValue:store.phone_number];
-    [[[firebaseRef.storesRef child:store.store_key] child:@"google_place_id"] setValue:store.google_place_id];
-    [[[firebaseRef.storesRef child:store.store_key] child:@"url"]  setValue:store.url];
-    [[[firebaseRef.storesRef child:store.store_key] child:@"phone_number"] setValue:store.phone_number];
-    [[[firebaseRef.storesRef child:store.store_key] child:@"rating_count"] setValue:@""];
-    [[[firebaseRef.storesRef child:store.store_key] child:@"rating_score"] setValue:@""];
-    [[[firebaseRef.storesRef child:store.store_key] child:@"sells"] setValue:@""];
+    [[[firebaseRef.storesRef child:store.storeKey] child:@"storeName"] setValue:store.storeName];
+    [[[[firebaseRef.storesRef child:store.storeKey] child:@"location"] child:@"address" ] setValue:store.address];
+    [[[[firebaseRef.storesRef child:store.storeKey] child:@"location"] child:@"city" ] setValue:store.city];
+    [[[[firebaseRef.storesRef child:store.storeKey] child:@"location"] child:@"state" ] setValue:store.state];
+    [[[[firebaseRef.storesRef child:store.storeKey] child:@"location"] child:@"latitude" ] setValue:store.latitude];
+    [[[[firebaseRef.storesRef child:store.storeKey] child:@"location"] child:@"longitude" ] setValue:store.longitude];
+    [[[firebaseRef.storesRef child:store.storeKey] child:@"phoneNumber"] setValue:store.phone_number];
+    [[[firebaseRef.storesRef child:store.storeKey] child:@"googlePlaceID"] setValue:store.googlePlaceID];
+    [[[firebaseRef.storesRef child:store.storeKey] child:@"url"]  setValue:store.url];
+    [[[firebaseRef.storesRef child:store.storeKey] child:@"phoneNumber"] setValue:store.phone_number];
+    [[[firebaseRef.storesRef child:store.storeKey] child:@"ratingCount"] setValue:@""];
+    [[[firebaseRef.storesRef child:store.storeKey] child:@"ratingScore"] setValue:@""];
+    [[[firebaseRef.storesRef child:store.storeKey] child:@"sells"] setValue:@""];
 }
 
 - (NSDictionary *)storeLocation{
@@ -185,9 +177,9 @@
 }
 
 - (NSDictionary *)storeStats{
-    NSDictionary *strainStats= @{@"total_count":@"",
-                                 @"monthly_count":@"",
-                                 @"total_user_count":@""};
+    NSDictionary *strainStats= @{@"totalCount":@"",
+                                 @"monthlyCount":@"",
+                                 @"totalUserCount":@""};
     return strainStats;
 }
 - (IBAction)tappedCancelButton:(UIBarButtonItem *)sender {
@@ -198,10 +190,10 @@
     if(_imageSelected){
         NSDictionary *dict2 = [self storeLocation];
         NSDictionary *dict3 = [self storeStats];
-        store.store_key = [firebaseRef.storesRef childByAutoId].key;
+        store.storeKey = [firebaseRef.storesRef childByAutoId].key;
   
-        [[[firebaseRef.storesRef child:store.store_key] child:@"location"]setValue:dict2];
-        [[[firebaseRef.storesRef child:store.store_key] child:@"stats"]setValue:dict3];
+        [[[firebaseRef.storesRef child:store.storeKey] child:@"location"]setValue:dict2];
+        [[[firebaseRef.storesRef child:store.storeKey] child:@"stats"]setValue:dict3];
         
         [self updateClassObjectValues];
         [self updateFirebaseValues];
@@ -237,7 +229,7 @@
         
         [store.imageNames removeAllObjects];
         [store.imageNames addObject:imageURL];
-        [[[[firebaseRef.storesRef child:store.store_key] child:@"images"] child:@"1" ] setValue:imageURL];
+        [[[[firebaseRef.storesRef child:store.storeKey] child:@"images"] child:@"1" ] setValue:imageURL];
 
         [self performSegueWithIdentifier:@"createdStoreSegue" sender:self];
 
@@ -247,18 +239,7 @@
 
     }
     else if (!_imageSelected){
-        UIAlertController *alertController = [UIAlertController
-                                              alertControllerWithTitle:@"Uh-oh!"
-                                              message:@"Image not selected."
-                                              preferredStyle:UIAlertControllerStyleAlert];
-        UIAlertAction *okAction = [UIAlertAction
-                                   actionWithTitle:NSLocalizedString(@"OK", @"OK action")
-                                   style:UIAlertActionStyleDefault
-                                   handler:^(UIAlertAction *action)
-                                   {}];
-        
-        [alertController addAction:okAction];
-        [self presentViewController:alertController animated:YES completion:nil];
+        [user presentImageNotSelectedAlert:self];
     }
 }
 

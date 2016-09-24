@@ -21,7 +21,6 @@
 @import Firebase;
 
 @interface NewsFeedViewController : UIViewController <UITableViewDelegate, UITableViewDataSource>
-//@property (strong, nonatomic) IBOutlet UIScrollView *scrollView;
 @property (strong, nonatomic) IBOutlet UITableView *tableView;
 @property (strong, nonatomic) IBOutlet NSMutableArray *array;
 @property (strong, nonatomic) IBOutlet NSMutableDictionary *dict;

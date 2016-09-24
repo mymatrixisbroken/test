@@ -20,6 +20,9 @@
     [self loadImageView];
     [self loadRatingScore];
 
+    if ([user.strainsTried indexOfObject:strain.strainKey] != NSNotFound) {
+        self.smokedButton.selected = YES;
+    }
     // Do any additional setup after loading the view, typically from a nib.
 }
 
@@ -36,26 +39,11 @@
         });
     });
 }
-- (IBAction)tapped_strainImage:(UITapGestureRecognizer *)sender {
+- (IBAction)tappedStrainImage:(UITapGestureRecognizer *)sender {
     [self performSegueWithIdentifier:@"popOverStrainImage" sender:self];
 }
-- (IBAction)tapped_menu_button:(UIButton *)sender {
-    
-        UIAlertController *actionSheet = [UIAlertController alertControllerWithTitle:@"Menu" message:@"Select Option" preferredStyle:UIAlertControllerStyleActionSheet];
-        
-        /*[actionSheet addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:^(UIAlertAction *action) {
-            // Cancel button tappped.
-        }]];*/
-        
-        [actionSheet addAction:[UIAlertAction actionWithTitle:@"Edit Strain" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
-                [self performSegueWithIdentifier:@"EditStrainSegue" sender:self];
-        }]];
-        
-        [actionSheet addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:^(UIAlertAction *action) {
-        }]];
-        
-        // Present action sheet.
-        [self presentViewController:actionSheet animated:YES completion:nil];
+- (IBAction)tappedMenuButton:(UIButton *)sender {
+    [user presentStrainEditAlert:self];
 }
 
 - (void)loadLabels {
@@ -64,14 +52,14 @@
 }
 
 - (void)loadRatingScore {
-    if( !(isnan(strain.rating_score))){
-        _starRating.rating = strain.rating_score;
+    if( !(isnan(strain.ratingScore))){
+        _starRating.rating = strain.ratingScore;
     }
 }
 
 - (void)loadRatingCount{
-    if( !(isnan(strain.rating_score)))
-        _ratingCount.text = [[NSString stringWithFormat:@"%lu", (unsigned long)strain.rating_count] stringByAppendingString:@" reviews"];
+    if( !(isnan(strain.ratingScore)))
+        _ratingCount.text = [[NSString stringWithFormat:@"%lu", (unsigned long)strain.ratingCount] stringByAppendingString:@" reviews"];
 }
 
 - (IBAction)tappedBackButton:(UIBarButtonItem *)sender {
@@ -79,7 +67,7 @@
 }
 
 - (void) setLabelValues {
-    _strainNameLabel.text = strain.strain_name;
+    _strainNameLabel.text = strain.strainName;
     _strainTHCLabel.text =  [@"THC: "stringByAppendingString: strain.thc];
     _strainCBDLabel.text =  [@"CBD: " stringByAppendingString:strain.cbd];
     _strainSpeciesLabel.text = strain.species;
@@ -106,78 +94,43 @@
         str.trackTintColor = [UIColor colorWithRed:199.0/255.0 green:199.0/255.0 blue:205.0/255.0 alpha:1];
         
     }
-
-    
-    /*
-    _happinessView.progressTintColor        = [UIColor colorWithRed:19.0/255.0 green:128.0/255.0 blue:0.0/255.0 alpha:1];
-    [_happinessView setProgress:strain.happiness *.01];
-    _happinessView.indicatorTextLabel.text = [NSString stringWithFormat:@"%d", strain.happiness];
-    _happinessView.indicatorTextDisplayMode = YLProgressBarIndicatorTextDisplayModeProgress;
-    _happinessView.hideStripes = YES;
-    _happinessView.trackTintColor = [UIColor colorWithRed:199.0/255.0 green:199.0/255.0 blue:205.0/255.0 alpha:1];
-
-    _upliftedView.progressTintColor        = [UIColor colorWithRed:19.0/255.0 green:128.0/255.0 blue:0.0/255.0 alpha:1];
-    [_upliftedView setProgress: strain.uplifting *.01];
-    _upliftedView.indicatorTextLabel.text = [NSString stringWithFormat:@"%d", strain.uplifting];
-    _upliftedView.indicatorTextDisplayMode = YLProgressBarIndicatorTextDisplayModeProgress;
-    _upliftedView.hideStripes = YES;
-    _upliftedView.trackTintColor = [UIColor colorWithRed:199.0/255.0 green:199.0/255.0 blue:205.0/255.0 alpha:1];
-
-    _energeticView.progressTintColor        = [UIColor colorWithRed:19.0/255.0 green:128.0/255.0 blue:0.0/255.0 alpha:1];
-    [_energeticView setProgress: strain.energetic *.01];
-    _energeticView.indicatorTextLabel.text = [NSString stringWithFormat:@"%d", strain.energetic];
-    _energeticView.indicatorTextDisplayMode = YLProgressBarIndicatorTextDisplayModeProgress;
-    _energeticView.hideStripes = YES;
-    _energeticView.trackTintColor = [UIColor colorWithRed:199.0/255.0 green:199.0/255.0 blue:205.0/255.0 alpha:1];
-
-    _euphoricView.progressTintColor        = [UIColor colorWithRed:19.0/255.0 green:128.0/255.0 blue:0.0/255.0 alpha:1];
-    [_euphoricView setProgress: strain.euphoric *.01];
-    _euphoricView.indicatorTextLabel.text = [NSString stringWithFormat:@"%d", strain.euphoric];
-    _euphoricView.indicatorTextDisplayMode = YLProgressBarIndicatorTextDisplayModeProgress;
-    _euphoricView.hideStripes = YES;
-    _euphoricView.trackTintColor = [UIColor colorWithRed:199.0/255.0 green:199.0/255.0 blue:205.0/255.0 alpha:1];
-
-    _relaxedView.progressTintColor        = [UIColor colorWithRed:19.0/255.0 green:128.0/255.0 blue:0.0/255.0 alpha:1];
-    [_relaxedView setProgress: strain.relaxed *.01];
-    _relaxedView.indicatorTextLabel.text = [NSString stringWithFormat:@"%d", strain.relaxed];
-    _relaxedView.indicatorTextDisplayMode = YLProgressBarIndicatorTextDisplayModeProgress;
-    _relaxedView.hideStripes = YES;
-    _relaxedView.trackTintColor = [UIColor colorWithRed:199.0/255.0 green:199.0/255.0 blue:205.0/255.0 alpha:1];
-
-    
-
-    */
-    
 }
 
 
-- (IBAction)write_review_button_tapped:(UIButton *)sender {
-    FIRUser *user = [FIRAuth auth].currentUser;
-    if (user.email == nil) {
-        [self performSegueWithIdentifier:@"userNotSignedinWriteReviewSegue" sender:self];
+- (IBAction)writeReviewButtonTapped:(UIButton *)sender {
+    FIRUser *youser = [FIRAuth auth].currentUser;
+    if (youser.email == nil) {
+        [user goToUserNotSignedInViewController:self];
     } else {
-        [self performSegueWithIdentifier:@"StrainWriteReviewSegue" sender:self];
+        [user goToWriteReviewViewController:self];
     }
 }
+- (IBAction)tappedSmokedButton:(UIButton *)sender {
+    FIRUser *youser = [FIRAuth auth].currentUser;
+    if (youser.email == nil) {
+        [user goToUserNotSignedInViewController:self];
+    } else {
+        _smokedButton.selected = !_smokedButton.selected;
+        NSString *eventKey;
+        
+        if(_smokedButton.selected){
+            eventKey = [firebaseRef.eventsRef childByAutoId].key;
+            [[[[firebaseRef.usersRef child:user.userKey] child:@"strainsTried"] child:strain.strainKey] setValue:@"test"];
+            [user.strainsTried addObject:strain.strainKey];
 
--(void) alertNoUserLoggedIn {
-    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Uh-oh! You are not signed in." message:@"Please signin to write a review." preferredStyle:UIAlertControllerStyleAlert];
-    UIAlertAction *login_action = [UIAlertAction actionWithTitle:@"Login" style:UIAlertActionStyleDefault handler:^(UIAlertAction * action){
-        [self performSegueWithIdentifier:@"strainReviewToLoginSegue" sender:self];
-    }];
-    UIAlertAction *signup_action = [UIAlertAction actionWithTitle:@"Signup" style:UIAlertActionStyleDefault handler:^(UIAlertAction * action){
-        [self performSegueWithIdentifier:@"strainReviewToSignupSegue" sender:self];
-    }];
-    UIAlertAction *cancel_action = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:^(UIAlertAction *action) {
-     // Cancel button tappped.
-    }];
-
-    [alert addAction:login_action];
-    [alert addAction:signup_action];
-    [alert addAction:cancel_action];
-    [self presentViewController:alert animated:YES completion:nil];
+            NSString *messageString = [@"Smoked a new strain " stringByAppendingString:strain.strainName];
+            [[[firebaseRef.eventsRef child:eventKey] child:@"userAvatarURL"] setValue:user.avatarURL];
+            [[[firebaseRef.eventsRef child:eventKey] child:@"message"] setValue:messageString];
+            [[[firebaseRef.eventsRef child:eventKey] child:@"userID"] setValue:user.userKey];
+            [[[firebaseRef.eventsRef child:eventKey] child:@"username"] setValue:user.username];
+        }
+        else{
+            [[[[firebaseRef.usersRef child:user.userKey] child:@"strainsTried"]  child:strain.strainKey] removeValue];
+            [user.strainsTried removeObject:strain.strainKey];
+            [[firebaseRef.eventsRef child:eventKey] removeValue];
+        }
+    }
 }
-
 
 - (CALayer *) customUITextField{
     CALayer *border = [CALayer layer];

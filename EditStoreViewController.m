@@ -23,11 +23,11 @@
 }
 
 - (void) loadImage {
-    [_image_view setImage:store .medium_image];
+    [_image_view setImage:[UIImage imageWithData:store.data]];
 }
 
 - (void) loadLabels {
-    _store_name_label.text = store .store_name;
+    _store_name_label.text = store .storeName;
     _address_label.text = store .address;
     _city_label.text = store .city;
     _state_label.text = store .state;
@@ -43,20 +43,19 @@
 }
 
 - (void) updateFirebaseDatabase{
-    [[[firebaseRef.storesRef child:store.store_key] child:@"store_name"]setValue:_store_name_label.text];
-    [[[firebaseRef.storesRef child:store.store_key] child:@"image_name"]setValue:store.store_key];
-    [[[[firebaseRef.storesRef child:store.store_key] child:@"location"] child:@"address"] setValue:_address_label.text];
-    [[[[firebaseRef.storesRef child:store.store_key] child:@"location"] child:@"city"]setValue:_city_label.text];
-    [[[[firebaseRef.storesRef child:store.store_key] child:@"location"] child:@"state"]setValue:_state_label.text];
-    [[[firebaseRef.storesRef child:store.store_key] child:@"phone_number"]setValue:_phone_number_label.text];
+    [[[firebaseRef.storesRef child:store.storeKey] child:@"store_name"]setValue:_store_name_label.text];
+    [[[[firebaseRef.storesRef child:store.storeKey] child:@"location"] child:@"address"] setValue:_address_label.text];
+    [[[[firebaseRef.storesRef child:store.storeKey] child:@"location"] child:@"city"]setValue:_city_label.text];
+    [[[[firebaseRef.storesRef child:store.storeKey] child:@"location"] child:@"state"]setValue:_state_label.text];
+    [[[firebaseRef.storesRef child:store.storeKey] child:@"phone_number"]setValue:_phone_number_label.text];
 }
 
 - (void) updateClassObjectValues {
-    store .store_name = _store_name_label.text;
-    store .address = _address_label.text;
-    store .city = _city_label.text;
-    store .state = _state_label.text;
-    store .phone_number = _phone_number_label.text;
+    store.storeKey = _store_name_label.text;
+    store.address = _address_label.text;
+    store.city = _city_label.text;
+    store.state = _state_label.text;
+    store.phone_number = _phone_number_label.text;
 }
 
 - (void) updateFirebaseStorage {
@@ -93,9 +92,9 @@
     NSDictionary *result = [results objectAtIndex:0];
     NSDictionary *geometry = [result objectForKey:@"geometry"];
     NSDictionary *location = [geometry objectForKey:@"location"];
-    store .latitude = [location objectForKey:@"lat"];
-    store .longitude = [location objectForKey:@"lng"];
-    store .google_place_id = [result objectForKey:@"place_id"];
+    store.latitude = [location objectForKey:@"lat"];
+    store.longitude = [location objectForKey:@"lng"];
+    store.googlePlaceID = [result objectForKey:@"place_id"];
 }
 
 - (void)loadFirstPhotoForPlace:(NSString *)placeID {
@@ -128,20 +127,6 @@
 - (IBAction)tappedImageView:(id)sender {
     UIAlertController *actionSheet = [UIAlertController alertControllerWithTitle:@"Select Image" message:nil preferredStyle:UIAlertControllerStyleActionSheet];
     
-    NSString *addressFormatted = [NSString stringWithFormat:@"%@%@%@", store .address, store .city, store .state];
-    [self gecodeAddress:addressFormatted];
-    
-    [actionSheet addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:^(UIAlertAction *action) {
-        
-        // Cancel button tappped.
-        [self dismissViewControllerAnimated:YES completion:^{
-        }];
-    }]];
-    
-    [actionSheet addAction:[UIAlertAction actionWithTitle:@"Check Google Place Photos" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
-        [self loadFirstPhotoForPlace:store .google_place_id];
-    }]];
-    
     [actionSheet addAction:[UIAlertAction actionWithTitle:@"Gallery" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
         picker2 = [[UIImagePickerController alloc] init];
         self->picker2.delegate = self;
@@ -172,7 +157,7 @@
 }
 
 - (void) loadImagesToClassObject{
-    store .medium_image = [[self class] imageWithImage:image scaledToWidth:150];
+    //store .medium_image = [[self class] imageWithImage:image scaledToWidth:150];
 }
 
 +(UIImage*)imageWithImage: (UIImage*) sourceImage scaledToWidth: (float) i_width

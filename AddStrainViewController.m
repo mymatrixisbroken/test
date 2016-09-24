@@ -28,13 +28,12 @@
         NSDictionary *dict3 = [self strainStats];
         NSDictionary *dict4 = [self consumptionForm];
         
-        strain.strain_key = [firebaseRef.strainsRef childByAutoId].key;
+        strain.strainKey = [firebaseRef.strainsRef childByAutoId].key;
         
-        [[[firebaseRef.strainsRef child:strain.strain_key] child:@"strain_key" ]setValue:strain.strain_key];
-        [[[firebaseRef.strainsRef child:strain.strain_key] child:@"high_type" ]setValue:dict2];
-        [[[firebaseRef.strainsRef child:strain.strain_key] child:@"stats" ]setValue:dict3];
-        [[[firebaseRef.strainsRef child:strain.strain_key] child:@"consumption_form" ]setValue:dict4];
-        strain.rating_count = 0;
+        [[[firebaseRef.strainsRef child:strain.strainKey] child:@"highType" ]setValue:dict2];
+        [[[firebaseRef.strainsRef child:strain.strainKey] child:@"stats" ]setValue:dict3];
+        [[[firebaseRef.strainsRef child:strain.strainKey] child:@"consumptionForm" ]setValue:dict4];
+        strain.ratingCount = 0;
         
         [self updateClassValues];
         [self updateFirDatabase];
@@ -70,24 +69,13 @@
         
         [strain.imageNames removeAllObjects];
         [strain.imageNames addObject:imageURL];
-        [[[[firebaseRef.strainsRef child:strain.strain_key] child:@"images"] child:@"1" ] setValue:imageURL];
+        [[[[firebaseRef.strainsRef child:strain.strainKey] child:@"images"] child:@"1" ] setValue:imageURL];
         
 
         [self performSegueWithIdentifier:@"SubmitStrainSegue" sender:self];
     }
     else if (!_imageSelected){
-        UIAlertController *alertController = [UIAlertController
-                                              alertControllerWithTitle:@"Uh-oh!"
-                                              message:@"Image not selected."
-                                              preferredStyle:UIAlertControllerStyleAlert];
-        UIAlertAction *okAction = [UIAlertAction
-                                   actionWithTitle:NSLocalizedString(@"OK", @"OK action")
-                                   style:UIAlertActionStyleDefault
-                                   handler:^(UIAlertAction *action)
-                                   {}];
-        
-        [alertController addAction:okAction];
-        [self presentViewController:alertController animated:YES completion:nil];
+        [user presentImageNotSelectedAlert:self];
     }
     
 }
@@ -154,7 +142,7 @@
 
 
 - (void) updateClassValues {
-    strain.strain_name = _strainNameField.text;
+    strain.strainName = _strainNameField.text;
     strain.thc = _thcField.text;
     strain.cbd = _cbdField.text;
     strain.grower = _growerField.text;
@@ -170,41 +158,39 @@
 }
 
 - (void) updateFirDatabase {
-    NSString *happiness = [NSString stringWithFormat:@"%d", strain.happiness];
-    NSString *uplifting = [NSString stringWithFormat:@"%d", strain.uplifting];
-    NSString *euphoric = [NSString stringWithFormat:@"%d", strain.euphoric];
-    NSString *energetic = [NSString stringWithFormat:@"%d", strain.energetic];
-    NSString *relaxed = [NSString stringWithFormat:@"%d", strain.relaxed];
+    NSString *happiness = [NSString stringWithFormat:@"%lu", strain.happiness];
+    NSString *uplifting = [NSString stringWithFormat:@"%lu", strain.uplifting];
+    NSString *euphoric = [NSString stringWithFormat:@"%lu", strain.euphoric];
+    NSString *energetic = [NSString stringWithFormat:@"%lu", strain.energetic];
+    NSString *relaxed = [NSString stringWithFormat:@"%lu", strain.relaxed];
 
-    [[[firebaseRef.strainsRef child:strain.strain_key] child:@"strain_name"] setValue:strain.strain_name];
-    [[[firebaseRef.strainsRef child:strain.strain_key] child:@"THC"] setValue:strain.thc];
-    [[[firebaseRef.strainsRef child:strain.strain_key] child:@"CBD"] setValue:strain.cbd];
-    [[[firebaseRef.strainsRef child:strain.strain_key] child:@"species"] setValue:strain.species];
-    [[[firebaseRef.strainsRef child:strain.strain_key] child:@"grower"] setValue:strain.grower];
-    [[[firebaseRef.strainsRef child:strain.strain_key] child:@"flavor"] setValue:strain.flavor];
-    [[[firebaseRef.strainsRef child:strain.strain_key] child:@"aroma"] setValue:strain.aroma];
-    [[[[firebaseRef.strainsRef child:strain.strain_key] child:@"high_type"] child:@"happiness"] setValue:happiness];
-    [[[[firebaseRef.strainsRef child:strain.strain_key] child:@"high_type"] child:@"uplifting"] setValue:uplifting];
-    [[[[firebaseRef.strainsRef child:strain.strain_key] child:@"high_type"] child:@"euphoric"] setValue:euphoric];
-    [[[[firebaseRef.strainsRef child:strain.strain_key] child:@"high_type"] child:@"energetic"] setValue:energetic];
-    [[[[firebaseRef.strainsRef child:strain.strain_key] child:@"high_type"] child:@"relaxed"] setValue:relaxed];
+    [[[firebaseRef.strainsRef child:strain.strainKey] child:@"strainName"] setValue:strain.strainName];
+    [[[firebaseRef.strainsRef child:strain.strainKey] child:@"thc"] setValue:strain.thc];
+    [[[firebaseRef.strainsRef child:strain.strainKey] child:@"cbd"] setValue:strain.cbd];
+    [[[firebaseRef.strainsRef child:strain.strainKey] child:@"species"] setValue:strain.species];
+    [[[firebaseRef.strainsRef child:strain.strainKey] child:@"grower"] setValue:strain.grower];
+    [[[firebaseRef.strainsRef child:strain.strainKey] child:@"flavor"] setValue:strain.flavor];
+    [[[firebaseRef.strainsRef child:strain.strainKey] child:@"aroma"] setValue:strain.aroma];
+    [[[[firebaseRef.strainsRef child:strain.strainKey] child:@"highType"] child:@"happiness"] setValue:happiness];
+    [[[[firebaseRef.strainsRef child:strain.strainKey] child:@"highType"] child:@"uplifting"] setValue:uplifting];
+    [[[[firebaseRef.strainsRef child:strain.strainKey] child:@"highType"] child:@"euphoric"] setValue:euphoric];
+    [[[[firebaseRef.strainsRef child:strain.strainKey] child:@"highType"] child:@"energetic"] setValue:energetic];
+    [[[[firebaseRef.strainsRef child:strain.strainKey] child:@"highType"] child:@"relaxed"] setValue:relaxed];
 }
 
 - (NSDictionary *)createEmptyStrain{
-    NSDictionary *dictionaryStrainCreate= @{@"strain_name": @"",
-                                            @"THC":@"",
-                                            @"CBD":@"",
+    NSDictionary *dictionaryStrainCreate= @{@"strainName": @"",
+                                            @"thc":@"",
+                                            @"cbd":@"",
                                             @"species":@"",
                                             @"grower":@"",
                                             @"flavor":@"",
                                             @"aroma":@"",
-                                            @"image_name":@"",
-                                            @"rating_count":@"0",
-                                            @"rating_score":@"",
+                                            @"ratings":@"0",
+                                            @"ratingScore":@"",
                                             @"stats":@"",
-                                            @"consumption_form":@"",
-                                            @"image_name":@"",
-                                            @"available_at":@""};
+                                            @"consumptionForm":@"",
+                                            @"availableAt":@""};
     return dictionaryStrainCreate;
 }
 
@@ -219,9 +205,9 @@
 
 
 - (NSDictionary *)strainStats{
-    NSDictionary *strainStats= @{@"total_count":@"",
-                                 @"monthly_count":@"",
-                                 @"total_user_count":@""};
+    NSDictionary *strainStats= @{@"totalCount":@"",
+                                 @"monthlyCount":@"",
+                                 @"totalUserCount":@""};
     return strainStats;
 }
 

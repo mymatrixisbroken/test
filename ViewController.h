@@ -21,7 +21,5 @@
 @property (strong, nonatomic) IBOutlet NSDictionary *storeObjectDictionary;
 @property (strong, nonatomic) IBOutlet NSDictionary *strainObjectDictionary;
 @property (strong, nonatomic) IBOutlet UIActivityIndicatorView *activity;
-@property float ratingScore;
-@property NSInteger ratingCount;
 
 @end

@@ -8,6 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import "strainClass.h"
+#import "userClass.h"
 #import "FirebaseReferenceClass.h"
 #import "ASValueTrackingSlider.h"
 @import JVFloatLabeledTextField;

@@ -27,7 +27,7 @@
 }
 
 - (void) loadLabels {
-    _strain_name_label.text = strain.strain_name;
+    _strain_name_label.text = strain.strainName;
     _thc_label.text = strain.thc;
     _cbd_label.text = strain.cbd;
     _grower_label.text = strain.grower;
@@ -115,9 +115,9 @@
 }
 
 - (void) updateFirebaseDatabase{
-    FIRDatabaseReference *strainRef= [firebaseRef.strainsRef child:strain.strain_key];
+    FIRDatabaseReference *strainRef= [firebaseRef.strainsRef child:strain.strainKey];
     [[strainRef child:@"strain_name"]setValue:_strain_name_label.text];
-    [[strainRef child:@"image_name"]setValue:strain.strain_key];
+    [[strainRef child:@"image_name"]setValue:strain.strainKey];
     [[strainRef child:@"THC"]setValue:_thc_label.text];
     [[strainRef child:@"CBD"]setValue:_cbd_label.text];
     [[strainRef child:@"grower"]setValue:_grower_label.text];
@@ -128,7 +128,7 @@
 }
 
 - (void) updateClassObjectValues {
-    strain.strain_name = _strain_name_label.text;
+    strain.strainName = _strain_name_label.text;
     strain.thc = _thc_label.text;
     strain.cbd = _cbd_label.text;
     strain.grower = _grower_label.text;

@@ -104,27 +104,28 @@
         
         for(int i=0; i<keys.count ; i++){
             NSString *key = keys[i];
-            NSDictionary *dict = [_strainObjectDictionary valueForKey:key];
-            NSDictionary *dict2 = [dict valueForKey:@"high_type"];
-            NSArray *array = [dict valueForKey:@"images"];
+            NSDictionary *strainDict = [_strainObjectDictionary valueForKey:key];
+            NSDictionary *highDict = [strainDict valueForKey:@"highType"];
+            NSArray *array = [strainDict valueForKey:@"images"] ;
             
-            NSDictionary *dict4 = [dict valueForKey:@"available_at"];
-            NSArray *array2 = [dict4 allKeys];
-
+            NSArray *availableAtArray = [[strainDict valueForKey:@"availableAt"] allKeys];
             
-            NSDictionary *dict3 = [dict valueForKey:@"rating_count"];
-            _ratingScore = 0.0;
-            _ratingCount = 0;
-            NSArray *arr = [dict3 allValues];
-            _ratingCount = arr.count;
-            for (int i =0; i < _ratingCount; i++) {
-                _ratingScore += [[arr objectAtIndex:i] floatValue];
+            NSArray *ratingsArray = [[strainDict valueForKey:@"ratings"] allValues];
+            float ratingScore = 0.0;
+            for (int i =0; i < ratingsArray.count; i++) {
+                ratingScore += [[ratingsArray objectAtIndex:i] floatValue];
             }
-            _ratingScore = _ratingScore / (float)_ratingCount;
+            ratingScore = ratingScore / (float)ratingsArray.count;
             
             //you have to delcare a new object instance to load table cells!!!!!!!!!!!!!!!!!!!
             strainClass *strainLoop = [[strainClass alloc] init];
-            [strainLoop setClassObject:key Values:dict Image:array highType:dict2 :_ratingCount :_ratingScore :array2];
+            [strainLoop setStrainObject:key
+                         fromDictionary:strainDict
+                               highType:highDict
+                                 images:array
+                            availableAt:availableAtArray
+                            ratingCount:ratingsArray.count
+                            ratingScore:ratingScore];
             [strainLoop.imageNames removeObjectAtIndex:0];
             
             dispatch_async(dispatch_get_global_queue(0,0), ^{
@@ -158,12 +159,14 @@
         
         for(int i=0; i<keys.count ; i++){
             NSString *key = keys[i];
-            NSDictionary *dict = [_storeObjectDictionary valueForKey:key];
-            NSArray *array = [dict valueForKey:@"images"];
+            NSDictionary *storeDict = [_storeObjectDictionary valueForKey:key];
+            NSArray *imagesArray = [storeDict valueForKey:@"images"];
             
             //you have to delcare a new object instance to load table cells!!!!!!!!!!!!!!!!!!!
             storeClass *storeloop = [[storeClass alloc] init];
-            [storeloop setClassObject:key Values:dict Image:array];
+            [storeloop setStoreObject:key
+                       fromDictionary:storeDict
+                               images:imagesArray];
             [storeloop.imageNames removeObjectAtIndex:0];
             dispatch_async(dispatch_get_global_queue(0,0), ^{
                 NSInteger length = [[storeloop.imageNames objectAtIndex:0] length];
@@ -225,7 +228,7 @@
                 tempStore = [objectsArray.storeObjectArray objectAtIndex:indexPath.row];
                 
                 cell.imageView.image = [UIImage imageWithData:tempStore.data];
-                cell.label.text = tempStore.store_name;
+                cell.label.text = tempStore.storeName;
             }
         }
     }
@@ -236,7 +239,7 @@
                 tempStrain = [objectsArray.strainObjectArray objectAtIndex:indexPath.row];
                 
                 cell.imageView.image = [UIImage imageWithData:tempStrain.data];
-                cell.label.text = tempStrain.strain_name;
+                cell.label.text = tempStrain.strainName;
                 
                 if ([tempStrain.species isEqual:@"stevia"]) {
                     cell.steviaImageView.image = [UIImage imageNamed:@"stevia"];

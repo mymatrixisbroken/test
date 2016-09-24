@@ -27,6 +27,52 @@
 - (IBAction)tapped_back_button:(UIBarButtonItem *)sender {
     [self performSegueWithIdentifier:@"storeProfileToListSegue" sender:self];
 }
+- (IBAction)tappedWriteReviewButton:(UIButton *)sender {
+    FIRUser *youser = [FIRAuth auth].currentUser;
+    if (youser.email == nil) {
+        [user goToUserNotSignedInViewController:self];
+    } else {
+        [user goToWriteReviewViewController:self];
+    }
+}
+- (IBAction)tappedCheckInButton:(UIButton *)sender {
+    FIRUser *youser = [FIRAuth auth].currentUser;
+    if (youser.email == nil) {
+        [user goToUserNotSignedInViewController:self];
+    } else {
+        _checkInButton.selected = !_checkInButton.selected;
+        NSString *eventKey;
+        NSString *checkInKey;
+        if(_checkInButton.selected){
+            
+            NSDate *today = [NSDate date];
+            NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
+            [dateFormat setDateFormat:@"dd/MM/yyyy"];
+            NSString *todaysDate = [dateFormat stringFromDate:today];
+
+            eventKey = [firebaseRef.eventsRef childByAutoId].key;
+            checkInKey = [[[firebaseRef.usersRef child:user.userKey] child:@"checkIns"] childByAutoId].key;
+
+            [[[[firebaseRef.usersRef child:user.userKey] child:@"storesVisited"] child:store.storeKey] setValue:store.storeName];
+            [user.storesVisited addObject:store.storeKey];
+            
+            [[[[[firebaseRef.usersRef child:user.userKey] child:@"checkIns"] child:checkInKey] child:@"storeName"] setValue:store.storeName];
+            [[[[[firebaseRef.usersRef child:user.userKey] child:@"checkIns"] child:checkInKey] child:@"date"] setValue:todaysDate];
+            [user.checkIns addObject:checkInKey];
+            
+            NSString *messageString = [@"Checked in to " stringByAppendingString:store.storeName];
+            [[[firebaseRef.eventsRef child:eventKey] child:@"userAvatarURL"] setValue:user.avatarURL];
+            [[[firebaseRef.eventsRef child:eventKey] child:@"message"] setValue:messageString];
+            [[[firebaseRef.eventsRef child:eventKey] child:@"userID"] setValue:user.userKey];
+            [[[firebaseRef.eventsRef child:eventKey] child:@"username"] setValue:user.username];
+        }
+        else{
+            //[[[[firebaseRef.usersRef child:user.userKey] child:@"storesVisit"]  child:store.storeKey] removeValue];
+            //[user.storesVisited removeObject:store.storeKey];
+            //[[firebaseRef.eventsRef child:eventKey] removeValue];
+        }
+    }
+}
 
 - (void)loadImageView {
     dispatch_async(dispatch_get_global_queue(0,0), ^{
@@ -50,7 +96,7 @@
 }
 
 - (void) setLabelValues {
-    _store_name_label.text = store .store_name;
+    _store_name_label.text = store .storeName;
     _store_address_label.text =  [@"Address: "stringByAppendingString: store .address];
     _store_city_label.text =  [@"City: " stringByAppendingString:store .city];
     _store_state_label.text = [@"State: " stringByAppendingString:store .state];
@@ -60,11 +106,11 @@
 }
 
 - (void)loadRatingScore {
-    _store_rating_score.rating = store .rating_score;
+    _store_rating_score.rating = store .ratingScore;
 }
 
 - (void)loadRatingCount{
-    _store_rating_count.text = [[NSString stringWithFormat:@"%lu", (unsigned long)store .rating_count] stringByAppendingString:@" reviews"];
+    _store_rating_count.text = [[NSString stringWithFormat:@"%lu", (unsigned long)store .ratingCount] stringByAppendingString:@" reviews"];
 }
 
 - (IBAction)tappedEditButton:(UIBarButtonItem *)sender {

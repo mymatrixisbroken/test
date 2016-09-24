@@ -36,7 +36,9 @@ findFriendClass *tempFriend;
     return self;
 }
 
--(id)set:(NSString *)uid User:(NSString *)name image:(NSString *)url{
+-(id)set:(NSString *)uid
+    user:(NSString *)name
+   image:(NSString *)url{
     self.key = uid;
     self.username = name;
     self.imageURL = url;

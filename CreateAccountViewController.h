@@ -13,13 +13,11 @@
 @import JVFloatLabeledTextField;
 
 @interface CreateAccountViewController : UIViewController
-@property (weak, nonatomic) IBOutlet UIButton *CreateAccountNext;
-
+@property (weak, nonatomic) IBOutlet UIButton *createAccountButton;
 @property (weak, nonatomic) IBOutlet JVFloatLabeledTextField *emailField;
 @property (weak, nonatomic) IBOutlet JVFloatLabeledTextField *passwordField;
 @property (strong, nonatomic) IBOutlet JVFloatLabeledTextField *usernameField;
-
-@property (weak, nonatomic) IBOutlet NSString* todays_date;
+@property (weak, nonatomic) IBOutlet NSString* todaysDate;
 
 @end
 

@@ -13,32 +13,66 @@
 extern userClass *user;
 
 @interface userClass : NSObject
-@property NSString *user_key;
+@property NSString *userKey;
 @property NSString *email;
 @property NSString *username;
-@property NSString *date_joined;
-@property NSString *last_signed_in;
-@property NSString *account_type;
+@property NSString *dateJoined;
+@property NSString *lastSignedIn;
+@property NSString *accountType;
 @property NSString *avatarURL;
-@property NSArray *wish_list;
-@property NSMutableArray *friends;
-@property NSArray *reviews;
+@property NSData *data;
+
 @property NSMutableArray *badges;
-@property NSArray *strains_tried;
-@property NSArray *stores_visited;
-@property NSMutableArray *events;
-@property NSMutableArray *checkIns;
 @property NSInteger badgeCount;
+
+@property NSMutableArray *checkIns;
 @property NSInteger checkInCount;
+
+@property NSMutableArray *friendsEvents;
+@property NSInteger *friendsEventsCount;
+
+@property NSMutableArray *friends;
 @property NSInteger friendsCount;
+
+@property NSMutableArray *reviews;
 @property NSInteger reviewsCount;
+
+@property NSMutableArray *storesVisited;
 @property NSInteger storesVisitedCount;
+
+@property NSMutableArray *strainsTried;
 @property NSInteger strainsTriedCount;
+
+@property NSMutableArray *wishList;
 @property NSInteger wishListCount;
+
+
+
 
 + (userClass *)sharedInstance;
 -(id)createUser:(NSString *)createAccountEmail SignedUp:(NSString *)createAccountUsername;
--(id)setClassObject:key Values:(NSDictionary *)dict :(NSArray *) array1 :(NSArray *) array2 :(NSArray *) array3 :(NSArray *) array4 :(NSArray *) array5 :(NSArray *) array6;
+-(id)setUserObject:key
+    fromDictionary:(NSDictionary *)userDict
+            badges:(NSMutableArray *)array1
+          checkIns:(NSMutableArray *)array2
+           friends:(NSMutableArray *)array3
+           reviews:(NSMutableArray *)array4
+     storesVisited:(NSMutableArray *)array5
+      strainsTried:(NSMutableArray *)array6
+          wishList:(NSMutableArray *)array7;
 
-
-@end
+-(void)goToNewsFeedViewController:(UIViewController *)viewController;
+-(void)goToSearchViewController:(UIViewController *)viewController;
+-(void)goToStrainsViewController:(UIViewController *)viewController;
+-(void)goToStoresViewController:(UIViewController *)viewController;
+-(void)goToUserNotSignedInViewController:(UIViewController *)viewController;
+-(void)goToCurrentUserProfileViewController:(UIViewController *)viewController;
+-(void)goToLoginViewController:(UIViewController *)viewController;
+-(void)goToWriteReviewViewController:(UIViewController *)viewController;
+-(void)presentLoginErrorAlert:(UIViewController *)viewController;
+-(void)presentImageNotSelectedAlert:(UIViewController *)viewController;
+-(void)presentUsernameInvalidAlert:(UIViewController *)viewController;
+-(void)presentUsernameTakenAlert:(UIViewController *)viewController;
+-(void)presentPasswordInvalidAlert:(UIViewController *)viewController;
+-(void)presentEmailInvalidAlert:(UIViewController *)viewController;
+-(void)presentStrainEditAlert:(UIViewController *)viewController;@end

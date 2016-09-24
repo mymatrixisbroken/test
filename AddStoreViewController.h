@@ -9,6 +9,7 @@
 #import <UIKit/UIKit.h>
 #import <MapKit/MKAnnotation.h>
 #import "storeClass.h"
+#import "userClass.h"
 #import "FirebaseReferenceClass.h"
 @import Firebase;
 @import GooglePlaces;
