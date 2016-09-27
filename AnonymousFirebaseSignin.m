@@ -52,7 +52,8 @@
 
 - (void) loadfirebaseRef {
     firebaseRef = [FirebaseReferenceClass sharedInstance];
-    [self performSegueWithIdentifier:@"successfulAnonymousLoginSegue" sender:self];
+    objectsArray.selection = 1;
+    [user goToStrainsStoresViewController:self];
 }
 
 - (void)didReceiveMemoryWarning {

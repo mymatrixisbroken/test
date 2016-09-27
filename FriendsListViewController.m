@@ -17,13 +17,20 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
+    _searchBar = [[UISearchBar alloc] initWithFrame:CGRectMake(0, 0, 200, 44)];
+    _searchBar.autocorrectionType = UITextAutocorrectionTypeNo;
+    _searchBar.delegate = self;
+    _searchBar.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+    
+
+    
+    self.navigationController.navigationBar.topItem.titleView = _searchBar;
+
+
     self.tableView.delegate = self;
     self.tableView.dataSource = self;
-    self.searchBar.delegate = self;
-    self.shyNavBarManager.scrollView = self.tableView;
-    [self loadExtView];
-}
 
+}
 
 -(void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText{
     if(searchBar.text.length == 0){
@@ -32,47 +39,6 @@
     }
     else{
         [self searchFirebaseForUsernames];
-    }
-}
-
-- (void) loadExtView{
-    extensionViewClass *extView = [[extensionViewClass alloc] init];
-    [extView setView:CGRectGetWidth(self.view.bounds)];
-    [extView addButtons:CGRectGetWidth(self.view.bounds)];
-    [extView.newsFeedButton addTarget:self action:@selector(newsFeedButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
-    [extView.searchFriendsButton addTarget:self action:@selector(searchFriendsButton:) forControlEvents:UIControlEventTouchUpInside];
-    [extView.strainButton addTarget:self action:@selector(strainButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
-    [extView.storeButton addTarget:self action:@selector(storeButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
-    [extView.userProfileButton addTarget:self action:@selector(userProfileButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
-    [self.shyNavBarManager setExtensionView:extView];
-    [self.shyNavBarManager setStickyExtensionView:YES];
-}
-
--(IBAction)newsFeedButtonPressed:(UIButton*)btn {
-    [user goToNewsFeedViewController:self];
-}
-
--(IBAction)searchFriendsButton:(UIButton*)btn {
-    [user goToSearchViewController:self];
-}
-
--(IBAction)strainButtonPressed:(UIButton*)btn {
-    objectsArray.selection = NO;
-    [user goToStrainsViewController:self];
-}
-
--(IBAction)storeButtonPressed:(UIButton*)btn {
-    objectsArray.selection = YES;
-    [user goToStoresViewController:self];
-}
-
--(IBAction)userProfileButtonPressed:(UIButton*)btn {
-    FIRUser *youser = [FIRAuth auth].currentUser;
-    if(youser.anonymous){
-        [user goToUserNotSignedInViewController:self];
-    }
-    else{
-        [user goToCurrentUserProfileViewController:self];
     }
 }
 

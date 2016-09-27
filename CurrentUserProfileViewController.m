@@ -45,31 +45,26 @@
     extensionViewClass *extView = [[extensionViewClass alloc] init];
     [extView setView:CGRectGetWidth(self.view.bounds)];
     [extView addButtons:CGRectGetWidth(self.view.bounds)];
-    [extView.newsFeedButton addTarget:self action:@selector(newsFeedButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
-    [extView.searchFriendsButton addTarget:self action:@selector(searchFriendsButton:) forControlEvents:UIControlEventTouchUpInside];
-    [extView.strainButton addTarget:self action:@selector(strainButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
     [extView.storeButton addTarget:self action:@selector(storeButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
+    [extView.strainButton addTarget:self action:@selector(strainButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
+    [extView.newsFeedButton addTarget:self action:@selector(newsFeedButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
     [extView.userProfileButton addTarget:self action:@selector(userProfileButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
     [self.shyNavBarManager setExtensionView:extView];
     [self.shyNavBarManager setStickyExtensionView:YES];
 }
 
--(IBAction)newsFeedButtonPressed:(UIButton*)btn {
-    [user goToNewsFeedViewController:self];
-}
-
--(IBAction)searchFriendsButton:(UIButton*)btn {
-    [user goToSearchViewController:self];
+-(IBAction)storeButtonPressed:(UIButton*)btn {
+    objectsArray.selection = 1;
+    [user goToStrainsStoresViewController:self];
 }
 
 -(IBAction)strainButtonPressed:(UIButton*)btn {
-    objectsArray.selection = NO;
-    [user goToStrainsViewController:self];
+    objectsArray.selection = 0;
+    [user goToStrainsStoresViewController:self];
 }
 
--(IBAction)storeButtonPressed:(UIButton*)btn {
-    objectsArray.selection = YES;
-    [user goToStoresViewController:self];
+-(IBAction)newsFeedButtonPressed:(UIButton*)btn {
+    [user goToNewsFeedViewController:self];
 }
 
 -(IBAction)userProfileButtonPressed:(UIButton*)btn {

@@ -13,4 +13,5 @@
 @property (nonatomic, strong) UIImageView *steviaImageView;
 @property (nonatomic, strong) UIImageView *indicaImageView;
 @property (nonatomic, strong) UILabel *label;
+@property (nonatomic, strong) UILabel *distanceToMeLabel;
 @end

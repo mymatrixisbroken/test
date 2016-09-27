@@ -19,12 +19,14 @@
     
     [self.navigationController.navigationBar setTitleTextAttributes:@{NSForegroundColorAttributeName : [UIColor whiteColor]}];
     [UINavigationBar appearance].tintColor = [UIColor whiteColor];
-    
+
     UIBarButtonItem *rightButton = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"menu"] style:UIBarButtonItemStylePlain target:self   action:@selector(barButtonCustomPressed:)];
+
     UIBarButtonItem *leftButton = [[UIBarButtonItem alloc] initWithTitle:@"Search Ents" style:UIBarButtonItemStylePlain target:self action:nil];
-    
     self.navigationBar.topItem.rightBarButtonItem = rightButton;
+
     self.navigationBar.topItem.leftBarButtonItem = leftButton;
+    
 }
 
 -(IBAction)barButtonCustomPressed:(UIBarButtonItem*)btn

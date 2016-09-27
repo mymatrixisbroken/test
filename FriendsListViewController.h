@@ -7,7 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-#import <TLYShyNavBar/TLYShyNavBarManager.h>
+//#import <TLYShyNavBar/TLYShyNavBarManager.h>
 #import "extensionViewClass.h"
 #import "FirebaseReferenceClass.h"
 #import "FindFriendsCell.h"

@@ -9,6 +9,6 @@
 #import <UIKit/UIKit.h>
 #import "userClass.h"
 
-@interface SearchFriendsNavigationController : UINavigationController
+@interface SearchFriendsNavigationController : UINavigationController <UISearchBarDelegate, UISearchDisplayDelegate>
 
 @end

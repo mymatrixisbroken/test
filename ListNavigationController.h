@@ -10,6 +10,5 @@
 #import "userClass.h"
 
 @interface ListNavigationController : UINavigationController <UISearchBarDelegate, UISearchDisplayDelegate>
-@property (strong, nonatomic) IBOutlet UISearchBar *searchBar;
 
 @end

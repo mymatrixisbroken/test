@@ -30,7 +30,7 @@
 }
 
 -(IBAction) leftButtonPressed:(UIBarButtonItem *)btn{
-    [user goToStrainsViewController:self];
+    [user goToStrainsStoresViewController:self];
 }
 
 

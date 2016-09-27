@@ -11,10 +11,9 @@
 @interface extensionViewClass : UIView
 - (id) setView:(CGFloat ) width;
 - (id) addButtons:(CGFloat ) width;
-@property UIButton *newsFeedButton;
-@property UIButton *searchFriendsButton;
-@property UIButton *strainButton;
 @property UIButton *storeButton;
+@property UIButton *strainButton;
+@property UIButton *newsFeedButton;
 @property UIButton *userProfileButton;
 
 @end

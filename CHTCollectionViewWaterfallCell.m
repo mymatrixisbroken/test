@@ -51,12 +51,26 @@
     return _label;
 }
 
+- (UILabel *)distanceToMeLabel{
+    if (!_distanceToMeLabel) {
+        _distanceToMeLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 55, self.bounds.size.width, 40)];
+        _distanceToMeLabel.tag = 201;
+        /*_distanceToMeLabel--------- */_distanceToMeLabel.textColor = [UIColor blackColor];
+        _distanceToMeLabel.backgroundColor=[UIColor clearColor];
+        _distanceToMeLabel.shadowColor=[UIColor blackColor];
+        _distanceToMeLabel.textColor=[UIColor whiteColor];
+        _distanceToMeLabel.userInteractionEnabled=NO;
+    }
+    return _distanceToMeLabel;
+}
+
 - (id)initWithFrame:(CGRect)frame {
   if (self = [super initWithFrame:frame]) {
       [self.contentView addSubview:self.imageView];
       [self.contentView addSubview:self.steviaImageView];
       [self.contentView addSubview:self.indicaImageView];
       [self.contentView addSubview:self.label];
+      [self.contentView addSubview:self.distanceToMeLabel];
   }
   return self;
 }
