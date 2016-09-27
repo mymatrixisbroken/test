@@ -7,7 +7,17 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "objectsArrayClass.h"
+#import <CoreLocation/CoreLocation.h>
+#import "FirebaseReferenceClass.h"
 
-@interface CHTCollectionViewWaterfallHeader : UICollectionReusableView
+
+@interface CHTCollectionViewWaterfallHeader : UICollectionReusableView <CLLocationManagerDelegate>
+@property UIButton *AtoZButton;
+@property UIButton *nearMeButton;
+@property     CLLocationManager *locationManager;
+@property     NSString* destLat;
+@property     NSString* destLon;
+
 
 @end

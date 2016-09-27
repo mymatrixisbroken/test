@@ -37,9 +37,10 @@
     store.state = _state_field.text;
 }
 
-- (void) gecodeAddress:(NSString *)address{
+- (void) geocodeAddress:(NSString *)address{
+
     NSString *geocodingBaseURL = @"https://maps.googleapis.com/maps/api/geocode/json?";
-    NSString *url = [NSString stringWithFormat:@"%@address=%@&sensor=false", geocodingBaseURL, address];
+    NSString *url = [NSString stringWithFormat:@"%@address=%@&key=AIzaSyAsZ171sgZHuTcapToLRQ5-W9dl_WRLOh4", geocodingBaseURL, address];
     url = [url stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
     NSURL *queryURL = [NSURL URLWithString:url];
     NSData *data = [NSData dataWithContentsOfURL:queryURL];
@@ -188,6 +189,7 @@
 }
 - (IBAction)tapped_submit_button:(UIButton *)sender {
     if(_imageSelected){
+        [self geocodeAddress:_address_field.text];
         NSDictionary *dict2 = [self storeLocation];
         NSDictionary *dict3 = [self storeStats];
         store.storeKey = [firebaseRef.storesRef childByAutoId].key;
@@ -202,7 +204,7 @@
         UIImage *sizedImage = [[self class] imageWithImage:self.imageView.image scaledToSize:size];
         //NSString *encodedString = [UIImagePNGRepresentation(self.strainImageView.image) base64EncodedStringWithOptions:NSDataBase64Encoding64CharacterLineLength];
         NSData *encodedString = UIImagePNGRepresentation(sizedImage);
-        NSLog(@"image encoded= %@", encodedString);
+        //NSLog(@"image encoded= %@", encodedString);
         
         NSURL *theURL = [NSURL URLWithString:@"https://api.imgur.com/3/image"];
         NSMutableURLRequest *theRequest = [NSMutableURLRequest requestWithURL:theURL cachePolicy:NSURLRequestReloadIgnoringCacheData timeoutInterval:20.0f];
@@ -220,8 +222,8 @@
         NSData *theResponseData = [NSURLConnection sendSynchronousRequest:theRequest returningResponse:&theResponse error:&theError];
         
         NSDictionary *dataDictionaryResponse = [NSJSONSerialization JSONObjectWithData:theResponseData options:0 error:&theError];
-        NSLog(@"url to send request= %@",theURL);
-        NSLog(@"%@",dataDictionaryResponse);
+        //NSLog(@"url to send request= %@",theURL);
+        //NSLog(@"%@",dataDictionaryResponse);
         
         NSDictionary *output = [dataDictionaryResponse valueForKey:@"data"];
         NSString *imageURL = [output valueForKey:@"link"];

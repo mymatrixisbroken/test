@@ -42,7 +42,7 @@ const static CGFloat frameSizeWidth = 600.0f;
             [self updateFirebaseDatabaseValues];
             
             if (user.userKey != nil) {
-                [self performSegueWithIdentifier:@"createAccountToUserProfileSegue" sender:self];
+                [user goToCurrentUserProfileViewController:self];
             }
             else {
                 NSLog(@"Failed to create account.");

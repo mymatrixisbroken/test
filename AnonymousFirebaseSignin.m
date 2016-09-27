@@ -35,6 +35,7 @@
             // Uh-oh, an error occurred!
             NSLog(@"Anonymous Firebase User is NOT signed in..");
             NSLog(@"%@", error.localizedDescription);
+            //NSLog(@"UID:%@.",error.userInfo);
         }
         else {
             //Assign current Firebase user to a variable called user

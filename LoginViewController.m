@@ -52,7 +52,7 @@ const static CGFloat frameSizeWidth = 600.0f;
 }
 
 - (IBAction)SignUpButtonTapped:(id)sender {
-    [self performSegueWithIdentifier:@"CreateAccountSegue" sender:self];
+    [user gotoCreateAccountViewController:self];
 }
 
 - (IBAction)SignInButtonTapped:(UIButton *)sender{
@@ -152,7 +152,6 @@ const static CGFloat frameSizeWidth = 600.0f;
             user.data = data;
         });
     });
-
 }
 
 -(void) newLoadEventsFromFirebaseDatabse{
@@ -178,8 +177,7 @@ const static CGFloat frameSizeWidth = 600.0f;
                     [tempDict setObject:value forKey:key ];
                     [user.friendsEvents addObject:tempDict];
                 }
-                user.friendsEvents = [NSMutableArray arrayWithArray:[[user.friendsEvents reverseObjectEnumerator] allObjects]];
-                [self performSegueWithIdentifier:@"loginToProfileSegue" sender:self];
+                [user goToCurrentUserProfileViewController:self];
             }
         }];
     }

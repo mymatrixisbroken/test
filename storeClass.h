@@ -26,7 +26,7 @@ extern storeClass *store;
 @property NSString *googlePlaceID;
 @property NSMutableArray *imageNames;
 @property NSData *data;
-@property (nonatomic, assign) double ratingScore;
+@property (nonatomic, assign) float ratingScore;
 @property (nonatomic, assign) NSInteger ratingCount;
 @property (nonatomic, assign) NSInteger totalCount;
 @property (nonatomic, assign) NSInteger monthlyCount;

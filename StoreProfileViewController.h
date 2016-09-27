@@ -10,7 +10,7 @@
 #import "storeClass.h"
 #import "FirebaseReferenceClass.h"
 #import "userClass.h"
-@import Cosmos;
+@import HCSStarRatingView;
 @import Firebase;
 
 @interface StoreProfileViewController : UIViewController
@@ -18,7 +18,7 @@
 @property (strong, nonatomic) IBOutlet UIButton *back_button;
 @property (strong, nonatomic) IBOutlet UIButton *edit_button;
 @property (strong, nonatomic) IBOutlet UIImageView *store_image_view;
-@property (strong, nonatomic) IBOutlet CosmosView *store_rating_score;
+@property (strong, nonatomic) IBOutlet HCSStarRatingView *store_rating_score;
 @property (strong, nonatomic) IBOutlet UILabel *store_rating_count;
 @property (strong, nonatomic) IBOutlet UILabel *store_name_label;
 @property (strong, nonatomic) IBOutlet UILabel *store_address_label;

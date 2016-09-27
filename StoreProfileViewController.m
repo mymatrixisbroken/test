@@ -67,9 +67,9 @@
             [[[firebaseRef.eventsRef child:eventKey] child:@"username"] setValue:user.username];
         }
         else{
-            //[[[[firebaseRef.usersRef child:user.userKey] child:@"storesVisit"]  child:store.storeKey] removeValue];
-            //[user.storesVisited removeObject:store.storeKey];
-            //[[firebaseRef.eventsRef child:eventKey] removeValue];
+            [[[[firebaseRef.usersRef child:user.userKey] child:@"storesVisit"]  child:store.storeKey] removeValue];
+            [user.storesVisited removeObject:store.storeKey];
+            [[firebaseRef.eventsRef child:eventKey] removeValue];
         }
     }
 }
@@ -106,7 +106,7 @@
 }
 
 - (void)loadRatingScore {
-    _store_rating_score.rating = store .ratingScore;
+    _store_rating_score.value = store.ratingScore;
 }
 
 - (void)loadRatingCount{

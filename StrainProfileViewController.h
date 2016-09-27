@@ -11,12 +11,12 @@
 #import "userClass.h"
 #import "YLProgressBar.h"
 #import "FirebaseReferenceClass.h"
-@import Cosmos;
+@import HCSStarRatingView;
 @import Firebase;
 
 @interface StrainProfileViewController : UIViewController
 @property (weak, nonatomic) IBOutlet UIImageView *strainImage;
-@property (weak, nonatomic) IBOutlet CosmosView *starRating;
+@property (weak, nonatomic) IBOutlet HCSStarRatingView *starRating;
 @property (strong, nonatomic) IBOutlet UILabel *strainNameLabel;
 @property (strong, nonatomic) IBOutlet UILabel *strainTHCLabel;
 @property (strong, nonatomic) IBOutlet UILabel *strainCBDLabel;

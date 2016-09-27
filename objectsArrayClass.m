@@ -15,6 +15,7 @@ objectsArrayClass *objectsArray;
 @synthesize strainObjectArray;
 @synthesize storeObjectArray;
 @synthesize selection;
+@synthesize searchType;
 
 + (objectsArrayClass *)sharedInstance {
     static dispatch_once_t onceToken;
