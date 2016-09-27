@@ -52,8 +52,10 @@
 }
 
 - (void)loadRatingScore {
+    NSLog(@"rating is %f", strain.ratingScore);
     if( !(isnan(strain.ratingScore))){
-        _starRating.rating = strain.ratingScore;
+        NSLog(@"1 rating is %f", strain.ratingScore);
+        _starRating.value = strain.ratingScore;
     }
 }
 
@@ -127,7 +129,7 @@
         else{
             [[[[firebaseRef.usersRef child:user.userKey] child:@"strainsTried"]  child:strain.strainKey] removeValue];
             [user.strainsTried removeObject:strain.strainKey];
-            [[firebaseRef.eventsRef child:eventKey] removeValue];
+//            [[firebaseRef.eventsRef child:eventKey] removeValue];
         }
     }
 }
