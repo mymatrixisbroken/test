@@ -30,14 +30,14 @@
     CHTCollectionViewWaterfallLayout *layout = [[CHTCollectionViewWaterfallLayout alloc] init];
 
     layout.sectionInset = UIEdgeInsetsMake(3, 3, 3 ,3);
-    layout.headerHeight = 0;
+    layout.headerHeight = 44;
     layout.footerHeight = 0;
     layout.minimumColumnSpacing = 1;
     layout.minimumInteritemSpacing = 1;
       
       
-    CGRect frame = CGRectMake(0, 63, CGRectGetWidth(self.view.bounds), CGRectGetHeight(self.view.bounds) -64);
-    //_collectionView = [[UICollectionView alloc] initWithFrame:frame collectionViewLayout:layout];
+//    CGRect frame = CGRectMake(0, 63, CGRectGetWidth(self.view.bounds), CGRectGetHeight(self.view.bounds) -64);
+//    _collectionView = [[UICollectionView alloc] initWithFrame:frame collectionViewLayout:layout];
     
       
     _collectionView = [[UICollectionView alloc] initWithFrame:self.view.bounds collectionViewLayout:layout];
@@ -78,6 +78,15 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
+    _searchBar = [[UISearchBar alloc] initWithFrame:CGRectMake(0, 0, 200, 44)];
+    _searchBar.autocorrectionType = UITextAutocorrectionTypeNo;
+    _searchBar.delegate = self;
+    _searchBar.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+    
+    self.navigationController.navigationBar.topItem.titleView = _searchBar;
+    
+    
     _activity = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge]; [self.view addSubview:_activity];
 
     if (objectsArray.selection == 0){
@@ -110,13 +119,13 @@
             
             NSArray *availableAtArray = [[strainDict valueForKey:@"availableAt"] allKeys];
             
-            NSArray *ratingsArray = [[strainDict valueForKey:@"ratings"] allValues];
+            NSArray *ratingsArray = [[strainDict valueForKey:@"ratingCount"] allValues];
             float ratingScore = 0.0;
             for (int i =0; i < ratingsArray.count; i++) {
                 ratingScore += [[ratingsArray objectAtIndex:i] floatValue];
             }
             ratingScore = ratingScore / (float)ratingsArray.count;
-            
+
             //you have to delcare a new object instance to load table cells!!!!!!!!!!!!!!!!!!!
             strainClass *strainLoop = [[strainClass alloc] init];
             [strainLoop setStrainObject:key
@@ -148,10 +157,41 @@
             });
             [objectsArray.strainObjectArray addObject:strainLoop];
         }
+        [self alphabetizeArray:objectsArray.strainObjectArray];
     }];
 }
 
+-(void) alphabetizeArray:(NSMutableArray *) array{
+    [array sortUsingDescriptors:
+     @[
+       [NSSortDescriptor sortDescriptorWithKey:@"strainName" ascending:YES selector:@selector(caseInsensitiveCompare:)]
+       ]];
+}
+
 - (void) loadStores {
+    CLGeocoder *ceo;
+    _locationManager = [[CLLocationManager alloc] init];
+    _locationManager.delegate = self;
+    _locationManager.distanceFilter = kCLDistanceFilterNone;
+    _locationManager.desiredAccuracy = kCLLocationAccuracyBest;
+    
+    if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 8.0)
+        [self.locationManager requestWhenInUseAuthorization];
+    
+    [_locationManager startUpdatingLocation];
+    
+    
+    ceo= [[CLGeocoder alloc]init];
+    [self.locationManager requestWhenInUseAuthorization];
+    if ([self.locationManager respondsToSelector:@selector(requestWhenInUseAuthorization)]) {
+        [self.locationManager requestWhenInUseAuthorization];
+    }
+    CLLocationCoordinate2D coordinate;
+    
+    coordinate.latitude=_locationManager.location.coordinate.latitude;
+    coordinate.longitude=_locationManager.location.coordinate.longitude;
+
+    
     [objectsArray.storeObjectArray removeAllObjects];
     [firebaseRef.storesRef observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
         _storeObjectDictionary = snapshot.value; //Creates a dictionary of of the JSON node strains
@@ -185,8 +225,47 @@
                     [self.collectionView reloadData];
                 });
             });
+            
+            
+            NSString *geocodingBaseURL = @"https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins=";
+            NSString *url = [NSString stringWithFormat:@"%@%f,%f&destinations=%@,%@&key=AIzaSyAsZ171sgZHuTcapToLRQ5-W9dl_WRLOh4", geocodingBaseURL, coordinate.latitude,coordinate.longitude,storeloop.latitude,storeloop.longitude];
+            url = [url stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+            NSURL *queryURL = [NSURL URLWithString:url];
+            NSData *data = [NSData dataWithContentsOfURL:queryURL];
+            
+            NSError *error;
+            NSDictionary *json = [NSJSONSerialization
+                                  JSONObjectWithData:data
+                                  options:kNilOptions
+                                  error:&error];
+//            NSLog(@"results are %@",json    );
+            if (coordinate.latitude != 0.00){
+                NSArray *rowsArray = [json objectForKey:@"rows"];
+                for (NSDictionary *alert in rowsArray ){
+                    NSArray *elementsArray = [alert objectForKey:@"elements"];
+                    for (NSDictionary *alert in elementsArray ){
+
+                        NSString* description = [[alert  valueForKey:@"distance"] valueForKey:@"text"];
+                        NSLog(@"description is %@",description    );
+                        storeloop.distanceToMe = description;
+
+                    }
+                }
+
+//                NSLog(@"distance to me  are %@",storeloop.distanceToMe    );
+
+            }
+            
+//            NSLog(@"results are %@",json    );
+            NSLog(@"latitude are %f",coordinate.latitude    );
+            
+
             [objectsArray.storeObjectArray addObject:storeloop];
+
+
+
         }
+        [_locationManager stopUpdatingLocation];
     }];
 }
 
@@ -229,6 +308,11 @@
                 
                 cell.imageView.image = [UIImage imageWithData:tempStore.data];
                 cell.label.text = tempStore.storeName;
+                NSLog(@"temp store distance is %@", tempStore.distanceToMe);
+
+                if(tempStore.distanceToMe != nil){
+                    cell.distanceToMeLabel.text = tempStore.distanceToMe;
+                }
             }
         }
     }

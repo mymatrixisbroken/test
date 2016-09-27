@@ -30,11 +30,10 @@
     [self dismissViewControllerAnimated:YES completion:^{}];
 }
 - (IBAction)tappedLogIn:(UIButton *)sender {
-    [self performSegueWithIdentifier:@"userNotFoundLoginSegue" sender:self];
-
+    [user goToLoginViewController:self];
 }
 - (IBAction)tappedImNew:(UIButton *)sender {
-    [self performSegueWithIdentifier:@"userNotFoundSigninSegue" sender:self];
+    [user gotoCreateAccountViewController:self];
 }
 
 -(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender{

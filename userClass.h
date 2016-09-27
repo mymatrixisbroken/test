@@ -62,17 +62,20 @@ extern userClass *user;
           wishList:(NSMutableArray *)array7;
 
 -(void)goToNewsFeedViewController:(UIViewController *)viewController;
--(void)goToSearchViewController:(UIViewController *)viewController;
--(void)goToStrainsViewController:(UIViewController *)viewController;
--(void)goToStoresViewController:(UIViewController *)viewController;
+-(void)goToStrainsStoresViewController:(UIViewController *)viewController;
 -(void)goToUserNotSignedInViewController:(UIViewController *)viewController;
 -(void)goToCurrentUserProfileViewController:(UIViewController *)viewController;
 -(void)goToLoginViewController:(UIViewController *)viewController;
 -(void)goToWriteReviewViewController:(UIViewController *)viewController;
+-(void)gotoOptionListViewController:(UIViewController *)viewController;
+-(void)goToStrainProfileViewController:(UIViewController *)viewController;
+-(void)goToUserNotFoundViewController:(UIViewController *)viewController;
+-(void)gotoCreateAccountViewController:(UIViewController *)viewController;
 -(void)presentLoginErrorAlert:(UIViewController *)viewController;
 -(void)presentImageNotSelectedAlert:(UIViewController *)viewController;
 -(void)presentUsernameInvalidAlert:(UIViewController *)viewController;
 -(void)presentUsernameTakenAlert:(UIViewController *)viewController;
 -(void)presentPasswordInvalidAlert:(UIViewController *)viewController;
 -(void)presentEmailInvalidAlert:(UIViewController *)viewController;
--(void)presentStrainEditAlert:(UIViewController *)viewController;@end
+-(void)presentStrainEditAlert:(UIViewController *)viewController;
+@end

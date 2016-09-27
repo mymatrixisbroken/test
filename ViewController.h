@@ -13,13 +13,19 @@
 #import "objectsArrayClass.h"
 #import <TLYShyNavBar/TLYShyNavBarManager.h>
 #import "extensionViewClass.h"
+#import "ICHObjectPrinter.h"
+#import <CoreLocation/CoreLocation.h>
 
 
 
-@interface ViewController : UIViewController <UICollectionViewDataSource, CHTCollectionViewDelegateWaterfallLayout>
+
+@interface ViewController : UIViewController <UICollectionViewDataSource, CHTCollectionViewDelegateWaterfallLayout, UISearchBarDelegate, UISearchDisplayDelegate>
 @property (nonatomic, strong) IBOutlet UICollectionView *collectionView;
 @property (strong, nonatomic) IBOutlet NSDictionary *storeObjectDictionary;
 @property (strong, nonatomic) IBOutlet NSDictionary *strainObjectDictionary;
 @property (strong, nonatomic) IBOutlet UIActivityIndicatorView *activity;
+@property (strong, nonatomic) IBOutlet UISearchBar *searchBar;
+@property     CLLocationManager *locationManager;
+
 
 @end

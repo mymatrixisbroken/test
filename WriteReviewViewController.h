@@ -13,10 +13,10 @@
 #import "FirebaseReferenceClass.h"
 #import "objectsArrayClass.h"
 @import Firebase;
-@import Cosmos;
+@import HCSStarRatingView;
 
 @interface WriteReviewViewController : UIViewController
-@property (strong, nonatomic) IBOutlet CosmosView *star_rating;
+@property (strong, nonatomic) IBOutlet HCSStarRatingView *star_rating;
 @property (strong, nonatomic) IBOutlet UITextView *review_text;
 @end
 
