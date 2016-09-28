@@ -19,6 +19,7 @@ storeClass *store;
 @synthesize latitude;
 @synthesize longitude;
 @synthesize distanceToMe;
+@synthesize distanceValue;
 @synthesize url;
 @synthesize phone_number;
 @synthesize googlePlaceID;

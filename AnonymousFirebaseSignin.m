@@ -53,6 +53,7 @@
 - (void) loadfirebaseRef {
     firebaseRef = [FirebaseReferenceClass sharedInstance];
     objectsArray.selection = 1;
+    objectsArray.searchType = loadObjects;
     [user goToStrainsStoresViewController:self];
 }
 

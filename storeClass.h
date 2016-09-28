@@ -22,6 +22,7 @@ extern storeClass *store;
 @property NSString *latitude;
 @property NSString *longitude;
 @property NSString *distanceToMe;
+@property NSString *distanceValue;
 @property NSString *url;
 @property NSString *phone_number;
 @property NSString *googlePlaceID;
