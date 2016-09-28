@@ -22,11 +22,9 @@
     // Do any additional setup after loading the view, typically from a nib.
 }
 - (IBAction)tappedImage:(UITapGestureRecognizer *)sender {
-    [self performSegueWithIdentifier:@"storeImageViewSegue" sender:self];
+    [user goToPopoverImageViewController:self];
 }
-- (IBAction)tapped_back_button:(UIBarButtonItem *)sender {
-    [self performSegueWithIdentifier:@"storeProfileToListSegue" sender:self];
-}
+
 - (IBAction)tappedWriteReviewButton:(UIButton *)sender {
     FIRUser *youser = [FIRAuth auth].currentUser;
     if (youser.email == nil) {

@@ -9,6 +9,7 @@
 #import <UIKit/UIKit.h>
 #import <TLYShyNavBar/TLYShyNavBarManager.h>
 #import "userClass.h"
+#import "objectsArrayClass.h"
 
 @interface PhotosNavigationController : UINavigationController
 

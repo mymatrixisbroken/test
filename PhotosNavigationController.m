@@ -30,7 +30,10 @@
 }
 
 -(IBAction) leftButtonPressed:(UIBarButtonItem *)btn{
-    [user goToStrainProfileViewController:self];
+    if (objectsArray.selection == 0){
+        [user goToStrainProfileViewController:self];}
+    else if (objectsArray.selection == 1){
+        [user goToStoreProfileViewController:self];}
 }
 
 -(IBAction) barButtonCustomPressed:(UIBarButtonItem*)btn

@@ -7,7 +7,9 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "userClass.h"
 @import Firebase;
+
 @interface optionsListTableViewController : UITableViewController
 @property (strong, nonatomic) IBOutlet FIRUser *currentUser;
 @end

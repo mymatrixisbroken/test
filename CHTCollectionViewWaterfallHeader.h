@@ -15,9 +15,12 @@
 
 
 @interface CHTCollectionViewWaterfallHeader : UICollectionReusableView <CLLocationManagerDelegate>
-@property UIButton *AtoZButton;
 @property UIButton *nearMeButton;
 @property UIButton *visitedButton;
+@property UIButton *AtoZButton;
+@property UIButton *recommendedButton;
+@property UIButton *smokedButton;
+@property UIButton *wishListButton;
 @property     CLLocationManager *locationManager;
 @property     NSString* destLat;
 @property     NSString* destLon;

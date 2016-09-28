@@ -12,18 +12,22 @@
 @class objectsArrayClass;
 extern objectsArrayClass *objectsArray;
 
-enum searchType
-{
-    loadObjects = 0,
-    nearMe = 1,
-    AtoZ = 2,
-};
-
 enum selection
 {
     strains = 0,
     stores = 1,
 };
+
+enum searchType
+{
+    loadObjects = 0,
+    nearMeRecommended = 1,
+    AtoZ = 2,
+    visitedSmoked = 3,
+    wishList = 4,
+};
+
+
 
 
 
