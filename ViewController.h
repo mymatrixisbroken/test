@@ -19,12 +19,13 @@
 
 
 
-@interface ViewController : UIViewController <UICollectionViewDataSource, CHTCollectionViewDelegateWaterfallLayout, UISearchBarDelegate, UISearchDisplayDelegate>
+@interface ViewController : UIViewController <UICollectionViewDataSource, CHTCollectionViewDelegateWaterfallLayout, UISearchBarDelegate, UISearchDisplayDelegate, CLLocationManagerDelegate>
 @property (nonatomic, strong) IBOutlet UICollectionView *collectionView;
 @property (strong, nonatomic) IBOutlet NSDictionary *storeObjectDictionary;
 @property (strong, nonatomic) IBOutlet NSDictionary *strainObjectDictionary;
 @property (strong, nonatomic) IBOutlet UIActivityIndicatorView *activity;
 @property (strong, nonatomic) IBOutlet UISearchBar *searchBar;
+@property (strong, nonatomic) IBOutlet objectsArrayClass *objectsArrayCopy;
 @property     CLLocationManager *locationManager;
 
 
