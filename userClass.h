@@ -63,12 +63,15 @@ extern userClass *user;
 
 -(void)goToNewsFeedViewController:(UIViewController *)viewController;
 -(void)goToStrainsStoresViewController:(UIViewController *)viewController;
+-(void)goToSearchUsersViewController:(UIViewController *)viewController;
 -(void)goToUserNotSignedInViewController:(UIViewController *)viewController;
 -(void)goToCurrentUserProfileViewController:(UIViewController *)viewController;
 -(void)goToLoginViewController:(UIViewController *)viewController;
 -(void)goToWriteReviewViewController:(UIViewController *)viewController;
 -(void)gotoOptionListViewController:(UIViewController *)viewController;
 -(void)goToStrainProfileViewController:(UIViewController *)viewController;
+-(void)goToStoreProfileViewController:(UIViewController *)viewController;
+-(void)goToPopoverImageViewController:(UIViewController *)viewController;
 -(void)goToUserNotFoundViewController:(UIViewController *)viewController;
 -(void)gotoCreateAccountViewController:(UIViewController *)viewController;
 -(void)presentLoginErrorAlert:(UIViewController *)viewController;

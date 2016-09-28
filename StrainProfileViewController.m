@@ -40,7 +40,7 @@
     });
 }
 - (IBAction)tappedStrainImage:(UITapGestureRecognizer *)sender {
-    [self performSegueWithIdentifier:@"popOverStrainImage" sender:self];
+    [user goToPopoverImageViewController:self];
 }
 - (IBAction)tappedMenuButton:(UIButton *)sender {
     [user presentStrainEditAlert:self];

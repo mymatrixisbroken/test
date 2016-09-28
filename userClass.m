@@ -158,6 +158,13 @@ userClass *user;
     [viewController presentViewController:vc animated:YES completion:NULL];
 }
 
+-(void)goToSearchUsersViewController:(UIViewController *)viewController{
+    UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+    UIViewController *vc = [sb instantiateViewControllerWithIdentifier:@"Friends Navigation SB ID"];
+    vc.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
+    [viewController presentViewController:vc animated:YES completion:NULL];
+}
+
 -(void)goToUserNotSignedInViewController:(UIViewController *)viewController{
     UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
     UIViewController *vc = [sb instantiateViewControllerWithIdentifier:@"User Not Found SB ID"];
@@ -199,6 +206,22 @@ userClass *user;
     vc.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
     [viewController presentViewController:vc animated:YES completion:NULL];
 }
+
+-(void)goToStoreProfileViewController:(UIViewController *)viewController{
+    UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+    UIViewController *vc = [sb instantiateViewControllerWithIdentifier:@"Store Profile SB ID"];
+    vc.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
+    [viewController presentViewController:vc animated:YES completion:NULL];
+}
+
+-(void)goToPopoverImageViewController:(UIViewController *)viewController{
+    UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+    UIViewController *vc = [sb instantiateViewControllerWithIdentifier:@"Popover Image SB ID"];
+    vc.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
+    [viewController presentViewController:vc animated:YES completion:NULL];
+
+}
+
 -(void)goToUserNotFoundViewController:(UIViewController *)viewController{
     UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
     UIViewController *vc = [sb instantiateViewControllerWithIdentifier:@"User Not Found SB ID"];
