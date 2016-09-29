@@ -13,27 +13,29 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     _currentUser = [FIRAuth auth].currentUser;
+    
+    _sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+     _vc = [_sb instantiateViewControllerWithIdentifier:@"Login View SB ID"];
+//    vc.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
+//    [viewController presentViewController:vc animated:YES completion:NULL];
+
 }
 
-//-(void) viewWillAppear:(BOOL)animated{
-//    if (!(_currentUser.anonymous)) {
-//        [self.tableView setContentOffset:CGPointMake(0, 44)];
+//-(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+//   
+//    switch (indexPath.row) {
+//        case 0:
+////            [self showDetailViewController:_vc sender:self];
+//
+//            [user goToLoginViewController:self];
+//            break;
+//        case 3:
+//            [user goToSearchUsersViewController:self];
+//            break;
+//        default:
+//            break;
 //    }
 //}
-
--(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-   
-    switch (indexPath.row) {
-        case 0:
-            [user goToLoginViewController:self];
-            break;
-        case 3:
-            [user goToSearchUsersViewController:self];
-            break;
-        default:
-            break;
-    }
-}
 
 //- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
 //    if (!(_currentUser.anonymous)) {

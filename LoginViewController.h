@@ -15,10 +15,10 @@
 
 @interface LoginViewController : UIViewController
 @property (weak, nonatomic) IBOutlet JVFloatLabeledTextField *SignInUsername;
-@property (strong, nonatomic) IBOutlet UIView *viewForButtonCreateAccount;
-@property (strong, nonatomic) IBOutlet UIButton *tappedSignUpButton;
 @property (weak, nonatomic) IBOutlet JVFloatLabeledTextField *SignInPassword;
+@property (strong, nonatomic) IBOutlet UIView *viewForButtonCreateAccount;
 @property (strong, nonatomic) IBOutlet UIView *signInVIew;
+@property (strong, nonatomic) IBOutlet UIButton *tappedSignUpButton;
 @property (weak, nonatomic) IBOutlet UIButton *SignInButton;
 @property (strong, nonatomic) IBOutlet NSMutableArray *queriesArray;
 @property (strong, nonatomic) IBOutlet NSMutableDictionary *dict;

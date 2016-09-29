@@ -12,4 +12,8 @@
 
 @interface optionsListTableViewController : UITableViewController
 @property (strong, nonatomic) IBOutlet FIRUser *currentUser;
+@property (strong, nonatomic) IBOutlet UIStoryboard *sb;
+@property (strong, nonatomic) IBOutlet UIViewController *vc;
+
 @end
+

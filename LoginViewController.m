@@ -135,7 +135,7 @@ const static CGFloat frameSizeWidth = 600.0f;
                            wishList:array7];
                 
                 [self getAvatarURLData];
-                [self newLoadEventsFromFirebaseDatabse];
+//                [self newLoadEventsFromFirebaseDatabse];
             }
         }
     }];
@@ -150,6 +150,8 @@ const static CGFloat frameSizeWidth = 600.0f;
         }
         dispatch_async(dispatch_get_main_queue(), ^{
             user.data = data;
+            [user goToCurrentUserProfileViewController:self];
+
         });
     });
 }

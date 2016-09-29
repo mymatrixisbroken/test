@@ -11,7 +11,7 @@
 @interface NewsFeedViewController ()
 @end
 
-@implementation NewsFeedViewController 
+@implementation NewsFeedViewController
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -20,18 +20,24 @@
     self.tableView.tableFooterView = [UIView new];
     self.shyNavBarManager.scrollView = self.tableView;
     [self loadExtView];
+    
+    _queriesArray = [[NSMutableArray alloc] init];
+    _dict = [[NSMutableDictionary alloc] init];
 
     
-    if (!([FIRAuth auth].currentUser.isAnonymous)) {
-        [self loadEventsFromFirebaseDatabse];
-    }
-
     UIRefreshControl *refresh = [[UIRefreshControl alloc] init];
     refresh.attributedTitle = [[NSAttributedString alloc] initWithString:@"Pull to Refresh"];
     [self.tableView addSubview:refresh];
     [refresh addTarget:self action:@selector(refreshTable:) forControlEvents:UIControlEventValueChanged];
+    
+    if (!([FIRAuth auth].currentUser.isAnonymous)) {
+        [self newLoadEventsFromFirebaseDatabse];
+//        [self loadEventsFromFirebaseDatabse];
+    }
+    
+//    NSLog(@"friend events is %@", user.friendsEvents);
+//    NSLog(@"friend events count is %lu", (unsigned long)user.friendsEvents.count);
 }
-
 - (void) loadExtView{
     extensionViewClass *extView = [[extensionViewClass alloc] init];
     [extView setView:CGRectGetWidth(self.view.bounds)];
@@ -68,7 +74,7 @@
     }
 }
 
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
+- (NSInteger) tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
     return [user.friendsEvents count];
 }
 
@@ -77,7 +83,10 @@
     newsFeedCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier forIndexPath:indexPath];
     
     NSArray *keys = [[user.friendsEvents objectAtIndex:indexPath.row] allKeys];
+//    NSLog(@"keys is %@", keys);
     NSString *key = [keys objectAtIndex:0];
+//    NSLog(@"key is %@", key);
+
     NSDictionary *dict = [user.friendsEvents objectAtIndex:indexPath.row];
     NSDictionary *dict1 = [dict valueForKey:key];
     
@@ -85,71 +94,103 @@
     NSString *username = [dict1 valueForKey:@"username"];
     NSString *avatarURL = [dict1 valueForKey:@"userAvatarURL"];
     
-    [cell uploadCellWithUsername:username event:event imageURL:avatarURL];
-    
+    [cell uploadCellWithUsername:username
+                           event:event
+                        imageURL:avatarURL];
+        
     return cell;
 }
 
 - (void)refreshTable:(UIRefreshControl *)refresh {
     refresh.attributedTitle = [[NSAttributedString alloc] initWithString:@"Refreshing data..."];
-    [self loadEventsFromFirebaseDatabse];
+    [self newLoadEventsFromFirebaseDatabse];
+//    [self loadEventsFromFirebaseDatabse];
     [refresh endRefreshing];
 }
 
--(void) loadEventsFromFirebaseDatabse{
-    dispatch_async(dispatch_get_global_queue(0,0), ^{
-        
-        [user.friends removeAllObjects];
-        _array = [[NSMutableArray alloc] init];
-        _dict = [[NSMutableDictionary alloc] init];
-        
-        FIRDatabaseQuery *friendsQuery = [[[firebaseRef.usersRef child:user.userKey] child:@"friends"] queryOrderedByKey];
-        
-        [friendsQuery observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
-            if (![snapshot.value isEqual:@""]) {
-                NSArray *keys = [snapshot.value allKeys];
+-(void) newLoadEventsFromFirebaseDatabse{
+    for (int i = 0; i<[user.friends count]; i++) {
+        FIRDatabaseQuery *eventQuery = [[firebaseRef.eventsRef queryOrderedByChild:@"userID"] queryEqualToValue:[user.friends objectAtIndex:i]];
+        [_queriesArray addObject:eventQuery];
+    }
+    
+    for (int i = 0; i<_queriesArray.count; i++) {
+        [[_queriesArray objectAtIndex:i] observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
+            if (snapshot.value == [NSNull null]) {}
+            else{
+                [user.friendsEvents removeAllObjects];
+                [_dict addEntriesFromDictionary:snapshot.value];
+                
+                NSArray *keys = [_dict allKeys];
                 NSArray *sortedKeys = [keys sortedArrayUsingSelector:@selector(compare:)];
                 
                 for (id key in sortedKeys) {
-                    [user.friends addObject:key];
+                    NSMutableDictionary *tempDict = [[NSMutableDictionary alloc] init];
+                    NSMutableDictionary *value = [[NSMutableDictionary alloc] init];
+                    value = [_dict valueForKey:key];
+                    [tempDict setObject:value forKey:key ];
+                    [user.friendsEvents addObject:tempDict];
+                    user.friendsEvents = [NSMutableArray arrayWithArray:[[user.friendsEvents reverseObjectEnumerator] allObjects]];
                 }
-                
-                for (int i = 0; i<[user.friends count]; i++) {
-                    FIRDatabaseQuery *eventQuery = [[firebaseRef.eventsRef queryOrderedByChild:@"userID"] queryEqualToValue:[user.friends objectAtIndex:i]];
-                    [_array addObject:eventQuery];
-                }
-                for (int i = 0; i<_array.count; i++) {
-                    [[_array objectAtIndex:i] observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
-                        if (snapshot.value == [NSNull null]) {}
-                        else{
-                            [user.friendsEvents removeAllObjects];
-                            [_dict addEntriesFromDictionary:snapshot.value];
-                            
-                            NSArray *keys = [_dict allKeys];
-                            NSArray *sortedKeys = [keys sortedArrayUsingSelector:@selector(compare:)];
-                            
-                            for (id key in sortedKeys) {
-                                NSMutableDictionary *tempDict = [[NSMutableDictionary alloc] init];
-                                NSMutableDictionary *value = [[NSMutableDictionary alloc] init];
-                                value = [_dict valueForKey:key];
-                                [tempDict setObject:value forKey:key ];
-                                [user.friendsEvents addObject:tempDict];
-                            }
-                            user.friendsEvents = [NSMutableArray arrayWithArray:[[user.friendsEvents reverseObjectEnumerator] allObjects]];
-                        }
-                    }];
-                }
-            }
-            else{
-                [user.friendsEvents removeAllObjects];
-            }
-            dispatch_async(dispatch_get_main_queue(), ^{
                 [self.tableView reloadData];
-            });
-
+            }
         }];
-    });
+    }
 }
+
+//-(void) loadEventsFromFirebaseDatabse{
+//    dispatch_async(dispatch_get_global_queue(0,0), ^{
+//
+////        [user.friends removeAllObjects];
+//        _array = [[NSMutableArray alloc] init];
+//        _dict = [[NSMutableDictionary alloc] init];
+//        
+//        FIRDatabaseQuery *friendsQuery = [[[firebaseRef.usersRef child:user.userKey] child:@"friends"] queryOrderedByKey];
+//  
+//        [friendsQuery observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
+//            if (![snapshot.value isEqual:@""]) {
+//                NSArray *keys = [snapshot.value allKeys];
+//                NSArray *sortedKeys = [keys sortedArrayUsingSelector:@selector(compare:)];
+//                
+//                for (id key in sortedKeys) {
+//                    [user.friends addObject:key];}
+//                
+//                for (int i = 0; i<[user.friends count]; i++) {
+//                    FIRDatabaseQuery *eventQuery = [[firebaseRef.eventsRef queryOrderedByChild:@"userID"] queryEqualToValue:[user.friends objectAtIndex:i]];
+//                    [_array addObject:eventQuery];
+//                }
+//                
+//                for (int i = 0; i<_array.count; i++) {
+//                    [[_array objectAtIndex:i] observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
+//                        if (snapshot.value == [NSNull null]) {}
+//                        else{
+////                            [user.friendsEvents removeAllObjects];
+//                            [_dict addEntriesFromDictionary:snapshot.value];
+//                            
+//                            NSArray *keys = [_dict allKeys];
+//                            NSArray *sortedKeys = [keys sortedArrayUsingSelector:@selector(compare:)];
+//                            
+//                            for (id key in sortedKeys) {
+//                                NSMutableDictionary *tempDict = [[NSMutableDictionary alloc] init];
+//                                NSMutableDictionary *value = [[NSMutableDictionary alloc] init];
+//                                value = [_dict valueForKey:key];
+//                                [tempDict setObject:value forKey:key ];
+//                                [user.friendsEvents addObject:tempDict];}
+//                            
+////                            user.friendsEvents = [NSMutableArray arrayWithArray:[[user.friendsEvents reverseObjectEnumerator] allObjects]]
+//                            ;}}];}
+////                [self.tableView reloadData];
+//}
+//            else{
+////                [user.friendsEvents removeAllObjects];
+//            }
+//            
+//            dispatch_async(dispatch_get_main_queue(), ^{
+////                [self.tableView reloadData];
+//            });
+//         }];
+//    });
+//}
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
@@ -157,60 +198,4 @@
 }
 
 @end
-
-
-
-/*- (NSAttributedString *)titleForEmptyDataSet:(UIScrollView *)scrollView
- {
- NSMutableDictionary *attributes = [NSMutableDictionary new];
- 
- NSString *text = @"News feed empty";
- UIFont *font = [UIFont boldSystemFontOfSize:16.0];
- UIColor *textColor = [UIColor colorWithHex:@"828587"];
- [attributes setObject:@(-0.10) forKey:NSKernAttributeName];
- 
- if (font) [attributes setObject:font forKey:NSFontAttributeName];
- if (textColor) [attributes setObject:textColor forKey:NSForegroundColorAttributeName];
- 
- return [[NSAttributedString alloc] initWithString:text attributes:attributes];
- }
- 
- - (NSAttributedString *)descriptionForEmptyDataSet:(UIScrollView *)scrollView
- {
- NSMutableDictionary *attributes = [NSMutableDictionary new];
- NSString *text = @"When you add a friend, their activity will show up here.";
- UIFont *font = [UIFont systemFontOfSize:14.0];
- UIColor *textColor = [UIColor colorWithHex:@"828587"];
- 
- if (font) [attributes setObject:font forKey:NSFontAttributeName];
- if (textColor) [attributes setObject:textColor forKey:NSForegroundColorAttributeName];
- 
- NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:text attributes:attributes];
- 
- return attributedString;
- }
- 
- - (UIImage *)imageForEmptyDataSet:(UIScrollView *)scrollView
- {
- __block UIImage *image;
- 
- dispatch_async(dispatch_get_global_queue(0,0), ^{
- NSData * data = [[NSData alloc] initWithContentsOfURL: [NSURL URLWithString:@"http://i.imgur.com/3tGKHYV.png"]];
- if( data == nil ){
- NSLog(@"image is nil");
- return;
- }
- dispatch_async(dispatch_get_main_queue(), ^{
- // WARNING: is the cell still using the same data by this point??
- image = [UIImage imageWithData:data];
- });
- });
- 
- return image;
- }
- 
- - (UIColor *)backgroundColorForEmptyDataSet:(UIScrollView *)scrollView{/Users/guy/Desktop/myProject/myProject/userClass.m
- return [UIColor colorWithHex:@"f7fafa"];
- }*/
-
 
