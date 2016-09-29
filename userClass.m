@@ -196,7 +196,7 @@ userClass *user;
 -(void)gotoOptionListViewController:(UIViewController *)viewController{
     UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
     UIViewController *vc = [sb instantiateViewControllerWithIdentifier:@"Option list SB ID"];
-    vc.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
+//    vc.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
     [viewController presentViewController:vc animated:YES completion:NULL];
 }
 
