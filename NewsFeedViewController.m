@@ -32,11 +32,7 @@
     
     if (!([FIRAuth auth].currentUser.isAnonymous)) {
         [self newLoadEventsFromFirebaseDatabse];
-//        [self loadEventsFromFirebaseDatabse];
     }
-    
-//    NSLog(@"friend events is %@", user.friendsEvents);
-//    NSLog(@"friend events count is %lu", (unsigned long)user.friendsEvents.count);
 }
 - (void) loadExtView{
     extensionViewClass *extView = [[extensionViewClass alloc] init];
@@ -83,28 +79,25 @@
     newsFeedCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier forIndexPath:indexPath];
     
     NSArray *keys = [[user.friendsEvents objectAtIndex:indexPath.row] allKeys];
-//    NSLog(@"keys is %@", keys);
     NSString *key = [keys objectAtIndex:0];
-//    NSLog(@"key is %@", key);
 
     NSDictionary *dict = [user.friendsEvents objectAtIndex:indexPath.row];
     NSDictionary *dict1 = [dict valueForKey:key];
     
     NSString *event = [dict1 valueForKey:@"message"];
     NSString *username = [dict1 valueForKey:@"username"];
-    NSString *avatarURL = [dict1 valueForKey:@"userAvatarURL"];
+    NSData *data = [dict1 valueForKey:@"data"];
     
     [cell uploadCellWithUsername:username
                            event:event
-                        imageURL:avatarURL];
-        
+                            data:data];
+
     return cell;
 }
 
 - (void)refreshTable:(UIRefreshControl *)refresh {
     refresh.attributedTitle = [[NSAttributedString alloc] initWithString:@"Refreshing data..."];
     [self newLoadEventsFromFirebaseDatabse];
-//    [self loadEventsFromFirebaseDatabse];
     [refresh endRefreshing];
 }
 
@@ -129,6 +122,24 @@
                     NSMutableDictionary *value = [[NSMutableDictionary alloc] init];
                     value = [_dict valueForKey:key];
                     [tempDict setObject:value forKey:key ];
+                    
+                    NSString *url = [value valueForKey:@"userAvatarURL"];
+//                    NSLog(@"url is %@", url);
+                    
+                        NSInteger length = [url length];
+                        NSString *smallImageURL = [url substringWithRange:NSMakeRange(0, length-4)];
+                        smallImageURL = [smallImageURL stringByAppendingString:@"b.jpg"];
+                        
+                        NSData * data = [[NSData alloc] initWithContentsOfURL: [NSURL URLWithString:smallImageURL]];
+                        if( data == nil ){
+                            NSLog(@"image is nil");
+                            return;
+                        }
+                        else{
+                            [[tempDict valueForKey:key] setObject:data forKey:@"data"];
+                        }
+                    
+//                    NSLog(@"temp dict is %@", tempDict);
                     [user.friendsEvents addObject:tempDict];
                     user.friendsEvents = [NSMutableArray arrayWithArray:[[user.friendsEvents reverseObjectEnumerator] allObjects]];
                 }
@@ -137,60 +148,6 @@
         }];
     }
 }
-
-//-(void) loadEventsFromFirebaseDatabse{
-//    dispatch_async(dispatch_get_global_queue(0,0), ^{
-//
-////        [user.friends removeAllObjects];
-//        _array = [[NSMutableArray alloc] init];
-//        _dict = [[NSMutableDictionary alloc] init];
-//        
-//        FIRDatabaseQuery *friendsQuery = [[[firebaseRef.usersRef child:user.userKey] child:@"friends"] queryOrderedByKey];
-//  
-//        [friendsQuery observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
-//            if (![snapshot.value isEqual:@""]) {
-//                NSArray *keys = [snapshot.value allKeys];
-//                NSArray *sortedKeys = [keys sortedArrayUsingSelector:@selector(compare:)];
-//                
-//                for (id key in sortedKeys) {
-//                    [user.friends addObject:key];}
-//                
-//                for (int i = 0; i<[user.friends count]; i++) {
-//                    FIRDatabaseQuery *eventQuery = [[firebaseRef.eventsRef queryOrderedByChild:@"userID"] queryEqualToValue:[user.friends objectAtIndex:i]];
-//                    [_array addObject:eventQuery];
-//                }
-//                
-//                for (int i = 0; i<_array.count; i++) {
-//                    [[_array objectAtIndex:i] observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
-//                        if (snapshot.value == [NSNull null]) {}
-//                        else{
-////                            [user.friendsEvents removeAllObjects];
-//                            [_dict addEntriesFromDictionary:snapshot.value];
-//                            
-//                            NSArray *keys = [_dict allKeys];
-//                            NSArray *sortedKeys = [keys sortedArrayUsingSelector:@selector(compare:)];
-//                            
-//                            for (id key in sortedKeys) {
-//                                NSMutableDictionary *tempDict = [[NSMutableDictionary alloc] init];
-//                                NSMutableDictionary *value = [[NSMutableDictionary alloc] init];
-//                                value = [_dict valueForKey:key];
-//                                [tempDict setObject:value forKey:key ];
-//                                [user.friendsEvents addObject:tempDict];}
-//                            
-////                            user.friendsEvents = [NSMutableArray arrayWithArray:[[user.friendsEvents reverseObjectEnumerator] allObjects]]
-//                            ;}}];}
-////                [self.tableView reloadData];
-//}
-//            else{
-////                [user.friendsEvents removeAllObjects];
-//            }
-//            
-//            dispatch_async(dispatch_get_main_queue(), ^{
-////                [self.tableView reloadData];
-//            });
-//         }];
-//    });
-//}
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];

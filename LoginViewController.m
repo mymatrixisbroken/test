@@ -135,7 +135,6 @@ const static CGFloat frameSizeWidth = 600.0f;
                            wishList:array7];
                 
                 [self getAvatarURLData];
-//                [self newLoadEventsFromFirebaseDatabse];
             }
         }
     }];
@@ -154,35 +153,6 @@ const static CGFloat frameSizeWidth = 600.0f;
 
         });
     });
-}
-
--(void) newLoadEventsFromFirebaseDatabse{
-    for (int i = 0; i<[user.friends count]; i++) {
-        FIRDatabaseQuery *eventQuery = [[firebaseRef.eventsRef queryOrderedByChild:@"userID"] queryEqualToValue:[user.friends objectAtIndex:i]];
-        [_queriesArray addObject:eventQuery];
-    }
-    
-    for (int i = 0; i<_queriesArray.count; i++) {
-        [[_queriesArray objectAtIndex:i] observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
-            if (snapshot.value == [NSNull null]) {}
-            else{
-                [user.friendsEvents removeAllObjects];
-                [_dict addEntriesFromDictionary:snapshot.value];
-                
-                NSArray *keys = [_dict allKeys];
-                NSArray *sortedKeys = [keys sortedArrayUsingSelector:@selector(compare:)];
-                
-                for (id key in sortedKeys) {
-                    NSMutableDictionary *tempDict = [[NSMutableDictionary alloc] init];
-                    NSMutableDictionary *value = [[NSMutableDictionary alloc] init];
-                    value = [_dict valueForKey:key];
-                    [tempDict setObject:value forKey:key ];
-                    [user.friendsEvents addObject:tempDict];
-                }
-                [user goToCurrentUserProfileViewController:self];
-            }
-        }];
-    }
 }
 
 - (CALayer *) customUITextField:(CGFloat) frameHeight{

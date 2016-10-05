@@ -12,21 +12,11 @@
 
 -(void) uploadCellWithUsername:(NSString *)username
                          event:(NSString *)event
-                      imageURL:(NSString *)imageURL{
-//    dispatch_async(dispatch_get_global_queue(0,0), ^{
-//        NSData * data = [[NSData alloc] initWithContentsOfURL: [NSURL URLWithString:imageURL]];
-//        if( data == nil ){
-//            NSLog(@"image is nil");
-//            return;
-//        }
-//        dispatch_async(dispatch_get_main_queue(), ^{
-//            // WARNING: is the cell still using the same data by this point??
-//            self.image_View.image = [UIImage imageWithData: data];
-//        });
-//    });
-    
+                          data:(NSData *)imageURL{    
     self.usernameLabel.text = username;
     self.eventLabel.text = event;
+    self.image_View.image = [UIImage imageWithData:imageURL];
+
     
     
     
@@ -50,8 +40,26 @@
     
     [self.likeButton setAttributedTitle:attributedString forState:UIControlStateNormal];
     [self.commentsButton setAttributedTitle:attributedString1 forState:UIControlStateNormal];
-
-
+    
+    [self.likeButton addTarget:self action:@selector(likeButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
 }
+
+-(IBAction)likeButtonPressed:(UIButton*)btn {
+    NSMutableDictionary *attributes = [NSMutableDictionary new];
+    NSString *text = @"Like";
+    UIFont *font = [UIFont systemFontOfSize:14.0];
+    UIColor *textColor = [UIColor colorWithHex:@"828587"];
+    if (font) [attributes setObject:font forKey:NSFontAttributeName];
+    if (textColor) [attributes setObject:textColor forKey:NSBackgroundColorAttributeName];
+    NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:text attributes:attributes];
+    [self.likeButton setAttributedTitle:attributedString forState:UIControlStateNormal];
+
+//    [firebaseRef.eventsRef child:(nonnull NSString *)];
+}
+
+
+
+
+
 
 @end

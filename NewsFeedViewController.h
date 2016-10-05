@@ -12,18 +12,13 @@
 #import "userClass.h"
 #import "newsFeedCell.h"
 #import "FirebaseReferenceClass.h"
-//#import "ViewController.h"
 #import "objectsArrayClass.h"
-//#import "UIScrollView+EmptyDataSet.h"
-//#import "UIColor+Hexadecimal.h"
 @import Firebase;
 
 @interface NewsFeedViewController : UIViewController <UITableViewDelegate, UITableViewDataSource>
 @property (strong, nonatomic) IBOutlet UITableView *tableView;
 @property (strong, nonatomic) IBOutlet NSMutableArray *queriesArray;
 @property (strong, nonatomic) IBOutlet NSMutableDictionary *dict;
-//@property (strong, nonatomic) IBOutlet NSMutableArray *arr2;
-
 
 @end
 

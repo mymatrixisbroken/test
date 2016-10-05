@@ -8,6 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import "UIColor+Hexadecimal.h"
+#import "FirebaseReferenceClass.h"
 
 
 @interface newsFeedCell : UITableViewCell
@@ -19,6 +20,6 @@
 
 -(void) uploadCellWithUsername:(NSString *)username
                          event:(NSString *)event
-                      imageURL:(NSString *)imageURL;
+                          data:(NSData *)imageURL;
 
 @end
