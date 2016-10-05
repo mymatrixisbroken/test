@@ -50,7 +50,13 @@ extern userClass *user;
 
 
 + (userClass *)sharedInstance;
--(id)createUser:(NSString *)createAccountEmail SignedUp:(NSString *)createAccountUsername;
+-(id)createUser:(NSString *)createAccountEmail
+       SignedUp:(NSString *)createAccountUsername;
+
+-(id)set:(NSString *)uid
+    user:(NSString *)name
+   image:(NSString *)url;
+
 -(id)setUserObject:key
     fromDictionary:(NSDictionary *)userDict
             badges:(NSMutableArray *)array1

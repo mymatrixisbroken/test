@@ -100,6 +100,17 @@ userClass *user;
     return self;
 }
 
+-(id)set:(NSString *)uid
+    user:(NSString *)name
+   image:(NSString *)url{
+    self.userKey = uid;
+    self.username = name;
+    self.avatarURL = url;
+    
+    return self;
+}
+
+
 -(id)setUserObject:key
     fromDictionary:(NSDictionary *)userDict
             badges:(NSMutableArray *)array1
