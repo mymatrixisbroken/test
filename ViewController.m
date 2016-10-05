@@ -87,85 +87,6 @@
     self.navigationController.navigationBar.topItem.titleView = _searchBar;
     [self loadStoreStrain];
 
-    
-//    switch (objectsArray.searchType) {
-//        case 0:
-//            _objectsArrayCopy = [[objectsArrayClass alloc] init];
-//            [self loadstrains];
-//            [self loadStores];
-//            
-//            break;
-//            
-//        case 1:
-//            _objectsArrayCopy = [[objectsArrayClass alloc] init];
-//            
-//            if (objectsArray.selection == 0){}
-////                load your recommended strains}
-//            else if (objectsArray.selection == 1){
-//                [self loadDistances];
-//                [_objectsArrayCopy.storeObjectArray sortUsingDescriptors:@[[NSSortDescriptor sortDescriptorWithKey:@"distanceValue" ascending:YES selector:@selector(compare:)]]];
-//                    [self.collectionView reloadData];}
-//            
-//            break;
-//            
-//        case 2:
-//            _objectsArrayCopy = [[objectsArrayClass alloc] init];
-//            
-//            if (objectsArray.selection == 0){
-//                for (int i = 0; i <objectsArray.strainObjectArray.count; i++)
-//                    [_objectsArrayCopy.strainObjectArray addObject:[objectsArray.strainObjectArray objectAtIndex:i]];
-//                
-//                [_objectsArrayCopy.strainObjectArray sortUsingDescriptors:@[[NSSortDescriptor sortDescriptorWithKey:@"strainName" ascending:YES selector:@selector(caseInsensitiveCompare:)]]];
-//                [self.collectionView reloadData];}
-//            
-//            else if (objectsArray.selection == 1){
-//                for (int i = 0; i <objectsArray.storeObjectArray.count; i++)
-//                    [_objectsArrayCopy.storeObjectArray addObject:[objectsArray.storeObjectArray objectAtIndex:i]];
-//                
-//                [_objectsArrayCopy.storeObjectArray sortUsingDescriptors:@[[NSSortDescriptor sortDescriptorWithKey:@"storeName" ascending:YES selector:@selector(caseInsensitiveCompare:)]]];
-//                [self.collectionView reloadData];}
-//            
-//            break;
-//            
-//        case 3:
-//            _objectsArrayCopy = [[objectsArrayClass alloc] init];
-//
-//            if (objectsArray.selection == 0){
-//                for (int i = 0; i < user.strainsTried.count; i++) {
-//                    NSString *strainsTriedKey = [user.strainsTried objectAtIndex:i];
-//                    for(int j = 0; j < objectsArray.strainObjectArray.count; j++){
-//                        strainClass *tempStrain = [objectsArray.strainObjectArray objectAtIndex:j];
-//                        if ([strainsTriedKey isEqual:tempStrain.strainKey]) {
-//                            [_objectsArrayCopy.strainObjectArray addObject:tempStrain];}}}
-//                [self.collectionView reloadData];}
-//            else if (objectsArray.selection == 1){
-//                for (int i = 0; i < user.storesVisited.count; i++) {
-//                    NSString *storeVisitedKey = [user.storesVisited objectAtIndex:i];
-//                    for(int j = 0; j < objectsArray.storeObjectArray.count; j++){
-//                        storeClass *tempStore = [objectsArray.storeObjectArray objectAtIndex:j];
-//                        if ([storeVisitedKey isEqual:tempStore.storeKey]) {
-//                            [_objectsArrayCopy.storeObjectArray addObject:tempStore];}}}
-//                [self.collectionView reloadData];}
-//            
-//            break;
-//            
-//        case 4:
-//            _objectsArrayCopy = [[objectsArrayClass alloc] init];
-//
-//            NSLog(@"wishlist is %@", user.wishList);
-//                for (int i = 0; i < user.wishList.count; i++) {
-//                    NSString *wishListKey = [user.wishList objectAtIndex:i];
-//                    for(int j = 0; j < objectsArray.strainObjectArray.count; j++){
-//                        strainClass *tempStrain = [objectsArray.strainObjectArray objectAtIndex:j];
-//                        if ([wishListKey isEqual:tempStrain.strainKey]) {
-//                            [_objectsArrayCopy.strainObjectArray addObject:tempStrain];}}}
-//                [self.collectionView reloadData];
-//
-//        
-//        default:
-//            break;
-//    }
-
     self.shyNavBarManager.scrollView = self.collectionView;
     [self.view addSubview:self.collectionView];
     
@@ -198,9 +119,8 @@
             break;
             
         case 2:
-            _objectsArrayCopy = [[objectsArrayClass alloc] init];
-            
             if (objectsArray.selection == 0){
+                [_objectsArrayCopy.strainObjectArray removeAllObjects];
                 for (int i = 0; i <objectsArray.strainObjectArray.count; i++)
                     [_objectsArrayCopy.strainObjectArray addObject:[objectsArray.strainObjectArray objectAtIndex:i]];
                 
@@ -208,6 +128,7 @@
                 [self.collectionView reloadData];}
             
             else if (objectsArray.selection == 1){
+                [_objectsArrayCopy.storeObjectArray removeAllObjects];
                 for (int i = 0; i <objectsArray.storeObjectArray.count; i++)
                     [_objectsArrayCopy.storeObjectArray addObject:[objectsArray.storeObjectArray objectAtIndex:i]];
                 
@@ -265,15 +186,15 @@
 - (void)refreshTable:(UIRefreshControl *)refresh {
     refresh.attributedTitle = [[NSAttributedString alloc] initWithString:@"Refreshing data..."];
     objectsArray.searchType = 0;
-    _objectsArrayCopy = [[objectsArrayClass alloc] init];
-//    _objectsArrayCopy.strainObjectArray = [[NSMutableArray alloc] init];
-//    _objectsArrayCopy.storeObjectArray = [[NSMutableArray alloc] init];
+//    _objectsArrayCopy = [[objectsArrayClass alloc] init];
+    [_objectsArrayCopy.strainObjectArray init];
+    [_objectsArrayCopy.storeObjectArray  init];
     [self loadStoreStrain];
     [refresh endRefreshing];
 }
 
 -(void) loadstrains{
-    [objectsArray.strainObjectArray removeAllObjects];
+    [objectsArray.strainObjectArray init];
     [_objectsArrayCopy.strainObjectArray removeAllObjects];
     [firebaseRef.strainsRef observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
         _strainObjectDictionary = snapshot.value; //Creates a dictionary of of the JSON node strains
@@ -395,7 +316,7 @@
 }
 
 - (void) loadStores {
-    [objectsArray.storeObjectArray removeAllObjects];
+    [objectsArray.storeObjectArray init];
     [_objectsArrayCopy.storeObjectArray removeAllObjects];
     [firebaseRef.storesRef observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
         _storeObjectDictionary = snapshot.value; //Creates a dictionary of of the JSON node strains
