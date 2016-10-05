@@ -26,6 +26,7 @@
 @property (strong, nonatomic) IBOutlet UISearchBar *searchBar;
 @property (strong, nonatomic) IBOutlet objectsArrayClass *objectsArrayCopy;
 @property     CLLocationManager *locationManager;
-
+@property (strong, nonatomic) IBOutlet UIBarButtonItem *rightButton;
+@property (strong, nonatomic) IBOutlet UIRefreshControl *refresh;
 
 @end

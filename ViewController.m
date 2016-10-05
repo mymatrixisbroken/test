@@ -78,40 +78,104 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    
-    _searchBar = [[UISearchBar alloc] initWithFrame:CGRectMake(0, 0, 200, 44)];
+
+    _searchBar = [[UISearchBar alloc] initWithFrame:CGRectMake(0, 0, 100, 44)];
     _searchBar.autocorrectionType = UITextAutocorrectionTypeNo;
+    _searchBar.showsCancelButton = YES;
     _searchBar.delegate = self;
     _searchBar.autoresizingMask = UIViewAutoresizingFlexibleWidth;
     
-    self.navigationController.navigationBar.topItem.titleView = _searchBar;
+    _rightButton = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"Search"] style:UIBarButtonItemStylePlain target:self   action:@selector(searchButtonTapped:)];
+    
+    self.navigationController.navigationBar.topItem.rightBarButtonItem = _rightButton;
+    
+    self.navigationController.navigationBar.topItem.titleView = nil;
+    
+    if (objectsArray.selection == 0){
+        [self.navigationController.navigationBar setTitleTextAttributes:[NSDictionary dictionaryWithObject:[UIColor whiteColor] forKey:NSForegroundColorAttributeName]];
+        self.navigationController.navigationBar.topItem.title = @"Strains";
+    }
+    else if(objectsArray.selection == 1){
+        [self.navigationController.navigationBar setTitleTextAttributes:[NSDictionary dictionaryWithObject:[UIColor whiteColor] forKey:NSForegroundColorAttributeName]];
+        self.navigationController.navigationBar.topItem.title = @"Stores";
+    }
+    
     [self loadStoreStrain];
 
     self.shyNavBarManager.scrollView = self.collectionView;
     [self.view addSubview:self.collectionView];
     
+    if (_refresh == nil) {
+        _refresh = [[UIRefreshControl alloc] init];
+    }
     
-    UIRefreshControl *refresh = [[UIRefreshControl alloc] init];
-    refresh.attributedTitle = [[NSAttributedString alloc] initWithString:@"Pull to Refresh"];
-    [self.collectionView addSubview:refresh];
-    [refresh addTarget:self action:@selector(refreshTable:) forControlEvents:UIControlEventValueChanged];
+    _refresh.attributedTitle = [[NSAttributedString alloc] initWithString:@"Pull to Refresh"];
+    [self.collectionView addSubview:_refresh];
+    [_refresh addTarget:self action:@selector(refreshTableau:) forControlEvents:UIControlEventValueChanged];
+}
+
+- (void)searchButtonTapped:(id)sender {
+    
+    [UIView animateWithDuration:0.5 animations:^{
+//        _rightButton.alpha = 0.0f;
+        
+    } completion:^(BOOL finished) {
+        
+        // remove the search button
+        self.navigationController.navigationBar.topItem.rightBarButtonItem = nil;
+        // add the search bar (which will start out hidden).
+        self.navigationController.navigationBar.topItem.titleView = _searchBar;
+        _searchBar.alpha = 0.0;
+        
+        [UIView animateWithDuration:0.5
+                         animations:^{
+                             _searchBar.alpha = 1.0;
+                         } completion:^(BOOL finished) {
+                             [_searchBar becomeFirstResponder];
+                         }];
+        
+    }];
+}
+
+- (void)searchBarCancelButtonClicked:(UISearchBar *)searchBar {
+    
+    [UIView animateWithDuration:0.5f animations:^{
+        _searchBar.alpha = 0.0;
+    } completion:^(BOOL finished) {
+        self.navigationController.navigationBar.topItem.titleView = nil;
+        self.navigationController.navigationBar.topItem.rightBarButtonItem = _rightButton;
+//        _rightButton.alpha = 0.0;  // set this *after* adding it back
+        [UIView animateWithDuration:0.5f animations:^ {
+//            _rightButton.alpha = 1.0;
+        }];
+    }];
 }
 
 - (void) loadStoreStrain{
+//    _objectsArrayCopy = [[objectsArrayClass alloc] init];
+
     switch (objectsArray.searchType) {
         case 0:
             _objectsArrayCopy = [[objectsArrayClass alloc] init];
+            _objectsArrayCopy.storeObjectArray = [[NSMutableArray alloc] init];
+            _objectsArrayCopy.strainObjectArray = [[NSMutableArray alloc] init];
+
+
             [self loadstrains];
             [self loadStores];
             
             break;
             
         case 1:
-            _objectsArrayCopy = [[objectsArrayClass alloc] init];
+//            _objectsArrayCopy = [[objectsArrayClass alloc] init];
             
-            if (objectsArray.selection == 0){}
-            //                load your recommended strains}
+            if (objectsArray.selection == 0){
+//                load your recommended strains}
+                _objectsArrayCopy.strainObjectArray = [[NSMutableArray alloc] init];
+            }
+
             else if (objectsArray.selection == 1){
+                _objectsArrayCopy.storeObjectArray = [[NSMutableArray alloc] init];
                 [self loadDistances];
                 [_objectsArrayCopy.storeObjectArray sortUsingDescriptors:@[[NSSortDescriptor sortDescriptorWithKey:@"distanceValue" ascending:YES selector:@selector(compare:)]]];
                 [self.collectionView reloadData];}
@@ -120,7 +184,9 @@
             
         case 2:
             if (objectsArray.selection == 0){
-                [_objectsArrayCopy.strainObjectArray removeAllObjects];
+//                [_objectsArrayCopy.strainObjectArray removeAllObjects];
+                _objectsArrayCopy.strainObjectArray = [[NSMutableArray alloc] init];
+  
                 for (int i = 0; i <objectsArray.strainObjectArray.count; i++)
                     [_objectsArrayCopy.strainObjectArray addObject:[objectsArray.strainObjectArray objectAtIndex:i]];
                 
@@ -128,7 +194,9 @@
                 [self.collectionView reloadData];}
             
             else if (objectsArray.selection == 1){
-                [_objectsArrayCopy.storeObjectArray removeAllObjects];
+//                [_objectsArrayCopy.storeObjectArray removeAllObjects];
+                _objectsArrayCopy.storeObjectArray = [[NSMutableArray alloc] init];
+
                 for (int i = 0; i <objectsArray.storeObjectArray.count; i++)
                     [_objectsArrayCopy.storeObjectArray addObject:[objectsArray.storeObjectArray objectAtIndex:i]];
                 
@@ -138,9 +206,11 @@
             break;
             
         case 3:
-            _objectsArrayCopy = [[objectsArrayClass alloc] init];
+//            _objectsArrayCopy = [[objectsArrayClass alloc] init];
             
             if (objectsArray.selection == 0){
+                _objectsArrayCopy.strainObjectArray = [[NSMutableArray alloc] init];
+
                 for (int i = 0; i < user.strainsTried.count; i++) {
                     NSString *strainsTriedKey = [user.strainsTried objectAtIndex:i];
                     for(int j = 0; j < objectsArray.strainObjectArray.count; j++){
@@ -148,7 +218,10 @@
                         if ([strainsTriedKey isEqual:tempStrain.strainKey]) {
                             [_objectsArrayCopy.strainObjectArray addObject:tempStrain];}}}
                 [self.collectionView reloadData];}
+            
             else if (objectsArray.selection == 1){
+                _objectsArrayCopy.storeObjectArray = [[NSMutableArray alloc] init];
+
                 for (int i = 0; i < user.storesVisited.count; i++) {
                     NSString *storeVisitedKey = [user.storesVisited objectAtIndex:i];
                     for(int j = 0; j < objectsArray.storeObjectArray.count; j++){
@@ -160,9 +233,11 @@
             break;
             
         case 4:
-            _objectsArrayCopy = [[objectsArrayClass alloc] init];
+//            _objectsArrayCopy = [[objectsArrayClass alloc] init];
             
             NSLog(@"wishlist is %@", user.wishList);
+            _objectsArrayCopy.strainObjectArray = [[NSMutableArray alloc] init];
+
             for (int i = 0; i < user.wishList.count; i++) {
                 NSString *wishListKey = [user.wishList objectAtIndex:i];
                 for(int j = 0; j < objectsArray.strainObjectArray.count; j++){
@@ -183,19 +258,142 @@
     [self updateLayoutForOrientation:[UIApplication sharedApplication].statusBarOrientation];
 }
 
-- (void)refreshTable:(UIRefreshControl *)refresh {
+- (void)refreshTableau:(UIRefreshControl *)refresh {
     refresh.attributedTitle = [[NSAttributedString alloc] initWithString:@"Refreshing data..."];
     objectsArray.searchType = 0;
 //    _objectsArrayCopy = [[objectsArrayClass alloc] init];
-    [_objectsArrayCopy.strainObjectArray init];
-    [_objectsArrayCopy.storeObjectArray  init];
-    [self loadStoreStrain];
+
+//    _objectsArrayCopy = [objectsArrayClass init];
+//    _objectsArrayCopy.storeObjectArray = [[NSMutableArray alloc] init];
+//    _objectsArrayCopy.strainObjectArray = [[NSMutableArray alloc] init];
+    
+    
+//    [self loadstrains];
+//    [self loadStores];
+    if (objectsArray.selection == 0){
+        objectsArray.strainObjectArray = [[NSMutableArray alloc] init];
+        _objectsArrayCopy.strainObjectArray = [[NSMutableArray alloc] init];
+        
+        [firebaseRef.strainsRef observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
+            _strainObjectDictionary = snapshot.value; //Creates a dictionary of of the JSON node strains
+            NSArray *keys = [_strainObjectDictionary allKeys]; //Creates an array with only the strain key uID
+            
+            for(int i=0; i<keys.count ; i++){
+                NSString *key = keys[i];
+                NSDictionary *strainDict = [_strainObjectDictionary valueForKey:key];
+                NSDictionary *highDict = [strainDict valueForKey:@"highType"];
+                NSArray *array = [strainDict valueForKey:@"images"] ;
+                
+                NSArray *availableAtArray = [[strainDict valueForKey:@"availableAt"] allKeys];
+                
+                NSArray *ratingsArray = [[strainDict valueForKey:@"ratingCount"] allValues];
+                float ratingScore = 0.0;
+                for (int i =0; i < ratingsArray.count; i++) {
+                    ratingScore += [[ratingsArray objectAtIndex:i] floatValue];
+                }
+                ratingScore = ratingScore / (float)ratingsArray.count;
+                
+                //you have to delcare a new object instance to load table cells!!!!!!!!!!!!!!!!!!!
+                strainClass *strainLoop = [[strainClass alloc] init];
+                [strainLoop setStrainObject:key
+                             fromDictionary:strainDict
+                                   highType:highDict
+                                     images:array
+                                availableAt:availableAtArray
+                                ratingCount:ratingsArray.count
+                                ratingScore:ratingScore];
+                [strainLoop.imageNames removeObjectAtIndex:0];
+                
+                dispatch_async(dispatch_get_global_queue(0,0), ^{
+                    NSInteger length = [[strainLoop.imageNames objectAtIndex:0] length];
+                    NSString *smallImageURL = [[strainLoop.imageNames objectAtIndex:0] substringWithRange:NSMakeRange(0, length-4)];
+                    smallImageURL = [smallImageURL stringByAppendingString:@"m.jpg"];
+                    
+                    NSData * data = [[NSData alloc] initWithContentsOfURL: [NSURL URLWithString:smallImageURL]];
+                    if( data == nil ){
+                        NSLog(@"image is nil");
+                        return;
+                    }
+                    else{
+                        strainLoop.data = data;
+                    }
+                    
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        [self.collectionView reloadData];
+                    });
+                });
+                [objectsArray.strainObjectArray addObject:strainLoop];
+                [_objectsArrayCopy.strainObjectArray addObject:strainLoop];
+                
+            }
+            //        for (int i = 0; i <objectsArray.strainObjectArray.count; i++) {
+            //            [_objectsArrayCopy.strainObjectArray addObject:[objectsArray.strainObjectArray objectAtIndex:i]];
+            //        }
+        }];
+
+    }
+    else{
+        objectsArray.storeObjectArray = [[NSMutableArray alloc] init];
+        _objectsArrayCopy.storeObjectArray = [[NSMutableArray alloc] init];
+        
+        [firebaseRef.storesRef observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
+            _storeObjectDictionary = snapshot.value; //Creates a dictionary of of the JSON node strains
+            NSArray *keys = [_storeObjectDictionary allKeys]; //Creates an array with only the strain key uID
+            
+            for(int i=0; i<keys.count ; i++){
+                NSString *key = keys[i];
+                NSDictionary *storeDict = [_storeObjectDictionary valueForKey:key];
+                NSArray *imagesArray = [storeDict valueForKey:@"images"];
+                
+                //you have to delcare a new object instance to load table cells!!!!!!!!!!!!!!!!!!!
+                storeClass *storeloop = [[storeClass alloc] init];
+                [storeloop setStoreObject:key
+                           fromDictionary:storeDict
+                                   images:imagesArray];
+                [storeloop.imageNames removeObjectAtIndex:0];
+                dispatch_async(dispatch_get_global_queue(0,0), ^{
+                    NSInteger length = [[storeloop.imageNames objectAtIndex:0] length];
+                    NSString *smallImageURL = [[storeloop.imageNames objectAtIndex:0] substringWithRange:NSMakeRange(0, length-4)];
+                    smallImageURL = [smallImageURL stringByAppendingString:@"m.jpg"];
+                    
+                    NSData * data = [[NSData alloc] initWithContentsOfURL: [NSURL URLWithString:smallImageURL]];
+                    if( data == nil ){
+                        NSLog(@"image is nil");
+                        return;
+                    }
+                    else{
+                        storeloop.data = data;
+                    }
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        [self.collectionView reloadData];
+                    });
+                });
+                [objectsArray.storeObjectArray addObject:storeloop];
+                [_objectsArrayCopy.storeObjectArray addObject:storeloop];
+            }
+            [_locationManager stopUpdatingLocation];
+            //        _objectsArrayCopy = [[objectsArrayClass alloc] init];
+            //
+            //        for (int i = 0; i <objectsArray.storeObjectArray.count; i++) {
+            //            [_objectsArrayCopy.storeObjectArray addObject:[objectsArray.storeObjectArray objectAtIndex:i]];
+            //        }
+        }];
+
+    }
+
     [refresh endRefreshing];
+//    _objectsArrayCopy.strainObjectArray = [[NSMutableArray alloc] init];
+//    _objectsArrayCopy.storeObjectArray = [[NSMutableArray alloc] init];
+//    [self loadStoreStrain];
 }
 
 -(void) loadstrains{
-    [objectsArray.strainObjectArray init];
-    [_objectsArrayCopy.strainObjectArray removeAllObjects];
+//    [objectsArray.strainObjectArray init];
+//    [_objectsArrayCopy.strainObjectArray removeAllObjects];
+    
+    objectsArray.strainObjectArray = [[NSMutableArray alloc] init];
+    _objectsArrayCopy.strainObjectArray = [[NSMutableArray alloc] init];
+
     [firebaseRef.strainsRef observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
         _strainObjectDictionary = snapshot.value; //Creates a dictionary of of the JSON node strains
         NSArray *keys = [_strainObjectDictionary allKeys]; //Creates an array with only the strain key uID
@@ -316,8 +514,11 @@
 }
 
 - (void) loadStores {
-    [objectsArray.storeObjectArray init];
-    [_objectsArrayCopy.storeObjectArray removeAllObjects];
+//    [objectsArray.storeObjectArray init];
+//    [_objectsArrayCopy.storeObjectArray removeAllObjects];
+    objectsArray.storeObjectArray = [[NSMutableArray alloc] init];
+    _objectsArrayCopy.storeObjectArray = [[NSMutableArray alloc] init];
+
     [firebaseRef.storesRef observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
         _storeObjectDictionary = snapshot.value; //Creates a dictionary of of the JSON node strains
         NSArray *keys = [_storeObjectDictionary allKeys]; //Creates an array with only the strain key uID
@@ -365,17 +566,19 @@
 -(void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText{
     if(searchBar.text.length == 0){
         if (objectsArray.selection == 0)
-            [_objectsArrayCopy.strainObjectArray removeAllObjects];
+//            [_objectsArrayCopy.strainObjectArray removeAllObjects];
+            _objectsArrayCopy.strainObjectArray = [[NSMutableArray alloc] init];
         
         else if (objectsArray.selection == 1)
-            [_objectsArrayCopy.storeObjectArray removeAllObjects];
+//            [_objectsArrayCopy.storeObjectArray removeAllObjects];
+            _objectsArrayCopy.storeObjectArray = [[NSMutableArray alloc] init];
         
-        for (int i = 0; i <objectsArray.storeObjectArray.count; i++)
-            [_objectsArrayCopy.storeObjectArray addObject:[objectsArray.storeObjectArray objectAtIndex:i]];
-        
-        for (int i = 0; i <objectsArray.strainObjectArray.count; i++)
-            [_objectsArrayCopy.strainObjectArray addObject:[objectsArray.strainObjectArray objectAtIndex:i]];
-        
+//        for (int i = 0; i <objectsArray.storeObjectArray.count; i++)
+//            [_objectsArrayCopy.storeObjectArray addObject:[objectsArray.storeObjectArray objectAtIndex:i]];
+//        
+//        for (int i = 0; i <objectsArray.strainObjectArray.count; i++)
+//            [_objectsArrayCopy.strainObjectArray addObject:[objectsArray.strainObjectArray objectAtIndex:i]];
+//        
         [self.collectionView reloadData];}
     else
         [self searchFirebaseForSearch];
@@ -383,26 +586,30 @@
 
 -(void) searchFirebaseForSearch{
     if (objectsArray.selection == 0){
-        [_objectsArrayCopy.strainObjectArray removeAllObjects];
-        
+//        [_objectsArrayCopy.strainObjectArray removeAllObjects];
+        _objectsArrayCopy.strainObjectArray = [[NSMutableArray alloc] init];
+
         for (int i = 0; i < objectsArray.strainObjectArray.count; i++) {
             strainClass *tempStrain = [objectsArray.strainObjectArray objectAtIndex:i];
             if ([tempStrain.strainName.lowercaseString hasPrefix:_searchBar.text.lowercaseString]) {
                 NSLog(@"strain found %@", tempStrain.strainName);
                 [_objectsArrayCopy.strainObjectArray addObject:tempStrain];
-            }}
+            }
+        }
         
         [self.collectionView reloadData];}
     
     else if (objectsArray.selection == 1){
-        [_objectsArrayCopy.storeObjectArray removeAllObjects];
+//        [_objectsArrayCopy.storeObjectArray removeAllObjects];
+        _objectsArrayCopy.storeObjectArray = [[NSMutableArray alloc] init];
 
         for (int i = 0; i < objectsArray.storeObjectArray.count; i++) {
              storeClass *tempStore = [objectsArray.storeObjectArray objectAtIndex:i];
              if ([tempStore.storeName.lowercaseString hasPrefix:_searchBar.text.lowercaseString]) {
                  NSLog(@"store found %@", tempStore.storeName);
                  [_objectsArrayCopy.storeObjectArray addObject:tempStore];
-             }}
+             }
+        }
         
         [self.collectionView reloadData];}
 }
@@ -474,10 +681,12 @@
 - (void) collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath{
     if (objectsArray.selection == 1){
         store = [_objectsArrayCopy.storeObjectArray objectAtIndex:indexPath.row];
+        objectsArray.searchType = 0;
         [user goToStoreProfileViewController:self];
     }
     else if (objectsArray.selection == 0){
         strain = [_objectsArrayCopy.strainObjectArray objectAtIndex:indexPath.row];
+        objectsArray.searchType = 0;
         [user goToStrainProfileViewController:self];
     }
 }
