@@ -19,7 +19,7 @@
 @interface FriendsListViewController : UIViewController <UITableViewDataSource, UITableViewDelegate, UISearchBarDelegate, UISearchDisplayDelegate>
 @property (strong, nonatomic) IBOutlet UITableView *tableView;
 @property (strong, nonatomic) IBOutlet UISearchBar *searchBar;
-@property (strong, nonatomic) IBOutlet NSMutableArray *searchArray;
+@property (strong, nonatomic) IBOutlet userClass *friend;
 @property BOOL isFiltered;
 
 

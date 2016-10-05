@@ -15,6 +15,7 @@ objectsArrayClass *objectsArray;
 @synthesize strainObjectArray;
 @synthesize storeObjectArray;
 @synthesize eventObjectArray;
+@synthesize userSearchObjectArray;
 @synthesize selection;
 @synthesize searchType;
 
@@ -34,6 +35,7 @@ objectsArrayClass *objectsArray;
         self.strainObjectArray = [[NSMutableArray alloc] init];
         self.storeObjectArray = [[NSMutableArray alloc] init];
         self.eventObjectArray = [[NSMutableArray alloc] init];
+        self.userSearchObjectArray = [[NSMutableArray alloc] init];
     }
     return self;
 }

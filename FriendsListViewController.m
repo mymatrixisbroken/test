@@ -34,7 +34,7 @@
 
 -(void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText{
     if(searchBar.text.length == 0){
-        [_searchArray removeAllObjects];
+        objectsArray.userSearchObjectArray = [[NSMutableArray alloc] init];
         [self.tableView reloadData];
     }
     else{
@@ -43,21 +43,19 @@
 }
 
 -(NSInteger) tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
-    return [_searchArray count];
+    return [objectsArray.userSearchObjectArray count];
 }
 
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
     NSString *cellIdentifier = @"FindFriendsCell";
     FindFriendsCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier forIndexPath:indexPath];
     
-    for(int i=1; i<=[_searchArray count]; i++){
-        tempFriend = [findFriendClass sharedInstance];
-        tempFriend = [_searchArray objectAtIndex:indexPath.row];
-        
-        [cell uploadCell:tempFriend.key
-            withUsername:tempFriend.username
-                    data:tempFriend.data];
-    }
+        [cell uploadCell:_friend.userKey
+            withUsername:_friend.username
+                    data:_friend.data];
+
+    cell.addButton.tag = indexPath.row;
+
     return cell;
 }
 
@@ -67,13 +65,15 @@
     c++;
     NSString *charIncrement = [NSString stringWithCharacters:&c length:1];
     NSString *endString = [_searchBar.text substringWithRange:NSMakeRange(0, length)];
-    endString = [endString stringByAppendingString:charIncrement];    
+    endString = [endString stringByAppendingString:charIncrement];
+    
+    NSLog(@"end string is %@", endString);
     
     FIRDatabaseQuery *usernamesQuery = [[[firebaseRef.usersRef queryOrderedByChild:@"username"] queryStartingAtValue:_searchBar.text] queryEndingAtValue:endString];
 
     [usernamesQuery observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
         if ([NSNull null] != snapshot.value){
-            _searchArray = [[NSMutableArray alloc] init];
+            objectsArray.userSearchObjectArray = [[NSMutableArray alloc] init];
             NSArray *keys = [snapshot.value allKeys];
             for(int i=0; i<keys.count ; i++){
                 NSString *key = keys[i];
@@ -81,8 +81,8 @@
                 NSString *username = [dict valueForKey:@"username"];
                 NSString *imageURL = [dict valueForKey:@"avatarURL"];
                 
-                findFriendClass *friend = [[findFriendClass alloc] init];
-                [friend set:key user:username image:imageURL];
+                _friend = [[userClass alloc] init];
+                [_friend set:key user:username image:imageURL];
                 
                 
                 dispatch_async(dispatch_get_global_queue(0,0), ^{
@@ -96,7 +96,7 @@
                         return;
                     }
                     else{
-                        friend.data = data;
+                        _friend.data = data;
                     }
                     
                     dispatch_async(dispatch_get_main_queue(), ^{
@@ -104,7 +104,7 @@
                     });
                 });
 
-                [_searchArray addObject:friend];
+                [objectsArray.userSearchObjectArray addObject:_friend];
                 [self.tableView reloadData];
             }
         }

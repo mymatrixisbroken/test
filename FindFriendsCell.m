@@ -28,8 +28,11 @@
     }
     else {
         _addButton.selected = !_addButton.selected;
+        userClass *friend = [[userClass alloc] init];
+        friend = [objectsArray.userSearchObjectArray objectAtIndex:self.addButton.tag];
+
         if(_addButton.selected){
-            [[[[firebaseRef.usersRef child:user.userKey] child:@"friends"] child:tempFriend.key] setValue:@"test"];
+            [[[[firebaseRef.usersRef child:user.userKey] child:@"friends"] child:friend.userKey] setValue:@"test"];
             
             [[[firebaseRef.usersRef child:user.userKey] child:@"friends"] observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
                 [user.friends removeAllObjects];
@@ -42,8 +45,8 @@
             NSLog(@"user friends is %@",sortedKeys);*/
         }
         else{
-            [[[[firebaseRef.usersRef child:user.userKey] child:@"friends"]  child:tempFriend.key] removeValue];
-            [user.friends removeObject:tempFriend.key];
+            [[[[firebaseRef.usersRef child:user.userKey] child:@"friends"]  child:friend.userKey] removeValue];
+            [user.friends removeObject:friend.userKey];
         }
     }
 }

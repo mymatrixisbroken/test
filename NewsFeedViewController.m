@@ -71,27 +71,28 @@
 }
 
 - (NSInteger) tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
-    return [user.friendsEvents count];
+    return [objectsArray.eventObjectArray count];
 }
 
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
     NSString *cellIdentifier = @"newsFeedCell";
     newsFeedCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier forIndexPath:indexPath];
     
-    NSArray *keys = [[user.friendsEvents objectAtIndex:indexPath.row] allKeys];
-    NSString *key = [keys objectAtIndex:0];
-
-    NSDictionary *dict = [user.friendsEvents objectAtIndex:indexPath.row];
-    NSDictionary *dict1 = [dict valueForKey:key];
+    event.eventKey = [[[objectsArray.eventObjectArray objectAtIndex:indexPath.row] allKeys] objectAtIndex:0];
     
-    NSString *event = [dict1 valueForKey:@"message"];
-    NSString *username = [dict1 valueForKey:@"username"];
-    NSData *data = [dict1 valueForKey:@"data"];
+    NSDictionary *dict = [objectsArray.eventObjectArray objectAtIndex:indexPath.row];
+    NSDictionary *dict1 = [dict valueForKey:event.eventKey];
     
-    [cell uploadCellWithUsername:username
-                           event:event
-                            data:data];
-
+    event.message = [dict1 valueForKey:@"message"];
+    event.username = [dict1 valueForKey:@"username"];
+    event.imageData = [dict1 valueForKey:@"data"];
+    
+    [cell uploadCellWithUsername:event.username
+                           event:event.message
+                            data:event.imageData];
+    
+    cell.likeButton.tag = indexPath.row;
+    
     return cell;
 }
 
@@ -111,7 +112,7 @@
         [[_queriesArray objectAtIndex:i] observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
             if (snapshot.value == [NSNull null]) {}
             else{
-                [user.friendsEvents removeAllObjects];
+                [objectsArray.eventObjectArray removeAllObjects];
                 [_dict addEntriesFromDictionary:snapshot.value];
                 
                 NSArray *keys = [_dict allKeys];
@@ -140,8 +141,8 @@
                         }
                     
 //                    NSLog(@"temp dict is %@", tempDict);
-                    [user.friendsEvents addObject:tempDict];
-                    user.friendsEvents = [NSMutableArray arrayWithArray:[[user.friendsEvents reverseObjectEnumerator] allObjects]];
+                    [objectsArray.eventObjectArray addObject:tempDict];
+                    objectsArray.eventObjectArray = [NSMutableArray arrayWithArray:[[objectsArray.eventObjectArray reverseObjectEnumerator] allObjects]];
                 }
                 [self.tableView reloadData];
             }

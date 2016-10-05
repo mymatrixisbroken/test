@@ -8,14 +8,20 @@
 
 #import <Foundation/Foundation.h>
 
+@class eventClass;
+extern eventClass *event;
+
 @interface eventClass : NSObject
 @property NSString *eventKey;
 @property NSString *userID;
 @property NSString *username;
 @property NSString *message;
 @property NSString *userAvatarURL;
-@property NSString *likes;
-@property NSString *comments;
+@property NSMutableArray *likes;
+@property NSMutableArray *comments;
 @property NSData *imageData;
+
++ (eventClass *)sharedInstance;
+
 
 @end

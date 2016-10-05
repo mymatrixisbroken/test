@@ -9,6 +9,9 @@
 #import <UIKit/UIKit.h>
 #import "UIColor+Hexadecimal.h"
 #import "FirebaseReferenceClass.h"
+#import "userClass.h"
+#import "eventClass.h"
+#import "objectsArrayClass.h"
 
 
 @interface newsFeedCell : UITableViewCell
@@ -19,7 +22,6 @@
 @property (strong, nonatomic) IBOutlet UIButton *commentsButton;
 
 -(void) uploadCellWithUsername:(NSString *)username
-                         event:(NSString *)event
+                         event:(NSString *)message
                           data:(NSData *)imageURL;
-
 @end

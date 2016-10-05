@@ -10,6 +10,7 @@
 #import <TLYShyNavBar/TLYShyNavBarManager.h>
 #import "extensionViewClass.h"
 #import "userClass.h"
+#import "eventClass.h"
 #import "newsFeedCell.h"
 #import "FirebaseReferenceClass.h"
 #import "objectsArrayClass.h"

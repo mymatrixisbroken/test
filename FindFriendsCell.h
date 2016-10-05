@@ -9,6 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "FirebaseReferenceClass.h"
 #import "findFriendClass.h"
+#import "objectsArrayClass.h"
 #import "userClass.h"
 
 @interface FindFriendsCell : UITableViewCell

@@ -27,6 +27,7 @@
     user = [userClass sharedInstance];
     store = [storeClass sharedInstance];
     objectsArray = [objectsArrayClass sharedInstance];
+    event = [eventClass sharedInstance];
 }
 
 - (void) signinFirebaseAnonymously {

@@ -32,6 +32,7 @@ enum searchType
 @property NSMutableArray *strainObjectArray;
 @property NSMutableArray *storeObjectArray;
 @property NSMutableArray *eventObjectArray;
+@property NSMutableArray *userSearchObjectArray;
 @property (assign, nonatomic) enum selection selection;
 @property (assign, nonatomic) enum searchType searchType;
 
