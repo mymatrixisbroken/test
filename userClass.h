@@ -9,6 +9,7 @@
 #import <UIKit/UIKit.h>
 #import <Foundation/Foundation.h>
 
+
 @class userClass;
 extern userClass *user;
 
@@ -46,6 +47,9 @@ extern userClass *user;
 @property NSMutableArray *wishList;
 @property NSInteger wishListCount;
 
+@property double latitude;
+@property double longitude;
+
 
 
 
@@ -75,6 +79,7 @@ extern userClass *user;
 -(void)goToLoginViewController:(UIViewController *)viewController;
 -(void)goToWriteReviewViewController:(UIViewController *)viewController;
 -(void)gotoOptionListViewController:(UIViewController *)viewController;
+-(void)gotoMapViewViewController:(UIViewController *)viewController;
 -(void)goToStrainProfileViewController:(UIViewController *)viewController;
 -(void)goToStoreProfileViewController:(UIViewController *)viewController;
 -(void)goToPopoverImageViewController:(UIViewController *)viewController;

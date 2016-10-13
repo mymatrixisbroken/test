@@ -43,6 +43,9 @@ userClass *user;
 @synthesize wishList;
 @synthesize wishListCount;
 
+@synthesize latitude;
+@synthesize longitude;
+
 
 
 + (userClass *)sharedInstance {
@@ -89,6 +92,9 @@ userClass *user;
         
         self.wishList = [[NSMutableArray alloc] init];
         self.wishListCount = 0;
+        
+        self.latitude = 0;
+        self.longitude = 0;
     }
     return self;
 }
@@ -207,9 +213,18 @@ userClass *user;
 -(void)gotoOptionListViewController:(UIViewController *)viewController{
     UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
     UIViewController *vc = [sb instantiateViewControllerWithIdentifier:@"Option list SB ID"];
-//    vc.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
+    //    vc.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
     [viewController presentViewController:vc animated:YES completion:NULL];
 }
+
+-(void)gotoMapViewViewController:(UIViewController *)viewController{
+    UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+    UIViewController *vc = [sb instantiateViewControllerWithIdentifier:@"Map view SB ID"];
+    //    vc.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
+    [viewController presentViewController:vc animated:YES completion:NULL];
+}
+
+
 
 -(void)goToStrainProfileViewController:(UIViewController *)viewController{
     UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
