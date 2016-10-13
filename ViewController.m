@@ -85,9 +85,29 @@
     _searchBar.delegate = self;
     _searchBar.autoresizingMask = UIViewAutoresizingFlexibleWidth;
     
-    _rightButton = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"Search"] style:UIBarButtonItemStylePlain target:self   action:@selector(searchButtonTapped:)];
+    if (objectsArray.searchType == search) {
+        [UIView animateWithDuration:0.5 animations:^{
+            //        _rightButton.alpha = 0.0f;
+            
+        } completion:^(BOOL finished) {
+            
+            self.navigationController.navigationBar.topItem.rightBarButtonItem = nil;
+            self.navigationController.navigationBar.topItem.titleView = _searchBar;
+            _searchBar.alpha = 0.0;
+            
+            [UIView animateWithDuration:0.5
+                             animations:^{
+                                 _searchBar.alpha = 1.0;
+                             } completion:^(BOOL finished) {
+                                 [_searchBar becomeFirstResponder];
+                             }];
+            
+        }];
+    }
     
-    self.navigationController.navigationBar.topItem.rightBarButtonItem = _rightButton;
+//    _rightButton = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"Search"] style:UIBarButtonItemStylePlain target:self   action:@selector(searchButtonTapped:)];
+    
+//    self.navigationController.navigationBar.topItem.rightBarButtonItem = _rightButton;
     
     self.navigationController.navigationBar.topItem.titleView = nil;
     
@@ -146,6 +166,12 @@
         [UIView animateWithDuration:0.5f animations:^ {
 //            _rightButton.alpha = 1.0;
         }];
+        
+        UIBarButtonItem *rightButton = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"mapview"] style:UIBarButtonItemStylePlain target:self   action:@selector(barButtonCustomPressed:)];
+
+        self.navigationController.navigationBar.topItem.rightBarButtonItem = rightButton;
+
+        
         if (objectsArray.selection == 0){
             _objectsArrayCopy.strainObjectArray = [[NSMutableArray alloc] init];
             
@@ -165,6 +191,12 @@
             [self.collectionView reloadData];}
     }];
 }
+
+-(IBAction) barButtonCustomPressed:(UIBarButtonItem*)btn
+{
+    [user gotoMapViewViewController:self];
+}
+
 
 - (void) loadStoreStrain{
     switch (objectsArray.searchType) {
