@@ -22,7 +22,8 @@
     //[[FIRAuth auth] signOut:&error];
     //if (!error) {NSLog(@"Signed out any Firebase user if signed in.");}  //Sign out Firebase User at launch of App
     
-    [GMSPlacesClient provideAPIKey:@"AIzaSyCiJtePMaCbT4QEc6xAM4QEqFTAiVTyH_I"];
+    [GMSServices provideAPIKey:@"AIzaSyDv8JTb9TAl26khnT3x7Z6Em0_47rBfNfA"];
+    [GMSPlacesClient provideAPIKey:@"AIzaSyDv8JTb9TAl26khnT3x7Z6Em0_47rBfNfA"];
 
     return YES;
 }

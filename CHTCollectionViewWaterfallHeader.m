@@ -16,23 +16,28 @@
 
       if (objectsArray.selection == 1){
           _nearMeButton = [UIButton buttonWithType:UIButtonTypeCustom];
-          _nearMeButton.frame = CGRectMake(0, 0, CGRectGetWidth(frame)/3, 40.f);
+          _nearMeButton.frame = CGRectMake(0, 0, CGRectGetWidth(frame)/4, 40.f);
           [_nearMeButton setImage:[UIImage imageNamed:@"nearme"] forState:UIControlStateNormal];
           [_nearMeButton setTintColor:[UIColor lightGrayColor]];
           [_nearMeButton addTarget:self action:@selector(tappednearMeRecommendedButton:) forControlEvents:UIControlEventTouchUpInside];
           
           _AtoZButton = [UIButton buttonWithType:UIButtonTypeSystem];
-          _AtoZButton.frame = CGRectMake((CGRectGetWidth(frame)/3), 0, CGRectGetWidth(frame)/3, 40.f);
+          _AtoZButton.frame = CGRectMake((CGRectGetWidth(frame)/3), 0, CGRectGetWidth(frame)/4, 40.f);
           [_AtoZButton setImage:[UIImage imageNamed:@"A-Z-icon"] forState:UIControlStateNormal];
           [_AtoZButton setTintColor:[UIColor lightGrayColor]];
           [_AtoZButton addTarget:self action:@selector(tappedAtoZButton:) forControlEvents:UIControlEventTouchUpInside];
 
           _visitedButton = [UIButton buttonWithType:UIButtonTypeCustom];
-          _visitedButton.frame = CGRectMake(CGRectGetWidth(frame)/3*2, 0, CGRectGetWidth(frame)/3, 40.f);
+          _visitedButton.frame = CGRectMake(CGRectGetWidth(frame)/3*2, 0, CGRectGetWidth(frame)/4, 40.f);
           [_visitedButton setImage:[UIImage imageNamed:@"visited"] forState:UIControlStateNormal];
           [_visitedButton setTintColor:[UIColor lightGrayColor]];
           [_visitedButton addTarget:self action:@selector(tappedVisitedSmokedButton:) forControlEvents:UIControlEventTouchUpInside];
-          
+
+          _searchButton = [UIButton buttonWithType:UIButtonTypeCustom];
+          _searchButton.frame = CGRectMake(CGRectGetWidth(frame)/3*2, 0, CGRectGetWidth(frame)/4, 40.f);
+          [_searchButton setImage:[UIImage imageNamed:@"visited"] forState:UIControlStateNormal];
+          [_searchButton setTintColor:[UIColor lightGrayColor]];
+          [_searchButton addTarget:self action:@selector(tappedVisitedSmokedButton:) forControlEvents:UIControlEventTouchUpInside];
           
           self.backgroundColor = [UIColor colorWithRed:247.0/255.0 green:250.0/255.0 blue:250.0/255.0 alpha:1];
           [self addSubview:_nearMeButton];

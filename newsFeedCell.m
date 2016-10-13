@@ -21,6 +21,13 @@
     self.commentsButton.titleLabel.text = @"Comments";
     
     [self.likeButton addTarget:self action:@selector(likeButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
+    
+//    event.eventKey = [[[objectsArray.eventObjectArray objectAtIndex:self.likeButton.tag] allKeys] objectAtIndex:0];
+
+    if ([objectsArray.eventObjectArray indexOfObject:event.eventKey] != NSNotFound) {
+        self.likeButton.selected = YES;
+    }
+
 }
 
 -(IBAction)likeButtonPressed:(UIButton*)btn {

@@ -13,6 +13,7 @@
 #import "FirebaseReferenceClass.h"
 @import Firebase;
 @import GooglePlaces;
+@import GoogleMaps;
 
 @interface AppDelegate : UIResponder <UIApplicationDelegate>
 

@@ -19,6 +19,7 @@
 @property UIButton *visitedButton;
 @property UIButton *AtoZButton;
 @property UIButton *recommendedButton;
+@property UIButton *searchButton;
 @property UIButton *smokedButton;
 @property UIButton *wishListButton;
 @property     CLLocationManager *locationManager;
