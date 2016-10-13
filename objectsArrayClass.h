@@ -25,6 +25,7 @@ enum searchType
     AtoZ = 2,
     visitedSmoked = 3,
     wishList = 4,
+    search = 5,
 };
 
 

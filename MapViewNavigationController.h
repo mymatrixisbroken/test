@@ -8,6 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import "userClass.h"
+#import "objectsArrayClass.h"
 #import <TLYShyNavBar/TLYShyNavBarManager.h>
 
 @interface MapViewNavigationController : UINavigationController

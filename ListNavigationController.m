@@ -20,6 +20,7 @@
     UIBarButtonItem *leftButton = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"arrow_left"] style:UIBarButtonItemStylePlain target:self   action:@selector(leftButtonPressed:)];
 //    self.navigationBar.topItem.rightBarButtonItem = rightButton;
     self.navigationBar.topItem.leftBarButtonItem = leftButton;
+    self.navigationBar.topItem.rightBarButtonItem = rightButton;
 }
 
 -(IBAction) leftButtonPressed:(UIBarButtonItem *)btn{

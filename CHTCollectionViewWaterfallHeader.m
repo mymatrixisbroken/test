@@ -22,52 +22,59 @@
           [_nearMeButton addTarget:self action:@selector(tappednearMeRecommendedButton:) forControlEvents:UIControlEventTouchUpInside];
           
           _AtoZButton = [UIButton buttonWithType:UIButtonTypeSystem];
-          _AtoZButton.frame = CGRectMake((CGRectGetWidth(frame)/3), 0, CGRectGetWidth(frame)/4, 40.f);
-          [_AtoZButton setImage:[UIImage imageNamed:@"A-Z-icon"] forState:UIControlStateNormal];
-          [_AtoZButton setTintColor:[UIColor lightGrayColor]];
-          [_AtoZButton addTarget:self action:@selector(tappedAtoZButton:) forControlEvents:UIControlEventTouchUpInside];
-
-          _visitedButton = [UIButton buttonWithType:UIButtonTypeCustom];
-          _visitedButton.frame = CGRectMake(CGRectGetWidth(frame)/3*2, 0, CGRectGetWidth(frame)/4, 40.f);
-          [_visitedButton setImage:[UIImage imageNamed:@"visited"] forState:UIControlStateNormal];
-          [_visitedButton setTintColor:[UIColor lightGrayColor]];
-          [_visitedButton addTarget:self action:@selector(tappedVisitedSmokedButton:) forControlEvents:UIControlEventTouchUpInside];
-
-          _searchButton = [UIButton buttonWithType:UIButtonTypeCustom];
-          _searchButton.frame = CGRectMake(CGRectGetWidth(frame)/3*2, 0, CGRectGetWidth(frame)/4, 40.f);
-          [_searchButton setImage:[UIImage imageNamed:@"visited"] forState:UIControlStateNormal];
-          [_searchButton setTintColor:[UIColor lightGrayColor]];
-          [_searchButton addTarget:self action:@selector(tappedVisitedSmokedButton:) forControlEvents:UIControlEventTouchUpInside];
-          
-          self.backgroundColor = [UIColor colorWithRed:247.0/255.0 green:250.0/255.0 blue:250.0/255.0 alpha:1];
-          [self addSubview:_nearMeButton];
-          [self addSubview:_visitedButton];
-          [self addSubview:_AtoZButton];
-      }
-      else if (objectsArray.selection == 0){
-          _recommendedButton = [UIButton buttonWithType:UIButtonTypeCustom];
-          _recommendedButton.frame = CGRectMake(0, 0, CGRectGetWidth(frame)/3, 40.f);
-          [_recommendedButton setImage:[UIImage imageNamed:@"recommended"] forState:UIControlStateNormal];
-          [_recommendedButton setTintColor:[UIColor lightGrayColor]];
-          [_recommendedButton addTarget:self action:@selector(tappednearMeRecommendedButton:) forControlEvents:UIControlEventTouchUpInside];
-          
-          _AtoZButton = [UIButton buttonWithType:UIButtonTypeSystem];
           _AtoZButton.frame = CGRectMake((CGRectGetWidth(frame)/4), 0, CGRectGetWidth(frame)/4, 40.f);
           [_AtoZButton setImage:[UIImage imageNamed:@"A-Z-icon"] forState:UIControlStateNormal];
           [_AtoZButton setTintColor:[UIColor lightGrayColor]];
           [_AtoZButton addTarget:self action:@selector(tappedAtoZButton:) forControlEvents:UIControlEventTouchUpInside];
 
+          _visitedButton = [UIButton buttonWithType:UIButtonTypeCustom];
+          _visitedButton.frame = CGRectMake(CGRectGetWidth(frame)/4*2, 0, CGRectGetWidth(frame)/4, 40.f);
+          [_visitedButton setImage:[UIImage imageNamed:@"visited"] forState:UIControlStateNormal];
+          [_visitedButton setTintColor:[UIColor lightGrayColor]];
+          [_visitedButton addTarget:self action:@selector(tappedVisitedSmokedButton:) forControlEvents:UIControlEventTouchUpInside];
+
+          _searchButton = [UIButton buttonWithType:UIButtonTypeCustom];
+          _searchButton.frame = CGRectMake(CGRectGetWidth(frame)/4*3, 0, CGRectGetWidth(frame)/4, 40.f);
+          [_searchButton setImage:[UIImage imageNamed:@"Search"] forState:UIControlStateNormal];
+          [_searchButton setTintColor:[UIColor lightGrayColor]];
+          [_searchButton addTarget:self action:@selector(tappedSearchButton:) forControlEvents:UIControlEventTouchUpInside];
+          
+          self.backgroundColor = [UIColor colorWithRed:247.0/255.0 green:250.0/255.0 blue:250.0/255.0 alpha:1];
+          [self addSubview:_nearMeButton];
+          [self addSubview:_visitedButton];
+          [self addSubview:_AtoZButton];
+          [self addSubview:_searchButton];
+      }
+      else if (objectsArray.selection == 0){
+          _recommendedButton = [UIButton buttonWithType:UIButtonTypeCustom];
+          _recommendedButton.frame = CGRectMake(0, 0, CGRectGetWidth(frame)/5, 40.f);
+          [_recommendedButton setImage:[UIImage imageNamed:@"recommended"] forState:UIControlStateNormal];
+          [_recommendedButton setTintColor:[UIColor lightGrayColor]];
+          [_recommendedButton addTarget:self action:@selector(tappednearMeRecommendedButton:) forControlEvents:UIControlEventTouchUpInside];
+          
+          _AtoZButton = [UIButton buttonWithType:UIButtonTypeSystem];
+          _AtoZButton.frame = CGRectMake((CGRectGetWidth(frame)/5), 0, CGRectGetWidth(frame)/5, 40.f);
+          [_AtoZButton setImage:[UIImage imageNamed:@"A-Z-icon"] forState:UIControlStateNormal];
+          [_AtoZButton setTintColor:[UIColor lightGrayColor]];
+          [_AtoZButton addTarget:self action:@selector(tappedAtoZButton:) forControlEvents:UIControlEventTouchUpInside];
+
           _smokedButton = [UIButton buttonWithType:UIButtonTypeCustom];
-          _smokedButton.frame = CGRectMake(CGRectGetWidth(frame)/4*2, 0, CGRectGetWidth(frame)/4, 40.f);
+          _smokedButton.frame = CGRectMake(CGRectGetWidth(frame)/5*2, 0, CGRectGetWidth(frame)/5, 40.f);
           [_smokedButton setImage:[UIImage imageNamed:@"smoked"] forState:UIControlStateNormal];
           [_smokedButton setTintColor:[UIColor lightGrayColor]];
           [_smokedButton addTarget:self action:@selector(tappedVisitedSmokedButton:) forControlEvents:UIControlEventTouchUpInside];
           
           _wishListButton = [UIButton buttonWithType:UIButtonTypeSystem];
-          _wishListButton.frame = CGRectMake((CGRectGetWidth(frame)/4)*3, 0, CGRectGetWidth(frame)/4, 40.f);
+          _wishListButton.frame = CGRectMake((CGRectGetWidth(frame)/5)*3, 0, CGRectGetWidth(frame)/5, 40.f);
           [_wishListButton setImage:[UIImage imageNamed:@"wishlist"] forState:UIControlStateNormal];
           [_wishListButton setTintColor:[UIColor lightGrayColor]];
           [_wishListButton addTarget:self action:@selector(tappedWishListButton:) forControlEvents:UIControlEventTouchUpInside];
+          
+          _searchButton = [UIButton buttonWithType:UIButtonTypeCustom];
+          _searchButton.frame = CGRectMake(CGRectGetWidth(frame)/5*4, 0, CGRectGetWidth(frame)/5, 40.f);
+          [_searchButton setImage:[UIImage imageNamed:@"Search"] forState:UIControlStateNormal];
+          [_searchButton setTintColor:[UIColor lightGrayColor]];
+          [_searchButton addTarget:self action:@selector(tappedSearchButton:) forControlEvents:UIControlEventTouchUpInside];
 
 
           self.backgroundColor = [UIColor colorWithRed:247.0/255.0 green:250.0/255.0 blue:250.0/255.0 alpha:1];
@@ -75,6 +82,7 @@
           [self addSubview:_smokedButton];
           [self addSubview:_wishListButton];
           [self addSubview:_AtoZButton];
+          [self addSubview:_searchButton];
       }
 
   }
@@ -125,6 +133,20 @@
 
 - (IBAction)tappedWishListButton:(UIButton *)sender {
     objectsArray.searchType = wishList;
+    NSLog(@"search type is %u", objectsArray.searchType);
+    
+    for (UIView* next = [self superview]; next; next = next.superview)
+    {
+        UIResponder* nextResponder = [next nextResponder];
+        if ([nextResponder isKindOfClass:[UIViewController class]])
+        {
+            [(UIViewController*)nextResponder viewDidLoad];
+        }
+    }
+}
+
+- (IBAction)tappedSearchButton:(UIButton *)sender {
+    objectsArray.searchType = search;
     NSLog(@"search type is %u", objectsArray.searchType);
     
     for (UIView* next = [self superview]; next; next = next.superview)
