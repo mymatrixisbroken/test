@@ -105,9 +105,9 @@ const static CGFloat frameSizeWidth = 600.0f;
                 }
 
                 NSMutableArray *array4 = [[NSMutableArray alloc] init];
-                if (!([[userDict valueForKey:@"reviews"]  isEqual: @""])) {
-                    array4 = [NSMutableArray arrayWithArray:[[userDict valueForKey:@"reviews"] allKeys]];
-                }
+//                if (!([[userDict valueForKey:@"reviews"]  isEqual: @""])) {
+//                    array4 = [NSMutableArray arrayWithArray:[[userDict valueForKey:@"reviews"] allKeys]];
+//                }
 
                 NSMutableArray *array5 = [[NSMutableArray alloc] init];
                 if (!([[userDict valueForKey:@"storesVisited"]  isEqual: @""])) {
@@ -134,10 +134,99 @@ const static CGFloat frameSizeWidth = 600.0f;
                        strainsTried:array6
                            wishList:array7];
                 
-                [self getAvatarURLData];
+//                [self getAvatarURLData];
             }
         }
+        
+        
+        
+        
+        
+        
+        FIRDatabaseQuery *reviewQuery = [[firebaseRef.reviewsRef queryOrderedByChild:@"userKey"] queryEqualToValue:user.userKey];
+        
+        [reviewQuery observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
+            if (snapshot.value == [NSNull null]) {}
+            else{
+//                NSLog(@"review snapshot is %@", snapshot.value);
+                for (NSInteger i = 0; i < [snapshot.value allKeys].count; i++) {
+                    reviewClass *tempReview = [[reviewClass alloc] init];
+                    tempReview.reviewKey = [[snapshot.value allKeys] objectAtIndex:i];
+                    
+                    NSDictionary *dictionary = [[NSDictionary alloc] init];
+                    dictionary = [snapshot.value valueForKey:tempReview.reviewKey];
+                    tempReview.message = [dictionary valueForKey:@"message"];
+                    tempReview.objectImageURL = [dictionary valueForKey:@"objectImage"];
+                    tempReview.objectKey = [dictionary valueForKey:@"objectKey"];
+                    tempReview.objectName = [dictionary valueForKey:@"objectName"];
+                    tempReview.objectType = [dictionary valueForKey:@"objectType"];
+                    tempReview.userKey = [dictionary valueForKey:@"userKey"];
+                    tempReview.rating = [dictionary valueForKey:@"rating"];
+                    
+//                    NSLog(@"temp review is %@", tempReview.message);
+//                    NSLog(@"temp review is %@", tempReview.objectImageURL);
+//                    NSLog(@"temp review is %@", tempReview.objectKey);
+//                    NSLog(@"temp review is %@", tempReview.objectName);
+//                    NSLog(@"temp review is %@", tempReview.objectType);
+//                    NSLog(@"temp review is %@", tempReview.userKey);
+//                    NSLog(@"temp review is %@", tempReview.rating);
+                    
+                    [user.reviews addObject:tempReview];
+                }
+                
+                [self getAvatarURLData];
+
+                //            [_dict addEntriesFromDictionary:snapshot.value];
+                //
+                //            NSArray *keys = [_dict allKeys];
+                //            NSArray *sortedKeys = [keys sortedArrayUsingSelector:@selector(compare:)];
+                //
+                //            for (id key in sortedKeys) {
+                //                NSMutableDictionary *tempDict = [[NSMutableDictionary alloc] init];
+                //                NSMutableDictionary *value = [[NSMutableDictionary alloc] init];
+                //                value = [_dict valueForKey:key];
+                //                [tempDict setObject:value forKey:key ];
+                //
+                //                NSString *url = [value valueForKey:@"userAvatarURL"];
+                //                //                    NSLog(@"url is %@", url);
+                //
+                //                NSInteger length = [url length];
+                //                NSString *smallImageURL = [url substringWithRange:NSMakeRange(0, length-4)];
+                //                smallImageURL = [smallImageURL stringByAppendingString:@"b.jpg"];
+                //
+                //                NSData * data = [[NSData alloc] initWithContentsOfURL: [NSURL URLWithString:smallImageURL]];
+                //                if( data == nil ){
+                //                    NSLog(@"image is nil");
+                //                    return;
+                //                }
+                //                else{
+                //                    [[tempDict valueForKey:key] setObject:data forKey:@"data"];
+                //                }
+                //                
+                //                //                    NSLog(@"temp dict is %@", tempDict);
+                //                [objectsArray.eventObjectArray addObject:tempDict];
+                //                objectsArray.eventObjectArray = [NSMutableArray arrayWithArray:[[objectsArray.eventObjectArray reverseObjectEnumerator] allObjects]];
+                //            }
+                //            [self.tableView reloadData];
+                //        }
+            }}];
+
+        
+        
+        
+        
+        
+        
+        
+        
     }];
+    
+    
+    
+    
+
+    
+    
 }
 
 -(void) getAvatarURLData{
