@@ -10,6 +10,7 @@
 #import "userClass.h"
 #import "strainClass.h"
 #import "storeClass.h"
+#import "reviewClass.h"
 #import "FirebaseReferenceClass.h"
 #import "objectsArrayClass.h"
 @import Firebase;

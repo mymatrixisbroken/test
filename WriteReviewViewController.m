@@ -36,11 +36,21 @@
 
 - (void) updateFirebaseValues:reviewKey {
     if(objectsArray.selection == 0){
-        [[[[firebaseRef.reviewsRef child:@"strains"] child:reviewKey] child:@"message"] setValue:_review_text.text];
-        [[[[firebaseRef.reviewsRef child:@"strains"] child:reviewKey] child:@"strainKey"] setValue:strain.strainKey];
-        [[[[firebaseRef.reviewsRef child:@"strains"] child:reviewKey]  child:@"userKey"] setValue:user.userKey];
+//        [[[[firebaseRef.reviewsRef child:@"strains"] child:reviewKey] child:@"message"] setValue:_review_text.text];
+//        [[[[firebaseRef.reviewsRef child:@"strains"] child:reviewKey] child:@"strainKey"] setValue:strain.strainKey];
+//        [[[[firebaseRef.reviewsRef child:@"strains"] child:reviewKey]  child:@"userKey"] setValue:user.userKey];
+        [[[firebaseRef.reviewsRef child:reviewKey] child:@"message"] setValue:_review_text.text];
+        [[[firebaseRef.reviewsRef child:reviewKey] child:@"objectKey"] setValue:strain.strainKey];
+        [[[firebaseRef.reviewsRef child:reviewKey]  child:@"userKey"] setValue:user.userKey];
+        [[[firebaseRef.reviewsRef child:reviewKey]  child:@"objectType"] setValue:@"strain"];
+        [[[firebaseRef.reviewsRef child:reviewKey] child:@"objectImage"] setValue:[strain.imageNames objectAtIndex:0]];
+        [[[firebaseRef.reviewsRef child:reviewKey] child:@"objectName"] setValue:strain.strainName];
+
         
         NSString *rating = [NSString stringWithFormat:@"%d", (int)_star_rating.value];
+        [[[firebaseRef.reviewsRef child:reviewKey] child:@"rating"] setValue:rating];
+
+        
         [[[[firebaseRef.strainsRef child:strain.strainKey] child:@"ratingCount"] child:user.userKey] setValue:rating];
         [[[[[firebaseRef.strainsRef child:strain.strainKey] child:@"reviews"] child:reviewKey] child:@"reviewedBy"] setValue:user.userKey];
         [[[[firebaseRef.usersRef child:user.userKey] child:@"reviews"] child:reviewKey] setValue:@"strainReview"];
@@ -53,11 +63,22 @@
         [[[firebaseRef.eventsRef child:eventKey] child:@"username"] setValue:user.username];
     }
     else{
-        [[[[firebaseRef.reviewsRef child:@"stores"] child:reviewKey] child:@"message"] setValue:_review_text.text];
-        [[[[firebaseRef.reviewsRef child:@"stores"] child:reviewKey] child:@"storeKey"] setValue:store.storeKey];
-        [[[[firebaseRef.reviewsRef child:@"stores"] child:reviewKey]  child:@"userKey"] setValue:user.userKey];
+//        [[[[firebaseRef.reviewsRef child:@"stores"] child:reviewKey] child:@"message"] setValue:_review_text.text];
+//        [[[[firebaseRef.reviewsRef child:@"stores"] child:reviewKey] child:@"storeKey"] setValue:store.storeKey];
+//        [[[[firebaseRef.reviewsRef child:@"stores"] child:reviewKey]  child:@"userKey"] setValue:user.userKey];
+        
+        [[[firebaseRef.reviewsRef child:reviewKey] child:@"message"] setValue:_review_text.text];
+        [[[firebaseRef.reviewsRef child:reviewKey] child:@"objectKey"] setValue:store.storeKey];
+        [[[firebaseRef.reviewsRef child:reviewKey]  child:@"userKey"] setValue:user.userKey];
+        [[[firebaseRef.reviewsRef child:reviewKey]  child:@"objectType"] setValue:@"store"];
+        [[[firebaseRef.reviewsRef child:reviewKey] child:@"objectImage"] setValue:[store.imageNames objectAtIndex:0]];
+        [[[firebaseRef.reviewsRef child:reviewKey] child:@"objectName"] setValue:store.storeName];
+
         
         NSString *rating = [NSString stringWithFormat:@"%d", (int)_star_rating.value];
+        [[[firebaseRef.reviewsRef child:reviewKey] child:@"rating"] setValue:rating];
+
+        
         [[[[firebaseRef.storesRef child:store.storeKey] child:@"ratingCount"] child:user.userKey] setValue:rating];
         [[[[[firebaseRef.storesRef child:store.storeKey] child:@"reviews"] child:reviewKey] child:@"reviewedBy"] setValue:user.userKey];
         [[[[firebaseRef.usersRef child:user.userKey] child:@"reviews"] child:reviewKey] setValue:@"storeReview"];
