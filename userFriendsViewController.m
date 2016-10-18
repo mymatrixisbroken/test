@@ -53,7 +53,7 @@
                 });
             });
             [_array addObject:tempFriend];
-            [self.tableView reloadData];
+//            [self.tableView reloadData];
         }];
     }
 }
@@ -75,23 +75,23 @@
     
     if (_array.count > 0) {
         findFriendClass *friend = [_array objectAtIndex:indexPath.row];
-        dispatch_async(dispatch_get_global_queue(0,0), ^{
-            NSInteger length = [friend.imageURL length];
-            NSString *smallImageURL = [friend.imageURL substringWithRange:NSMakeRange(0, length-4)];
-            smallImageURL = [smallImageURL stringByAppendingString:@"m.jpg"];
-            
-            NSData * data = [[NSData alloc] initWithContentsOfURL: [NSURL URLWithString:smallImageURL]];
-            if( data == nil ){
-                NSLog(@"image is nil");
-                return;
-            }
-            else{
-                friend.data = data;
-            }
-            dispatch_async(dispatch_get_main_queue(), ^{
-//                [self.tableView reloadData];
-            });
-        });
+//        dispatch_async(dispatch_get_global_queue(0,0), ^{
+//            NSInteger length = [friend.imageURL length];
+//            NSString *smallImageURL = [friend.imageURL substringWithRange:NSMakeRange(0, length-4)];
+//            smallImageURL = [smallImageURL stringByAppendingString:@"m.jpg"];
+//            
+//            NSData * data = [[NSData alloc] initWithContentsOfURL: [NSURL URLWithString:smallImageURL]];
+//            if( data == nil ){
+//                NSLog(@"image is nil");
+//                return;
+//            }
+//            else{
+//                friend.data = data;
+//            }
+//            dispatch_async(dispatch_get_main_queue(), ^{
+////                [self.tableView reloadData];
+//            });
+//        });
         
         cell.userFriendLabel.text = friend.username;
         cell.imageView.image = [UIImage imageWithData:friend.data];

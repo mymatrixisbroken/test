@@ -58,11 +58,17 @@
             [[[[[firebaseRef.usersRef child:user.userKey] child:@"checkIns"] child:checkInKey] child:@"date"] setValue:todaysDate];
             [user.checkIns addObject:checkInKey];
             
-            NSString *messageString = [@"Checked in to " stringByAppendingString:store.storeName];
+//            NSString *messageString = [@"Checked in to " stringByAppendingString:store.storeName];
+            NSString *messageString = @"Checked in";
             [[[firebaseRef.eventsRef child:eventKey] child:@"userAvatarURL"] setValue:user.avatarURL];
             [[[firebaseRef.eventsRef child:eventKey] child:@"message"] setValue:messageString];
             [[[firebaseRef.eventsRef child:eventKey] child:@"userID"] setValue:user.userKey];
             [[[firebaseRef.eventsRef child:eventKey] child:@"username"] setValue:user.username];
+            [[[firebaseRef.eventsRef child:eventKey] child:@"eventType"] setValue:@"checkIn"];
+            [[[firebaseRef.eventsRef child:eventKey] child:@"objectURL"] setValue:[store.imageNames objectAtIndex:0]];
+            [[[firebaseRef.eventsRef child:eventKey] child:@"objectName"] setValue:store.storeName];
+            [[[firebaseRef.eventsRef child:eventKey] child:@"objectRating"] setValue:[NSString stringWithFormat:@"%f",store.ratingScore]];
+
         }
         else{
             [[[[firebaseRef.usersRef child:user.userKey] child:@"storesVisit"]  child:store.storeKey] removeValue];

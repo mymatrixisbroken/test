@@ -56,11 +56,18 @@
         [[[[firebaseRef.usersRef child:user.userKey] child:@"reviews"] child:reviewKey] setValue:@"strainReview"];
         
         NSString *eventKey = [firebaseRef.eventsRef childByAutoId].key;
-        NSString *messageString = [@"Wrote a review for strain " stringByAppendingString:strain.strainName];
+        NSString *messageString = @"Wrote a review";
         [[[firebaseRef.eventsRef child:eventKey] child:@"userAvatarURL"] setValue:user.avatarURL];
         [[[firebaseRef.eventsRef child:eventKey] child:@"message"] setValue:messageString];
         [[[firebaseRef.eventsRef child:eventKey] child:@"userID"] setValue:user.userKey];
         [[[firebaseRef.eventsRef child:eventKey] child:@"username"] setValue:user.username];
+        [[[firebaseRef.eventsRef child:eventKey] child:@"eventType"] setValue:@"wroteReviewStrain"];
+        [[[firebaseRef.eventsRef child:eventKey] child:@"objectURL"] setValue:[strain.imageNames objectAtIndex:0]];
+        [[[firebaseRef.eventsRef child:eventKey] child:@"objectName"] setValue:strain.strainName];
+        [[[firebaseRef.eventsRef child:eventKey] child:@"objectRating"] setValue:[NSString stringWithFormat:@"%f",strain.ratingScore]];
+        [[[firebaseRef.eventsRef child:eventKey] child:@"reviewMessage"] setValue:_review_text.text];
+        [[[firebaseRef.eventsRef child:eventKey] child:@"reviewRating"]setValue:rating];
+
     }
     else{
 //        [[[[firebaseRef.reviewsRef child:@"stores"] child:reviewKey] child:@"message"] setValue:_review_text.text];
@@ -84,11 +91,21 @@
         [[[[firebaseRef.usersRef child:user.userKey] child:@"reviews"] child:reviewKey] setValue:@"storeReview"];
         
         NSString *eventKey = [firebaseRef.eventsRef childByAutoId].key;
-        NSString *messageString = [@"Wrote a review for store " stringByAppendingString:store.storeName];
+        NSString *messageString = @"Wrote a review";
         [[[firebaseRef.eventsRef child:eventKey] child:@"userAvatarURL"] setValue:user.avatarURL];
         [[[firebaseRef.eventsRef child:eventKey] child:@"message"] setValue:messageString];
         [[[firebaseRef.eventsRef child:eventKey] child:@"userID"] setValue:user.userKey];
         [[[firebaseRef.eventsRef child:eventKey] child:@"username"] setValue:user.username];
+        [[[firebaseRef.eventsRef child:eventKey] child:@"eventType"] setValue:@"wroteReviewStore"];
+        [[[firebaseRef.eventsRef child:eventKey] child:@"objectURL"] setValue:[store.imageNames objectAtIndex:0]];
+        [[[firebaseRef.eventsRef child:eventKey] child:@"objectName"] setValue:store.storeName];
+        [[[firebaseRef.eventsRef child:eventKey] child:@"objectRating"] setValue:[NSString stringWithFormat:@"%f",store.ratingScore]];
+        [[[firebaseRef.eventsRef child:eventKey] child:@"reviewMessage"] setValue:_review_text.text];
+        [[[firebaseRef.eventsRef child:eventKey] child:@"reviewRating"]setValue:rating];
+
+
+        
+
     }
 }
 

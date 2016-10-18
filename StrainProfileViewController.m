@@ -120,11 +120,16 @@
             [[[[firebaseRef.usersRef child:user.userKey] child:@"strainsTried"] child:strain.strainKey] setValue:@"test"];
             [user.strainsTried addObject:strain.strainKey];
 
-            NSString *messageString = [@"Smoked a new strain " stringByAppendingString:strain.strainName];
+//            NSString *messageString = [@"Smoked a new strain " stringByAppendingString:strain.strainName];
+            NSString *messageString = @"Smoked a new strain";
             [[[firebaseRef.eventsRef child:eventKey] child:@"userAvatarURL"] setValue:user.avatarURL];
             [[[firebaseRef.eventsRef child:eventKey] child:@"message"] setValue:messageString];
             [[[firebaseRef.eventsRef child:eventKey] child:@"userID"] setValue:user.userKey];
             [[[firebaseRef.eventsRef child:eventKey] child:@"username"] setValue:user.username];
+            [[[firebaseRef.eventsRef child:eventKey] child:@"eventType"] setValue:@"smokedNew"];
+            [[[firebaseRef.eventsRef child:eventKey] child:@"objectURL"] setValue:[strain.imageNames objectAtIndex:0]];
+            [[[firebaseRef.eventsRef child:eventKey] child:@"objectName"] setValue:strain.strainName];
+            [[[firebaseRef.eventsRef child:eventKey] child:@"objectRating"] setValue:[NSString stringWithFormat:@"%f",strain.ratingScore]];
         }
         else{
             [[[[firebaseRef.usersRef child:user.userKey] child:@"strainsTried"]  child:strain.strainKey] removeValue];
