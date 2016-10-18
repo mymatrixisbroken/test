@@ -76,8 +76,12 @@
 
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
     NSString *cellIdentifier = @"newsFeedCell";
-    newsFeedCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier forIndexPath:indexPath];
+    NSString *cellIdentifier1 = @"newsFeedCheckInCell";
+    NSString *cellIdentifier2 = @"newsFeedWroteReviewStoreCell";
+    NSString *cellIdentifier3 = @"newsFeedWroteReviewStrainCell";
     
+//    newsFeedCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier forIndexPath:indexPath];
+
     event.eventKey = [[[objectsArray.eventObjectArray objectAtIndex:indexPath.row] allKeys] objectAtIndex:0];
     
     NSDictionary *dict = [objectsArray.eventObjectArray objectAtIndex:indexPath.row];
@@ -85,15 +89,64 @@
     
     event.message = [dict1 valueForKey:@"message"];
     event.username = [dict1 valueForKey:@"username"];
-    event.imageData = [dict1 valueForKey:@"data"];
+    event.userImageData = [dict1 valueForKey:@"userImageData"];
+    event.eventType = [dict1 valueForKey:@"eventType"];
+    event.objectName = [dict1 valueForKey:@"objectName"];
+    event.objectRating = [dict1 valueForKey:@"objectRating"];
+    event.objectURL = [dict1 valueForKey:@"objectURL"];
+    event.objectData = [dict1 valueForKey:@"objectImageData"];
     
-    [cell uploadCellWithUsername:event.username
-                           event:event.message
-                            data:event.imageData];
+//            dispatch_async(dispatch_get_global_queue(0,0), ^{
+//
+//                NSInteger length = [event.objectURL length];
+//                NSString *smallImageURL = [event.objectURL substringWithRange:NSMakeRange(0, length-4)];
+//                smallImageURL = [smallImageURL stringByAppendingString:@"b.jpg"];
+//    
+//
+//                NSData * data = [[NSData alloc] initWithContentsOfURL: [NSURL URLWithString:smallImageURL]];
+//                if( data == nil ){
+//                    NSLog(@"image is nil");
+//                }
+//                else{
+//                    event.objectData = data;
+//                }
+//            });
     
-    cell.likeButton.tag = indexPath.row;
+    if ([event.eventType isEqual:@"smokedNew"]) {
+        newsFeedCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier forIndexPath:indexPath];
+//        [cell uploadCellWithUsername:event.username
+//                               event:event.message
+//                                data:event.imageData];
+        [cell uploadCellWithUsernameEventData:event];
+        
+        cell.likeButton.tag = indexPath.row;
+        return cell;
+
+    } else if ([event.eventType isEqual:@"checkIn"]){
+        newsFeedCheckInCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier1 forIndexPath:indexPath];
+        [cell uploadCellWithUsernameEventData:event];
+        
+        cell.likeButton.tag = indexPath.row;
+        return cell;
+    } else if ([event.eventType isEqual:@"wroteReviewStore"]){
+        event.reviewRating = [dict1 valueForKey:@"reviewRating"];
+        event.reviewMessage = [dict1 valueForKey:@"reviewMessage"];
+        newsFeedWroteReviewStoreCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier2 forIndexPath:indexPath];
+        [cell uploadCellWithUsernameEventData:event];
+        cell.likeButton.tag = indexPath.row;
+
+        return cell;
+    } else {
+        event.reviewRating = [dict1 valueForKey:@"reviewRating"];
+        event.reviewMessage = [dict1 valueForKey:@"reviewMessage"];
+
+        newsFeedWroteReviewStrainCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier3 forIndexPath:indexPath];
+        [cell uploadCellWithUsernameEventData:event];
+        cell.likeButton.tag = indexPath.row;
+
+        return cell;
+    }
     
-    return cell;
 }
 
 - (void)refreshTable:(UIRefreshControl *)refresh {
@@ -122,22 +175,30 @@
                     NSMutableDictionary *tempDict = [[NSMutableDictionary alloc] init];
                     NSMutableDictionary *value = [[NSMutableDictionary alloc] init];
                     value = [_dict valueForKey:key];
-                    [tempDict setObject:value forKey:key ];
+                    [tempDict setObject:value forKey:key];
                     
                     NSString *url = [value valueForKey:@"userAvatarURL"];
+                    NSString *url2 = [value valueForKey:@"objectURL"];
+
 //                    NSLog(@"url is %@", url);
                     
                         NSInteger length = [url length];
                         NSString *smallImageURL = [url substringWithRange:NSMakeRange(0, length-4)];
                         smallImageURL = [smallImageURL stringByAppendingString:@"b.jpg"];
-                        
+
+                        NSInteger length2 = [url2 length];
+                        NSString *smallImageURL2 = [url2 substringWithRange:NSMakeRange(0, length2-4)];
+                        smallImageURL2 = [smallImageURL2 stringByAppendingString:@"b.jpg"];
+
                         NSData * data = [[NSData alloc] initWithContentsOfURL: [NSURL URLWithString:smallImageURL]];
+                        NSData * data2 = [[NSData alloc] initWithContentsOfURL: [NSURL URLWithString:smallImageURL2]];
                         if( data == nil ){
                             NSLog(@"image is nil");
                             return;
                         }
                         else{
-                            [[tempDict valueForKey:key] setObject:data forKey:@"data"];
+                            [[tempDict valueForKey:key] setObject:data forKey:@"userImageData"];
+                            [[tempDict valueForKey:key] setObject:data2 forKey:@"objectImageData"];
                         }
                     
 //                    NSLog(@"temp dict is %@", tempDict);

@@ -12,5 +12,6 @@
 #import "userClass.h"
 
 @interface CurrentUserReviewsController : UITableViewController <UITableViewDelegate, UITableViewDataSource>
+@property (strong, nonatomic) IBOutlet NSMutableArray *mArray;
 
 @end

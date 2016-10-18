@@ -163,6 +163,14 @@ const static CGFloat frameSizeWidth = 600.0f;
                     tempReview.userKey = [dictionary valueForKey:@"userKey"];
                     tempReview.rating = [dictionary valueForKey:@"rating"];
                     
+                    
+                    NSInteger length = [tempReview.objectImageURL length];
+                    NSString *smallImageURL = [tempReview.objectImageURL substringWithRange:NSMakeRange(0, length-4)];
+                    smallImageURL = [smallImageURL stringByAppendingString:@"b.jpg"];
+                    NSData * data = [[NSData alloc] initWithContentsOfURL: [NSURL URLWithString:smallImageURL]];
+                    tempReview.data = data;
+
+                    
 //                    NSLog(@"temp review is %@", tempReview.message);
 //                    NSLog(@"temp review is %@", tempReview.objectImageURL);
 //                    NSLog(@"temp review is %@", tempReview.objectKey);

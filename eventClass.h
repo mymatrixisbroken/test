@@ -17,9 +17,16 @@ extern eventClass *event;
 @property NSString *username;
 @property NSString *message;
 @property NSString *userAvatarURL;
+@property NSString *eventType;
+@property NSString *objectName;
+@property NSString *objectRating;
+@property NSString *objectURL;
+@property NSString *reviewRating;
+@property NSString *reviewMessage;
+@property NSData *objectData;
 @property NSMutableArray *likes;
 @property NSMutableArray *comments;
-@property NSData *imageData;
+@property NSData *userImageData;
 
 + (eventClass *)sharedInstance;
 

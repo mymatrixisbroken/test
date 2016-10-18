@@ -20,6 +20,32 @@
     self.tableView.delegate = self;
     self.tableView.dataSource = self;
     
+//    for (NSInteger i = 0; i <user.reviews.count; i++) {
+//        reviewClass *tempReview = [[reviewClass alloc] init];
+//        tempReview = [user.reviews objectAtIndex:i];
+//
+//        dispatch_async(dispatch_get_global_queue(0,0), ^{
+//            NSInteger length = [tempReview.objectImageURL length];
+//            NSString *smallImageURL = [tempReview.objectImageURL substringWithRange:NSMakeRange(0, length-4)];
+//            smallImageURL = [smallImageURL stringByAppendingString:@"m.jpg"];
+//            
+//            NSData * data = [[NSData alloc] initWithContentsOfURL: [NSURL URLWithString:smallImageURL]];
+//            if( data == nil ){
+//                NSLog(@"image is nil");
+//                return;
+//            }
+//            else{
+//                tempReview.data = data;
+//            }
+//            dispatch_async(dispatch_get_main_queue(), ^{
+//                [self.tableView reloadData];
+//            });
+//        });
+//
+//    }
+    
+
+    
     
     // Uncomment the following line to preserve selection between presentations.
     // self.clearsSelectionOnViewWillAppear = NO;
@@ -54,23 +80,23 @@
     tempReview = [user.reviews objectAtIndex:indexPath.row];
 //    NSLog(@"object name is %@", tempReview.objectName);
     
-    dispatch_async(dispatch_get_global_queue(0,0), ^{
-        NSInteger length = [tempReview.objectImageURL length];
-        NSString *smallImageURL = [tempReview.objectImageURL substringWithRange:NSMakeRange(0, length-4)];
-        smallImageURL = [smallImageURL stringByAppendingString:@"m.jpg"];
-        
-        NSData * data = [[NSData alloc] initWithContentsOfURL: [NSURL URLWithString:smallImageURL]];
-        if( data == nil ){
-            NSLog(@"image is nil");
-            return;
-        }
-        else{
-            tempReview.data = data;
-        }
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [self.tableView reloadData];
-        });
-    });
+//    dispatch_async(dispatch_get_global_queue(0,0), ^{
+//        NSInteger length = [tempReview.objectImageURL length];
+//        NSString *smallImageURL = [tempReview.objectImageURL substringWithRange:NSMakeRange(0, length-4)];
+//        smallImageURL = [smallImageURL stringByAppendingString:@"m.jpg"];
+//        
+//        NSData * data = [[NSData alloc] initWithContentsOfURL: [NSURL URLWithString:smallImageURL]];
+//        if( data == nil ){
+//            NSLog(@"image is nil");
+//            return;
+//        }
+//        else{
+//            tempReview.data = data;
+//        }
+//        dispatch_async(dispatch_get_main_queue(), ^{
+//            [self.tableView reloadData];
+//        });
+//    });
 
     
     [cell uploadCellWithReview:tempReview];

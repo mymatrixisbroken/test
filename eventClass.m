@@ -16,9 +16,16 @@ eventClass *event;
 @synthesize username;
 @synthesize message;
 @synthesize userAvatarURL;
+@synthesize eventType;
+@synthesize objectName;
+@synthesize objectRating;
+@synthesize objectURL;
+@synthesize objectData;
+@synthesize reviewRating;
+@synthesize reviewMessage;
 @synthesize likes;
 @synthesize comments;
-@synthesize imageData;
+@synthesize userImageData;
 
 + (eventClass *)sharedInstance {
     static dispatch_once_t onceToken;
@@ -38,9 +45,16 @@ eventClass *event;
         self.username = @"";
         self.message = @"";
         self.userAvatarURL = @"";
-        self.likes = @"user";
-        self.comments = @"";
-        self.imageData = [[NSData alloc] init];
+        self.eventType = @"";
+        self.objectName = @"";
+        self.objectRating = @"";
+        self.objectURL = @"";
+        self.objectData = [[NSData alloc] init];
+        self.reviewRating = @"";
+        self.reviewMessage = @"";
+        self.likes = [[NSMutableArray alloc] init];
+        self.comments = [[NSMutableArray alloc] init];
+        self.userImageData = [[NSData alloc] init];
     }
     return self;
 }

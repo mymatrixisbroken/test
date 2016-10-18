@@ -12,6 +12,9 @@
 #import "userClass.h"
 #import "eventClass.h"
 #import "newsFeedCell.h"
+#import "newsFeedCheckInCell.h"
+#import "newsFeedWroteReviewStoreCell.h"
+#import "newsFeedWroteReviewStrainCell.h"
 #import "FirebaseReferenceClass.h"
 #import "objectsArrayClass.h"
 @import Firebase;
