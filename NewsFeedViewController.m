@@ -156,8 +156,12 @@
 }
 
 -(void) newLoadEventsFromFirebaseDatabse{
-    for (int i = 0; i<[user.friends count]; i++) {
-        FIRDatabaseQuery *eventQuery = [[firebaseRef.eventsRef queryOrderedByChild:@"userID"] queryEqualToValue:[user.friends objectAtIndex:i]];
+    NSLog(@"friend keys count is %lu", user.friendsKeys.count);
+    [_queriesArray removeAllObjects];
+    [objectsArray.eventObjectArray removeAllObjects];
+
+    for (int i = 0; i<[user.friendsKeys count]; i++) {
+        FIRDatabaseQuery *eventQuery = [[firebaseRef.eventsRef queryOrderedByChild:@"userID"] queryEqualToValue:[user.friendsKeys objectAtIndex:i]];
         [_queriesArray addObject:eventQuery];
     }
     

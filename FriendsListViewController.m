@@ -50,9 +50,15 @@
     NSString *cellIdentifier = @"FindFriendsCell";
     FindFriendsCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier forIndexPath:indexPath];
     
-        [cell uploadCell:_friend.userKey
-            withUsername:_friend.username
-                    data:_friend.data];
+    userClass *friend = [[userClass alloc] init];
+    friend = [objectsArray.userSearchObjectArray objectAtIndex:indexPath.row];
+        [cell uploadCell:friend.userKey
+            withUsername:friend.username
+                    data:friend.data];
+
+//        [cell uploadCell:_friend.userKey
+//            withUsername:_friend.username
+//                    data:_friend.data];
 
     cell.addButton.tag = indexPath.row;
 
@@ -67,7 +73,7 @@
     NSString *endString = [_searchBar.text substringWithRange:NSMakeRange(0, length)];
     endString = [endString stringByAppendingString:charIncrement];
     
-    NSLog(@"end string is %@", endString);
+//    NSLog(@"end string is %@", endString);
     
     FIRDatabaseQuery *usernamesQuery = [[[firebaseRef.usersRef queryOrderedByChild:@"username"] queryStartingAtValue:_searchBar.text] queryEndingAtValue:endString];
 
@@ -77,35 +83,44 @@
             NSArray *keys = [snapshot.value allKeys];
             for(int i=0; i<keys.count ; i++){
                 NSString *key = keys[i];
-                NSDictionary *dict = [snapshot.value valueForKey:key];
-                NSString *username = [dict valueForKey:@"username"];
-                NSString *imageURL = [dict valueForKey:@"avatarURL"];
                 
-                _friend = [[userClass alloc] init];
-                [_friend set:key user:username image:imageURL];
-                
-                
-                dispatch_async(dispatch_get_global_queue(0,0), ^{
-                    NSInteger length = [imageURL length];
-                    NSString *smallImageURL = [imageURL substringWithRange:NSMakeRange(0, length-4)];
-                    smallImageURL = [smallImageURL stringByAppendingString:@"b.jpg"];
+//                if (![key isEqual:user.friendsKeys]) {
+                if([user.friendsKeys indexOfObject:key] == NSNotFound){
                     
-                    NSData * data = [[NSData alloc] initWithContentsOfURL: [NSURL URLWithString:smallImageURL]];
-                    if( data == nil ){
-                        NSLog(@"image is nil");
-                        return;
-                    }
-                    else{
-                        _friend.data = data;
-                    }
-                    
-                    dispatch_async(dispatch_get_main_queue(), ^{
-                        [self.tableView reloadData];
-                    });
-                });
 
-                [objectsArray.userSearchObjectArray addObject:_friend];
-                [self.tableView reloadData];
+                    NSDictionary *dict = [snapshot.value valueForKey:key];
+                    NSString *username = [dict valueForKey:@"username"];
+                    NSString *imageURL = [dict valueForKey:@"avatarURL"];
+                    
+//                    _friend = [[userClass alloc] init];
+                    userClass *friend = [[userClass alloc] init];
+
+                    
+                    [friend set:key user:username image:imageURL];
+                
+                    dispatch_async(dispatch_get_global_queue(0,0), ^{
+                        NSInteger length = [imageURL length];
+                        NSString *smallImageURL = [imageURL substringWithRange:NSMakeRange(0, length-4)];
+                        smallImageURL = [smallImageURL stringByAppendingString:@"b.jpg"];
+                        
+                        NSData * data = [[NSData alloc] initWithContentsOfURL: [NSURL URLWithString:smallImageURL]];
+                        if( data == nil ){
+                            NSLog(@"image is nil");
+                            return;
+                        }
+                        else{
+                            friend.data = data;
+                        }
+                        
+                        dispatch_async(dispatch_get_main_queue(), ^{
+                            [self.tableView reloadData];
+                        });
+                    });
+                    
+                    [objectsArray.userSearchObjectArray addObject:friend];
+                    [self.tableView reloadData];
+
+                }
             }
         }
     }];

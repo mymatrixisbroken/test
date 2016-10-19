@@ -81,20 +81,22 @@ const static CGFloat frameSizeWidth = 600.0f;
             NSDictionary *userDict = [usersSnapshot valueForKey:key];
             if ([_SignInUsername.text isEqual:[userDict valueForKey:@"email"]]){
                 
-                NSMutableArray *array1 = [[NSMutableArray alloc] init];
+//                NSMutableArray *array1 = [[NSMutableArray alloc] init];
                 if (!([[userDict valueForKey:@"badges"]  isEqual: @""])) {
                     NSMutableDictionary *dict = [userDict valueForKey:@"badges"];
                     for (id key in dict) {
                         NSString *value = [dict valueForKey:key];
                         if ([value isEqualToString:@"true"]) {
-                            [array1 addObject:key];
+//                            [array1 addObject:key];
+                            [user.badges addObject:key];
                         }
                     }
                 }
 
-                NSMutableArray *array2 = [[NSMutableArray alloc] init];
+//                NSMutableArray *array2 = [[NSMutableArray alloc] init];
                 if (!([[userDict valueForKey:@"checkIns"]  isEqual: @""])) {
-                    array2 = [NSMutableArray arrayWithArray:[[userDict valueForKey:@"checkIns"] allKeys]];
+//                    array2 = [NSMutableArray arrayWithArray:[[userDict valueForKey:@"checkIns"] allKeys]];
+                    user.checkIns = [NSMutableArray arrayWithArray:[[userDict valueForKey:@"checkIns"] allKeys]];
                 }
                 
                 NSMutableArray *array3 = [[NSMutableArray alloc] init];
@@ -102,37 +104,57 @@ const static CGFloat frameSizeWidth = 600.0f;
                     NSArray *keys = [[userDict valueForKey:@"friends"] allKeys];
                     NSArray *sortedKeys = [keys sortedArrayUsingSelector:@selector(compare:)];
                     array3 = [NSMutableArray arrayWithArray:sortedKeys];
+                    user.friendsKeys = [NSMutableArray arrayWithArray:sortedKeys];
                 }
 
-                NSMutableArray *array4 = [[NSMutableArray alloc] init];
+//                NSMutableArray *array4 = [[NSMutableArray alloc] init];
 //                if (!([[userDict valueForKey:@"reviews"]  isEqual: @""])) {
 //                    array4 = [NSMutableArray arrayWithArray:[[userDict valueForKey:@"reviews"] allKeys]];
 //                }
 
-                NSMutableArray *array5 = [[NSMutableArray alloc] init];
+//                NSMutableArray *array5 = [[NSMutableArray alloc] init];
                 if (!([[userDict valueForKey:@"storesVisited"]  isEqual: @""])) {
-                    array5 = [NSMutableArray arrayWithArray:[[userDict valueForKey:@"storesVisited"] allKeys]];
+//                    array5 = [NSMutableArray arrayWithArray:[[userDict valueForKey:@"storesVisited"] allKeys]];
+                    user.storesVisited = [NSMutableArray arrayWithArray:[[userDict valueForKey:@"storesVisited"] allKeys]];
                 }
 
-                NSMutableArray *array6 = [[NSMutableArray alloc] init];
+//                NSMutableArray *array6 = [[NSMutableArray alloc] init];
                 if (!([[userDict valueForKey:@"strainsTried"]  isEqual: @""])) {
-                    array6 = [NSMutableArray arrayWithArray:[[userDict valueForKey:@"strainsTried"] allKeys]];
+//                    array6 = [NSMutableArray arrayWithArray:[[userDict valueForKey:@"strainsTried"] allKeys]];
+                    user.strainsTried = [NSMutableArray arrayWithArray:[[userDict valueForKey:@"strainsTried"] allKeys]];
                 }
 
-                NSMutableArray *array7 = [[NSMutableArray alloc] init];
+//                NSMutableArray *array7 = [[NSMutableArray alloc] init];
                 if (!([[userDict valueForKey:@"wishList"]  isEqual: @""])) {
-                    array7 = [NSMutableArray arrayWithArray:[[userDict valueForKey:@"wishList"] allKeys]];
+//                    array7 = [NSMutableArray arrayWithArray:[[userDict valueForKey:@"wishList"] allKeys]];
+                    user.wishList = [NSMutableArray arrayWithArray:[[userDict valueForKey:@"wishList"] allKeys]];
+                }
+                
+//                NSMutableArray *array8 = [[NSMutableArray alloc] init];
+                if (!([[userDict valueForKey:@"friendRequestsIncoming"]  isEqual: @""])) {
+//                    array8 = [NSMutableArray arrayWithArray:[[userDict valueForKey:@"friendRequests"] allKeys]];
+                    user.friendRequestsIncomingKeys = [NSMutableArray arrayWithArray:[[userDict valueForKey:@"friendRequestsIncoming"] allKeys]];
+                }
+                
+                if (!([[userDict valueForKey:@"friendRequestsOutgoing"]  isEqual: @""])) {
+                    //                    array8 = [NSMutableArray arrayWithArray:[[userDict valueForKey:@"friendRequests"] allKeys]];
+                    user.friendRequestsOutgoingKeys = [NSMutableArray arrayWithArray:[[userDict valueForKey:@"friendRequestsOutgoing"] allKeys]];
                 }
                 
                 [user setUserObject:key
-                     fromDictionary:userDict
-                             badges:array1
-                           checkIns:array2
-                            friends:array3
-                            reviews:array4
-                      storesVisited:array5
-                       strainsTried:array6
-                           wishList:array7];
+                     fromDictionary:userDict];
+
+
+//                [user setUserObject:key
+//                     fromDictionary:userDict
+//                             badges:array1
+//                           checkIns:array2
+//                            friends:array3
+//                            reviews:array4
+//                      storesVisited:array5
+//                       strainsTried:array6
+//                           wishList:array7
+//                 friendRequestsKeys:array8];
                 
 //                [self getAvatarURLData];
             }
