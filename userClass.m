@@ -28,7 +28,8 @@ userClass *user;
 @synthesize friendsEvents;
 @synthesize friendsEventsCount;
 
-@synthesize friends;
+@synthesize friendsKeys;
+@synthesize friendsUsers;
 @synthesize friendsCount;
 
 @synthesize reviews;
@@ -42,6 +43,11 @@ userClass *user;
 
 @synthesize wishList;
 @synthesize wishListCount;
+
+@synthesize friendRequestsIncomingKeys;
+@synthesize friendRequestsIncomingUsers;
+
+@synthesize friendRequestsOutgoingKeys;
 
 @synthesize latitude;
 @synthesize longitude;
@@ -78,7 +84,8 @@ userClass *user;
         self.friendsEvents = [[NSMutableArray alloc] init];
         self.friendsEventsCount = 0;
         
-        self.friends = [[NSMutableArray alloc] init];
+        self.friendsKeys = [[NSMutableArray alloc] init];
+        self.friendsUsers = [[NSMutableArray alloc] init];
         self.friendsCount = 0;
         
         self.reviews = [[NSMutableArray alloc] init];
@@ -92,6 +99,11 @@ userClass *user;
         
         self.wishList = [[NSMutableArray alloc] init];
         self.wishListCount = 0;
+        
+        self.friendRequestsIncomingKeys = [[NSMutableArray alloc] init];
+        self.friendRequestsIncomingUsers = [[NSMutableArray alloc] init];
+        
+        self.friendRequestsOutgoingKeys = [[NSMutableArray alloc] init];
         
         self.latitude = 0;
         self.longitude = 0;
@@ -116,6 +128,29 @@ userClass *user;
     return self;
 }
 
+-(id)setUserObject:key
+    fromDictionary:(NSDictionary *)userDict{
+    self.userKey = key;
+    self.email = [userDict valueForKey:@"email"];
+    self.username = [userDict valueForKey:@"username"];
+    self.dateJoined = [userDict valueForKey:@"dateJoined"];
+    self.lastSignedIn = [userDict valueForKey:@"lastSignedIn"];
+    self.accountType = [userDict valueForKey:@"accountType"];
+    self.avatarURL = [userDict valueForKey:@"avatarURL"];
+    
+    self.badgeCount = 0;
+    self.checkInCount = 0;
+    self.friendsEventsCount = 0;
+    self.friendsCount = 0;
+    self.reviewsCount = 0;
+    self.storesVisitedCount = 0;
+    self.strainsTriedCount = 0;
+    self.wishListCount = 0;
+    
+    return self;
+}
+
+
 
 -(id)setUserObject:key
     fromDictionary:(NSDictionary *)userDict
@@ -125,7 +160,8 @@ userClass *user;
            reviews:(NSMutableArray *)array4
      storesVisited:(NSMutableArray *)array5
       strainsTried:(NSMutableArray *)array6
-          wishList:(NSMutableArray *)array7{
+          wishList:(NSMutableArray *)array7
+friendRequestsKeys:(NSMutableArray *)array8{
     
     self.userKey = key;
     self.email = [userDict valueForKey:@"email"];
@@ -143,7 +179,7 @@ userClass *user;
     
     self.friendsEventsCount = 0;
     
-    self.friends = array3;
+    self.friendsKeys = array3;
     self.friendsCount = 0;
     
     self.reviews = array4;
@@ -158,6 +194,8 @@ userClass *user;
     self.wishList = array7;
     self.wishListCount = 0;
     
+    self.friendRequestsIncomingKeys = array8;
+    
     return self;
 }
 
@@ -165,102 +203,113 @@ userClass *user;
     UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
     UIViewController *vc = [sb instantiateViewControllerWithIdentifier:@"News Feed Navigation SB ID"];
     vc.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
-    [viewController presentViewController:vc animated:YES completion:NULL];
+    //    [viewController presentViewController:vc animated:YES completion:NULL];
+    [viewController showDetailViewController:vc sender:viewController];
 }
 
 -(void)goToStrainsStoresViewController:(UIViewController *)viewController{
     UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
     UIViewController *vc = [sb instantiateViewControllerWithIdentifier:@"List View Controller  SB ID"];
     vc.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
-    [viewController presentViewController:vc animated:YES completion:NULL];
+    //    [viewController presentViewController:vc animated:YES completion:NULL];
+    [viewController showDetailViewController:vc sender:viewController];
 }
 
 -(void)goToSearchUsersViewController:(UIViewController *)viewController{
     UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
     UIViewController *vc = [sb instantiateViewControllerWithIdentifier:@"Friends Navigation SB ID"];
     vc.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
-    [viewController presentViewController:vc animated:YES completion:NULL];
+    //    [viewController presentViewController:vc animated:YES completion:NULL];
+    [viewController showDetailViewController:vc sender:viewController];
 }
 
 -(void)goToUserNotSignedInViewController:(UIViewController *)viewController{
     UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
     UIViewController *vc = [sb instantiateViewControllerWithIdentifier:@"User Not Found SB ID"];
     vc.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
-    [viewController presentViewController:vc animated:YES completion:NULL];
+    //    [viewController presentViewController:vc animated:YES completion:NULL];
+    [viewController showDetailViewController:vc sender:viewController];
 }
 
 -(void)goToCurrentUserProfileViewController:(UIViewController *)viewController{
     UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
     UIViewController *vc = [sb instantiateViewControllerWithIdentifier:@"User Profile Navigation SB ID"];
     vc.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
-    [viewController presentViewController:vc animated:YES completion:NULL];
+//    [viewController presentViewController:vc animated:YES completion:NULL];
+    [viewController showDetailViewController:vc sender:viewController];
 }
 
 -(void)goToLoginViewController:(UIViewController *)viewController{
     UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
     UIViewController *vc = [sb instantiateViewControllerWithIdentifier:@"Login View SB ID"];
     vc.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
-    [viewController presentViewController:vc animated:YES completion:NULL];
+    //    [viewController presentViewController:vc animated:YES completion:NULL];
+    [viewController showDetailViewController:vc sender:viewController];
 }
 
 -(void)goToWriteReviewViewController:(UIViewController *)viewController{
     UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
     UIViewController *vc = [sb instantiateViewControllerWithIdentifier:@"Write Review SB ID"];
     vc.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
-    [viewController presentViewController:vc animated:YES completion:NULL];
+    //    [viewController presentViewController:vc animated:YES completion:NULL];
+    [viewController showDetailViewController:vc sender:viewController];
 }
 
 -(void)gotoOptionListViewController:(UIViewController *)viewController{
     UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
     UIViewController *vc = [sb instantiateViewControllerWithIdentifier:@"Option list SB ID"];
     //    vc.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
-    [viewController presentViewController:vc animated:YES completion:NULL];
+    //    [viewController presentViewController:vc animated:YES completion:NULL];
+    [viewController showDetailViewController:vc sender:viewController];
 }
 
 -(void)gotoMapViewViewController:(UIViewController *)viewController{
     UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
     UIViewController *vc = [sb instantiateViewControllerWithIdentifier:@"Map view SB ID"];
     //    vc.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
-    [viewController presentViewController:vc animated:YES completion:NULL];
+    //    [viewController presentViewController:vc animated:YES completion:NULL];
+    [viewController showDetailViewController:vc sender:viewController];
 }
-
-
 
 -(void)goToStrainProfileViewController:(UIViewController *)viewController{
     UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
     UIViewController *vc = [sb instantiateViewControllerWithIdentifier:@"Strain Profile SB ID"];
     vc.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
-    [viewController presentViewController:vc animated:YES completion:NULL];
+    //    [viewController presentViewController:vc animated:YES completion:NULL];
+    [viewController showDetailViewController:vc sender:viewController];
 }
 
 -(void)goToStoreProfileViewController:(UIViewController *)viewController{
     UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
     UIViewController *vc = [sb instantiateViewControllerWithIdentifier:@"Store Profile SB ID"];
     vc.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
-    [viewController presentViewController:vc animated:YES completion:NULL];
+    //    [viewController presentViewController:vc animated:YES completion:NULL];
+    [viewController showDetailViewController:vc sender:viewController];
 }
 
 -(void)goToPopoverImageViewController:(UIViewController *)viewController{
     UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
     UIViewController *vc = [sb instantiateViewControllerWithIdentifier:@"Popover Image SB ID"];
     vc.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
-    [viewController presentViewController:vc animated:YES completion:NULL];
-
+    //    [viewController presentViewController:vc animated:YES completion:NULL];
+    [viewController showDetailViewController:vc sender:viewController];
 }
 
 -(void)goToUserNotFoundViewController:(UIViewController *)viewController{
     UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
     UIViewController *vc = [sb instantiateViewControllerWithIdentifier:@"User Not Found SB ID"];
     vc.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
-    [viewController presentViewController:vc animated:YES completion:NULL];
+    //    [viewController presentViewController:vc animated:YES completion:NULL];
+    [viewController showDetailViewController:vc sender:viewController];
 }
+
 -(void)gotoCreateAccountViewController:(UIViewController *)viewController{
     UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
     UIViewController *vc = [sb instantiateViewControllerWithIdentifier:@"Create Account SB ID"];
     vc.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
-    [viewController presentViewController:vc animated:YES completion:NULL];
+    //    [viewController presentViewController:vc animated:YES completion:NULL];
+    [viewController showDetailViewController:vc sender:viewController];
 }
-
 
 -(void)presentLoginErrorAlert:(UIViewController *)viewController{
     UIAlertController *alertController = [UIAlertController

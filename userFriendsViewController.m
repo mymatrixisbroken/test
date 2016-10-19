@@ -18,20 +18,22 @@
     [super viewDidLoad];
     self.tableView.delegate = self;
     self.tableView.dataSource = self;
-    _array = [[NSMutableArray alloc] init];
+//    _array = [[NSMutableArray alloc] init];
+    user.friendsUsers = [[NSMutableArray alloc] init];
+    
 
     
-    for (NSInteger i = 0; i <user.friends.count; i++) {
-        FIRDatabaseQuery *friendQuery = [[firebaseRef.usersRef queryOrderedByKey] queryEqualToValue:[user.friends objectAtIndex:i]];
+    for (NSInteger i = 0; i <user.friendsKeys.count; i++) {
+        FIRDatabaseQuery *friendQuery = [[firebaseRef.usersRef queryOrderedByKey] queryEqualToValue:[user.friendsKeys objectAtIndex:i]];
         
-        NSLog(@"friend is %@", [user.friends objectAtIndex:i]);
+        NSLog(@"friend is %@", [user.friendsKeys objectAtIndex:i]);
         findFriendClass *tempFriend = [[findFriendClass alloc] init];
 
 
         [friendQuery observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
             NSArray *arr = [snapshot.value allKeys];
-            NSString *key = [arr objectAtIndex:0];
-            NSDictionary *dictionary = [snapshot.value valueForKey:key];
+            tempFriend.key = [arr objectAtIndex:0];
+            NSDictionary *dictionary = [snapshot.value valueForKey:tempFriend.key];
             tempFriend.username = [dictionary valueForKey:@"username"];
             tempFriend.imageURL = [dictionary valueForKey:@"avatarURL"];
             
@@ -52,7 +54,7 @@
                     [self.tableView reloadData];
                 });
             });
-            [_array addObject:tempFriend];
+            [user.friendsUsers addObject:tempFriend];
 //            [self.tableView reloadData];
         }];
     }
@@ -64,17 +66,67 @@
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    NSLog(@"array count is %lu", _array.count);
-    return [_array count];
+    NSLog(@"array count is %lu", user.friendsUsers.count);
+    return [user.friendsUsers count];
 }
 
+- (NSArray *)rightButtons
+{
+    NSMutableArray *rightUtilityButtons = [NSMutableArray new];
+//    [rightUtilityButtons sw_addUtilityButtonWithColor:
+//     [UIColor colorWithRed:0.78f green:0.78f blue:0.8f alpha:1.0]
+//                                                title:@"More"];
+    [rightUtilityButtons sw_addUtilityButtonWithColor:
+     [UIColor colorWithRed:1.0f green:0.231f blue:0.188 alpha:1.0f]
+                                                title:@"Delete"];
+    
+    return rightUtilityButtons;
+}
+
+- (BOOL)swipeableTableViewCellShouldHideUtilityButtonsOnSwipe:(SWTableViewCell *)cell{
+    return YES;
+}
+
+- (void)swipeableTableViewCell:(SWTableViewCell *)cell didTriggerRightUtilityButtonWithIndex:(NSInteger)index {
+    switch (index) {
+        case 0:{
+            NSLog(@"Delete button was pressed");
+            NSIndexPath *cellIndexPath = [self.tableView indexPathForCell:cell];
+            findFriendClass *friend = [user.friendsUsers objectAtIndex:cellIndexPath.row];
+            NSLog(@"friend key is %@", friend.key);
+
+            [[[[firebaseRef.usersRef child:user.userKey] child:@"friends"] child:friend.key] removeValue];
+            [[[[firebaseRef.usersRef child:friend.key] child:@"friends"] child:user.userKey] removeValue];
+
+            [user.friendsKeys removeObject:friend.key];
+            [user.friendsUsers removeObjectAtIndex:cellIndexPath.row];
+            
+            [self.tableView deleteRowsAtIndexPaths:@[cellIndexPath]
+                                  withRowAnimation:UITableViewRowAnimationAutomatic];
+
+            break;
+        }
+        case 1:
+        {
+//            // Delete button was pressed
+//            NSIndexPath *cellIndexPath = [self.tableView indexPathForCell:cell];
+//            
+////            [_testArray removeObjectAtIndex:cellIndexPath.row];
+//            [self.tableView deleteRowsAtIndexPaths:@[cellIndexPath]
+//                                  withRowAnimation:UITableViewRowAnimationAutomatic];
+//            break;
+        }
+        default:
+            break;
+    }
+}
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     NSString *cellIdentifier = @"userFriendCell";
     userFriendsCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier forIndexPath:indexPath];
     
-    if (_array.count > 0) {
-        findFriendClass *friend = [_array objectAtIndex:indexPath.row];
+    if (user.friendsUsers.count > 0) {
+        findFriendClass *friend = [user.friendsUsers objectAtIndex:indexPath.row];
 //        dispatch_async(dispatch_get_global_queue(0,0), ^{
 //            NSInteger length = [friend.imageURL length];
 //            NSString *smallImageURL = [friend.imageURL substringWithRange:NSMakeRange(0, length-4)];
@@ -93,6 +145,9 @@
 //            });
 //        });
         
+        cell.rightUtilityButtons = [self rightButtons];
+        cell.delegate = self;
+
         cell.userFriendLabel.text = friend.username;
         cell.imageView.image = [UIImage imageWithData:friend.data];
     }

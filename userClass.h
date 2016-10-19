@@ -32,7 +32,8 @@ extern userClass *user;
 @property NSMutableArray *friendsEvents;
 @property NSInteger *friendsEventsCount;
 
-@property NSMutableArray *friends;
+@property NSMutableArray *friendsKeys;
+@property NSMutableArray *friendsUsers;
 @property NSInteger friendsCount;
 
 @property NSMutableArray *reviews;
@@ -46,6 +47,11 @@ extern userClass *user;
 
 @property NSMutableArray *wishList;
 @property NSInteger wishListCount;
+
+@property NSMutableArray *friendRequestsIncomingKeys;
+@property NSMutableArray *friendRequestsIncomingUsers;
+
+@property NSMutableArray *friendRequestsOutgoingKeys;
 
 @property double latitude;
 @property double longitude;
@@ -62,6 +68,9 @@ extern userClass *user;
    image:(NSString *)url;
 
 -(id)setUserObject:key
+    fromDictionary:(NSDictionary *)userDict;
+
+-(id)setUserObject:key
     fromDictionary:(NSDictionary *)userDict
             badges:(NSMutableArray *)array1
           checkIns:(NSMutableArray *)array2
@@ -69,7 +78,8 @@ extern userClass *user;
            reviews:(NSMutableArray *)array4
      storesVisited:(NSMutableArray *)array5
       strainsTried:(NSMutableArray *)array6
-          wishList:(NSMutableArray *)array7;
+          wishList:(NSMutableArray *)array7
+friendRequestsKeys:(NSMutableArray *)array8;
 
 -(void)goToNewsFeedViewController:(UIViewController *)viewController;
 -(void)goToStrainsStoresViewController:(UIViewController *)viewController;

@@ -7,8 +7,11 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "SWTableViewCell.h"
+//#import <TLYShyNavBar/TLYShyNavBarManager.h>
 
-@interface userFriendsCell : UITableViewCell
+
+@interface userFriendsCell : SWTableViewCell
 @property (strong, nonatomic) IBOutlet UIImageView *friendImageView;
 @property (strong, nonatomic) IBOutlet UILabel *userFriendLabel;
 
