@@ -25,18 +25,18 @@
     
     
     [UINavigationBar appearance].tintColor = [UIColor whiteColor];
-    UIBarButtonItem *rightButton = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"menu"] style:UIBarButtonItemStylePlain target:self   action:@selector(barButtonCustomPressed:)];
-    self.navigationBar.topItem.rightBarButtonItem = rightButton;
+//    UIBarButtonItem *rightButton = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"menu"] style:UIBarButtonItemStylePlain target:self   action:@selector(barButtonCustomPressed:)];
+//    self.navigationBar.topItem.rightBarButtonItem = rightButton;
 }
 
 -(IBAction) leftButtonPressed:(UIBarButtonItem *)btn{
     [user goToNewsFeedViewController:self];
 }
 
--(IBAction) barButtonCustomPressed:(UIBarButtonItem*)btn
-{
-    [user gotoOptionListViewController:self];
-}
+//-(IBAction) barButtonCustomPressed:(UIBarButtonItem*)btn
+//{
+//    [user gotoOptionListViewController:self];
+//}
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];

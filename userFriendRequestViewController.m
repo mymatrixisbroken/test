@@ -18,7 +18,6 @@
     [super viewDidLoad];
     self.tableView.delegate = self;
     self.tableView.dataSource = self;
-//    _array = [[NSMutableArray alloc] init];
     
     [user.friendRequestsIncomingUsers removeAllObjects];
     
@@ -53,11 +52,9 @@
                     });
                 });
                 [user.friendRequestsIncomingUsers addObject:friendRequestor];
-                //            [self.tableView reloadData];
             }
         }];
     }
-    // Do any additional setup after loading the view.
 }
 
 - (void)didReceiveMemoryWarning {
@@ -84,25 +81,10 @@
         
         cell.confirmButton.tag = indexPath.row;
     }
-
-//    [cell uploadCell:_friend.userKey
-//        withUsername:_friend.username
-//                data:_friend.data];
-    
-//    cell.addButton.tag = indexPath.row;
     
     return cell;
 
 }
 
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
 
 @end

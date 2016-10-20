@@ -121,13 +121,6 @@
     [self performSegueWithIdentifier:@"EditStoreSegue" sender:self];
 }
 
--(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender{
-    if([segue.identifier isEqualToString:@"EditStoreSegue"]){
-        //EditStoreViewController *controller = (EditStoreViewController *)segue.destinationViewController;
-        //controller.store = _store;
-    }
-}
-
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.

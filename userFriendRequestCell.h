@@ -18,8 +18,4 @@
 @property (strong, nonatomic) IBOutlet UIButton *deleteButton;
 @property (strong, nonatomic) IBOutlet UIButton *confirmButton;
 
-//-(void) uploadCell:(NSString *)key
-//      withUsername:(NSString *)username
-//              data:(NSData *)data;
-
 @end

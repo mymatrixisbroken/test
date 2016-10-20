@@ -16,6 +16,15 @@
     
     _sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
      _vc = [_sb instantiateViewControllerWithIdentifier:@"Login View SB ID"];
+    
+    if (!(_currentUser.anonymous)){
+//        NSIndexPath *cellIndexPath [self.tableView indexPathForCell:cell];
+        NSIndexPath *cellIndexPath = [NSIndexPath indexPathForRow:0 inSection:0] ;
+
+        [self.tableView deleteRowsAtIndexPaths:@[cellIndexPath]
+                              withRowAnimation:UITableViewRowAnimationNone];
+
+    }
 //    vc.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
 //    [viewController presentViewController:vc animated:YES completion:NULL];
 

@@ -15,9 +15,7 @@
 #import "extensionViewClass.h"
 #import "ICHObjectPrinter.h"
 #import <CoreLocation/CoreLocation.h>
-
-
-
+#import "KxMenu.h"
 
 @interface ViewController : UIViewController <UICollectionViewDataSource, CHTCollectionViewDelegateWaterfallLayout, UISearchBarDelegate, UISearchDisplayDelegate, CLLocationManagerDelegate>
 @property (nonatomic, strong) IBOutlet UICollectionView *collectionView;
