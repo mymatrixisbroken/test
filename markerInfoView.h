@@ -13,5 +13,6 @@
 @property (strong, nonatomic) IBOutlet UILabel *storeNameLabel;
 @property (strong, nonatomic) IBOutlet HCSStarRatingView *starRatingView;
 @property (strong, nonatomic) IBOutlet UILabel *reviewCountLabel;
+@property (strong, nonatomic) IBOutlet UIImageView *storeImageView;
 
 @end

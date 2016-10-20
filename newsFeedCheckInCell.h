@@ -23,10 +23,6 @@
 @property (strong, nonatomic) IBOutlet UIButton *commentsButton;
 @property (strong, nonatomic) IBOutlet UIButton *likeButton;
 
-//-(void) uploadCellWithUsername:(NSString *)username
-//                         event:(NSString *)message
-//                          data:(NSData *)imageURL;
-
 -(void) uploadCellWithUsernameEventData:(eventClass *)tempEvent;
 
 

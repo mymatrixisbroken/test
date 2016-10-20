@@ -46,9 +46,42 @@
             NSLog(isAnonymous ? @"Yes" : @"No");
             NSLog(@"UID:%@.",user.uid);
             //NSLog(@"ref %@ strains %@ stores %@ users %@", firebaseRef.ref, firebaseRef.strainsRef, firebaseRef.storesRef, firebaseRef.usersRef);
-            [self loadfirebaseRef];
+            [self loadCurrentLocation];
         }
     }];
+}
+
+-(void)loadCurrentLocation{
+    CLGeocoder *ceo;
+    _locationManager = [[CLLocationManager alloc] init];
+    _locationManager.delegate = self;
+    _locationManager.distanceFilter = kCLDistanceFilterNone;
+    _locationManager.desiredAccuracy = kCLLocationAccuracyBest;
+    
+    if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 8.0)
+        [self.locationManager requestWhenInUseAuthorization];
+    
+    [_locationManager startUpdatingLocation];
+    
+    
+    ceo= [[CLGeocoder alloc]init];
+    [self.locationManager requestWhenInUseAuthorization];
+    if ([self.locationManager respondsToSelector:@selector(requestWhenInUseAuthorization)]) {
+        [self.locationManager requestWhenInUseAuthorization];
+    }
+    CLLocationCoordinate2D coordinate;
+    
+    coordinate.latitude=_locationManager.location.coordinate.latitude;
+    coordinate.longitude=_locationManager.location.coordinate.longitude;
+    
+    NSLog(@"latitude is %f", coordinate.latitude);
+    
+    user.latitude = coordinate.latitude;
+    user.longitude = coordinate.longitude;
+    
+    [_locationManager stopUpdatingLocation];
+    
+    [self loadfirebaseRef];
 }
 
 - (void) loadfirebaseRef {

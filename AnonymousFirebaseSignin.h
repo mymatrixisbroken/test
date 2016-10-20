@@ -15,12 +15,11 @@
 #import "objectsArrayClass.h"
 #import "FirebaseReferenceClass.h"
 #import "findFriendClass.h"
+#import <CoreLocation/CoreLocation.h>
 @import Firebase;
 
-@interface AnonymousFirebaseSignin : UIViewController
-/*
-@property (strong, nonatomic) IBOutlet NSDictionary *storeObjectDictionary;
-@property (strong, nonatomic) IBOutlet NSDictionary *strainObjectDictionary;
-*/
+@interface AnonymousFirebaseSignin : UIViewController <CLLocationManagerDelegate>
+@property     CLLocationManager *locationManager;
+
 @end
 

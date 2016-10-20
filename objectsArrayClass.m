@@ -18,6 +18,7 @@ objectsArrayClass *objectsArray;
 @synthesize userSearchObjectArray;
 @synthesize selection;
 @synthesize searchType;
+@synthesize flag;
 
 + (objectsArrayClass *)sharedInstance {
     static dispatch_once_t onceToken;
@@ -36,6 +37,8 @@ objectsArrayClass *objectsArray;
         self.storeObjectArray = [[NSMutableArray alloc] init];
         self.eventObjectArray = [[NSMutableArray alloc] init];
         self.userSearchObjectArray = [[NSMutableArray alloc] init];
+        self.flag = NO;
+
     }
     return self;
 }

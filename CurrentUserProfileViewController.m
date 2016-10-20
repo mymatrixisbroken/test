@@ -27,19 +27,6 @@
     _strainsTriedNumber.text = [NSString stringWithFormat:@"%lu", (unsigned long)user.friendRequestsIncomingKeys.count];
     _storesVisitedNumber.text = [NSString stringWithFormat:@"%lu", (unsigned long)user.storesVisited.count];
     
-//    [[[firebaseRef.usersRef child:user.userKey] child:@"badges"] observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
-//        
-//        [user.badges removeAllObjects];
-//        
-//        for (id key in snapshot.value) {
-//            NSString *value = [snapshot.value valueForKey:key];
-//            if ([value isEqualToString:@"true"]) {
-//                [user.badges addObject:key];
-//            }
-//        }
-//        _badgesNumber.text = [NSString stringWithFormat:@"%lu", (unsigned long)user.badges.count];
-//     }];
-    
     [[firebaseRef.usersRef child:user.userKey] observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
         
         if (!([[snapshot.value valueForKey:@"badges"]  isEqual: @""])) {
@@ -68,81 +55,6 @@
 
     }];
 }
-
-
-
-//[firebaseRef.usersRef observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
-//    NSDictionary *usersSnapshot = snapshot.value; //Creates a dictionary of of the JSON node strains
-//    NSArray *userKeys = [usersSnapshot allKeys]; //Creates an array with only the strain key uID
-//    
-//    for(int i=0; i<userKeys.count ; i++){
-//        NSString *key = userKeys[i];
-//        NSDictionary *userDict = [usersSnapshot valueForKey:key];
-//        if ([_SignInUsername.text isEqual:[userDict valueForKey:@"email"]]){
-//            
-//            NSMutableArray *array1 = [[NSMutableArray alloc] init];
-//            if (!([[userDict valueForKey:@"badges"]  isEqual: @""])) {
-//                NSMutableDictionary *dict = [userDict valueForKey:@"badges"];
-//                for (id key in dict) {
-//                    NSString *value = [dict valueForKey:key];
-//                    if ([value isEqualToString:@"true"]) {
-//                        [array1 addObject:key];
-//                    }
-//                }
-//            }
-//            
-//            NSMutableArray *array2 = [[NSMutableArray alloc] init];
-//            if (!([[userDict valueForKey:@"checkIns"]  isEqual: @""])) {
-//                array2 = [NSMutableArray arrayWithArray:[[userDict valueForKey:@"checkIns"] allKeys]];
-//            }
-//            
-//            NSMutableArray *array3 = [[NSMutableArray alloc] init];
-//            if (!([[userDict valueForKey:@"friends"]  isEqual: @""])) {
-//                NSArray *keys = [[userDict valueForKey:@"friends"] allKeys];
-//                NSArray *sortedKeys = [keys sortedArrayUsingSelector:@selector(compare:)];
-//                array3 = [NSMutableArray arrayWithArray:sortedKeys];
-//            }
-//            
-//            NSMutableArray *array4 = [[NSMutableArray alloc] init];
-//            //                if (!([[userDict valueForKey:@"reviews"]  isEqual: @""])) {
-//            //                    array4 = [NSMutableArray arrayWithArray:[[userDict valueForKey:@"reviews"] allKeys]];
-//            //                }
-//            
-//            NSMutableArray *array5 = [[NSMutableArray alloc] init];
-//            if (!([[userDict valueForKey:@"storesVisited"]  isEqual: @""])) {
-//                array5 = [NSMutableArray arrayWithArray:[[userDict valueForKey:@"storesVisited"] allKeys]];
-//            }
-//            
-//            NSMutableArray *array6 = [[NSMutableArray alloc] init];
-//            if (!([[userDict valueForKey:@"strainsTried"]  isEqual: @""])) {
-//                array6 = [NSMutableArray arrayWithArray:[[userDict valueForKey:@"strainsTried"] allKeys]];
-//            }
-//            
-//            NSMutableArray *array7 = [[NSMutableArray alloc] init];
-//            if (!([[userDict valueForKey:@"wishList"]  isEqual: @""])) {
-//                array7 = [NSMutableArray arrayWithArray:[[userDict valueForKey:@"wishList"] allKeys]];
-//            }
-//            
-//            NSMutableArray *array8 = [[NSMutableArray alloc] init];
-//            if (!([[userDict valueForKey:@"friendRequests"]  isEqual: @""])) {
-//                array8 = [NSMutableArray arrayWithArray:[[userDict valueForKey:@"friendRequests"] allKeys]];
-//            }
-//            
-//            [user setUserObject:key
-//                 fromDictionary:userDict
-//                         badges:array1
-//                       checkIns:array2
-//                        friends:array3
-//                        reviews:array4
-//                  storesVisited:array5
-//                   strainsTried:array6
-//                       wishList:array7
-//             friendRequestsKeys:array8];
-//            
-//            //                [self getAvatarURLData];
-//        }
-//    }
-
 
 - (void) loadExtView{
     extensionViewClass *extView = [[extensionViewClass alloc] init];
@@ -301,10 +213,6 @@
 }
 - (IBAction)tappedMyReviews:(UITapGestureRecognizer *)sender {
     [self performSegueWithIdentifier:@"myReviewsSegue" sender:self];
-//    UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-//    UIViewController *vc = [sb instantiateViewControllerWithIdentifier:@"userReviews SB ID"];
-//    vc.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
-//    [self presentViewController:vc animated:YES completion:NULL];
 }
 - (IBAction)tappedStrainsTried:(UITapGestureRecognizer *)sender {
     [self performSegueWithIdentifier:@"strainsTriedSegue" sender:self];

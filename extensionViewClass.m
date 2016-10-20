@@ -58,7 +58,8 @@
     [self addSubview:strainButton];
     [self addSubview:newsFeedButton];
     [self addSubview:userProfileButton];
-
+    
     return self;
 }
+
 @end

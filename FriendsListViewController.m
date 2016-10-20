@@ -56,10 +56,6 @@
             withUsername:friend.username
                     data:friend.data];
 
-//        [cell uploadCell:_friend.userKey
-//            withUsername:_friend.username
-//                    data:_friend.data];
-
     cell.addButton.tag = indexPath.row;
 
     return cell;
@@ -84,17 +80,12 @@
             for(int i=0; i<keys.count ; i++){
                 NSString *key = keys[i];
                 
-//                if (![key isEqual:user.friendsKeys]) {
                 if([user.friendsKeys indexOfObject:key] == NSNotFound){
-                    
-
                     NSDictionary *dict = [snapshot.value valueForKey:key];
                     NSString *username = [dict valueForKey:@"username"];
                     NSString *imageURL = [dict valueForKey:@"avatarURL"];
                     
-//                    _friend = [[userClass alloc] init];
                     userClass *friend = [[userClass alloc] init];
-
                     
                     [friend set:key user:username image:imageURL];
                 
@@ -111,15 +102,12 @@
                         else{
                             friend.data = data;
                         }
-                        
                         dispatch_async(dispatch_get_main_queue(), ^{
                             [self.tableView reloadData];
                         });
                     });
-                    
                     [objectsArray.userSearchObjectArray addObject:friend];
                     [self.tableView reloadData];
-
                 }
             }
         }

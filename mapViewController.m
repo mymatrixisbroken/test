@@ -55,11 +55,11 @@
 
     
     
-    CLLocationCoordinate2D position = CLLocationCoordinate2DMake(user.latitude, user.longitude);
-    GMSMarker *marker = [GMSMarker markerWithPosition:position];
-    marker.title = @"I'm here";
-    marker.map = mapView;
-    marker.tappable = NO;
+//    CLLocationCoordinate2D position = CLLocationCoordinate2DMake(user.latitude, user.longitude);
+//    GMSMarker *marker = [GMSMarker markerWithPosition:position];
+//    marker.title = @"I'm here";
+//    marker.map = mapView;
+//    marker.tappable = NO;
     
     for (int i = 0; i < objectsArray.storeObjectArray.count; i++) {
         storeClass *tempStore = [objectsArray.storeObjectArray objectAtIndex:i];
@@ -76,22 +76,7 @@
         
         NSString *str = [NSString stringWithFormat: @"%ld", (long)i];
         marker.userData = str;
-}
-    
-    
-    
-//    GMSCameraPosition *camera = [GMSCameraPosition cameraWithLatitude:-33.8683
-//                                                            longitude:151.2086
-//                                                                 zoom:16];
-//    GMSMapView *mapView = [GMSMapView mapWithFrame:self.view.bounds camera:camera];
-//    mapView.myLocationEnabled = true;
-//    self.view = mapView;
-//    
-//    CLLocationCoordinate2D position = CLLocationCoordinate2DMake(-33.8683, 151.2086);
-//    GMSMarker *marker = [GMSMarker markerWithPosition:position];
-//    marker.title = @"Sydney";
-//    marker.map = mapView;
-
+    }
 }
 
 //- (BOOL)mapView:(GMSMapView*)mapView didTapMarker:(GMSMarker*)marker{
@@ -102,12 +87,11 @@
 -(UIView *) mapView:(GMSMapView *)mapView markerInfoWindow:(GMSMarker *)marker{
     markerInfoView *infoWindow = [[[NSBundle mainBundle] loadNibNamed:@"markerInfoView" owner:self options:nil] objectAtIndex:0];
 
-//    markerInfoView *view =  [[mapInfoView alloc] initWithFrame:marker.];
     NSInteger i = [marker.userData integerValue];
     
     storeClass *tempStore = [objectsArray.storeObjectArray objectAtIndex:i];
 
-    
+    infoWindow.storeImageView.image = [UIImage imageWithData:tempStore.data];
     infoWindow.storeNameLabel.text = tempStore.storeName;
     infoWindow.starRatingView.value = tempStore.ratingScore;
     infoWindow.reviewCountLabel.text = [[NSString stringWithFormat: @"%ld", (long)tempStore.ratingCount] stringByAppendingString:@"reviews"];
@@ -116,6 +100,9 @@
 }
 
 - (void)mapView:(GMSMapView *)mapView didTapInfoWindowOfMarker:(GMSMarker *)marker {
+    NSInteger i = [marker.userData integerValue];
+    store = [objectsArray.storeObjectArray objectAtIndex:i];
+    [user goToStoreProfileViewController:self];
 }
 
 - (void)didReceiveMemoryWarning {

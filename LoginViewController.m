@@ -80,182 +80,94 @@ const static CGFloat frameSizeWidth = 600.0f;
             NSString *key = userKeys[i];
             NSDictionary *userDict = [usersSnapshot valueForKey:key];
             if ([_SignInUsername.text isEqual:[userDict valueForKey:@"email"]]){
-                
-//                NSMutableArray *array1 = [[NSMutableArray alloc] init];
-                if (!([[userDict valueForKey:@"badges"]  isEqual: @""])) {
-                    NSMutableDictionary *dict = [userDict valueForKey:@"badges"];
-                    for (id key in dict) {
-                        NSString *value = [dict valueForKey:key];
-                        if ([value isEqualToString:@"true"]) {
-//                            [array1 addObject:key];
-                            [user.badges addObject:key];
-                        }
-                    }
-                }
-
-//                NSMutableArray *array2 = [[NSMutableArray alloc] init];
-                if (!([[userDict valueForKey:@"checkIns"]  isEqual: @""])) {
-//                    array2 = [NSMutableArray arrayWithArray:[[userDict valueForKey:@"checkIns"] allKeys]];
-                    user.checkIns = [NSMutableArray arrayWithArray:[[userDict valueForKey:@"checkIns"] allKeys]];
-                }
-                
-                NSMutableArray *array3 = [[NSMutableArray alloc] init];
-                if (!([[userDict valueForKey:@"friends"]  isEqual: @""])) {
-                    NSArray *keys = [[userDict valueForKey:@"friends"] allKeys];
-                    NSArray *sortedKeys = [keys sortedArrayUsingSelector:@selector(compare:)];
-                    array3 = [NSMutableArray arrayWithArray:sortedKeys];
-                    user.friendsKeys = [NSMutableArray arrayWithArray:sortedKeys];
-                }
-
-//                NSMutableArray *array4 = [[NSMutableArray alloc] init];
-//                if (!([[userDict valueForKey:@"reviews"]  isEqual: @""])) {
-//                    array4 = [NSMutableArray arrayWithArray:[[userDict valueForKey:@"reviews"] allKeys]];
-//                }
-
-//                NSMutableArray *array5 = [[NSMutableArray alloc] init];
-                if (!([[userDict valueForKey:@"storesVisited"]  isEqual: @""])) {
-//                    array5 = [NSMutableArray arrayWithArray:[[userDict valueForKey:@"storesVisited"] allKeys]];
-                    user.storesVisited = [NSMutableArray arrayWithArray:[[userDict valueForKey:@"storesVisited"] allKeys]];
-                }
-
-//                NSMutableArray *array6 = [[NSMutableArray alloc] init];
-                if (!([[userDict valueForKey:@"strainsTried"]  isEqual: @""])) {
-//                    array6 = [NSMutableArray arrayWithArray:[[userDict valueForKey:@"strainsTried"] allKeys]];
-                    user.strainsTried = [NSMutableArray arrayWithArray:[[userDict valueForKey:@"strainsTried"] allKeys]];
-                }
-
-//                NSMutableArray *array7 = [[NSMutableArray alloc] init];
-                if (!([[userDict valueForKey:@"wishList"]  isEqual: @""])) {
-//                    array7 = [NSMutableArray arrayWithArray:[[userDict valueForKey:@"wishList"] allKeys]];
-                    user.wishList = [NSMutableArray arrayWithArray:[[userDict valueForKey:@"wishList"] allKeys]];
-                }
-                
-//                NSMutableArray *array8 = [[NSMutableArray alloc] init];
-                if (!([[userDict valueForKey:@"friendRequestsIncoming"]  isEqual: @""])) {
-//                    array8 = [NSMutableArray arrayWithArray:[[userDict valueForKey:@"friendRequests"] allKeys]];
-                    user.friendRequestsIncomingKeys = [NSMutableArray arrayWithArray:[[userDict valueForKey:@"friendRequestsIncoming"] allKeys]];
-                }
-                
-                if (!([[userDict valueForKey:@"friendRequestsOutgoing"]  isEqual: @""])) {
-                    //                    array8 = [NSMutableArray arrayWithArray:[[userDict valueForKey:@"friendRequests"] allKeys]];
-                    user.friendRequestsOutgoingKeys = [NSMutableArray arrayWithArray:[[userDict valueForKey:@"friendRequestsOutgoing"] allKeys]];
-                }
-                
-                [user setUserObject:key
-                     fromDictionary:userDict];
-
-
-//                [user setUserObject:key
-//                     fromDictionary:userDict
-//                             badges:array1
-//                           checkIns:array2
-//                            friends:array3
-//                            reviews:array4
-//                      storesVisited:array5
-//                       strainsTried:array6
-//                           wishList:array7
-//                 friendRequestsKeys:array8];
-                
-//                [self getAvatarURLData];
+                [self setUserObject:key
+                       FromFirebase:userDict];
             }
         }
-        
-        
-        
-        
-        
-        
-        FIRDatabaseQuery *reviewQuery = [[firebaseRef.reviewsRef queryOrderedByChild:@"userKey"] queryEqualToValue:user.userKey];
-        
-        [reviewQuery observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
-            if (snapshot.value == [NSNull null]) {}
-            else{
-//                NSLog(@"review snapshot is %@", snapshot.value);
-                for (NSInteger i = 0; i < [snapshot.value allKeys].count; i++) {
-                    reviewClass *tempReview = [[reviewClass alloc] init];
-                    tempReview.reviewKey = [[snapshot.value allKeys] objectAtIndex:i];
-                    
-                    NSDictionary *dictionary = [[NSDictionary alloc] init];
-                    dictionary = [snapshot.value valueForKey:tempReview.reviewKey];
-                    tempReview.message = [dictionary valueForKey:@"message"];
-                    tempReview.objectImageURL = [dictionary valueForKey:@"objectImage"];
-                    tempReview.objectKey = [dictionary valueForKey:@"objectKey"];
-                    tempReview.objectName = [dictionary valueForKey:@"objectName"];
-                    tempReview.objectType = [dictionary valueForKey:@"objectType"];
-                    tempReview.userKey = [dictionary valueForKey:@"userKey"];
-                    tempReview.rating = [dictionary valueForKey:@"rating"];
-                    
-                    
-                    NSInteger length = [tempReview.objectImageURL length];
-                    NSString *smallImageURL = [tempReview.objectImageURL substringWithRange:NSMakeRange(0, length-4)];
-                    smallImageURL = [smallImageURL stringByAppendingString:@"b.jpg"];
-                    NSData * data = [[NSData alloc] initWithContentsOfURL: [NSURL URLWithString:smallImageURL]];
-                    tempReview.data = data;
-
-                    
-//                    NSLog(@"temp review is %@", tempReview.message);
-//                    NSLog(@"temp review is %@", tempReview.objectImageURL);
-//                    NSLog(@"temp review is %@", tempReview.objectKey);
-//                    NSLog(@"temp review is %@", tempReview.objectName);
-//                    NSLog(@"temp review is %@", tempReview.objectType);
-//                    NSLog(@"temp review is %@", tempReview.userKey);
-//                    NSLog(@"temp review is %@", tempReview.rating);
-                    
-                    [user.reviews addObject:tempReview];
-                }
-                
-                [self getAvatarURLData];
-
-                //            [_dict addEntriesFromDictionary:snapshot.value];
-                //
-                //            NSArray *keys = [_dict allKeys];
-                //            NSArray *sortedKeys = [keys sortedArrayUsingSelector:@selector(compare:)];
-                //
-                //            for (id key in sortedKeys) {
-                //                NSMutableDictionary *tempDict = [[NSMutableDictionary alloc] init];
-                //                NSMutableDictionary *value = [[NSMutableDictionary alloc] init];
-                //                value = [_dict valueForKey:key];
-                //                [tempDict setObject:value forKey:key ];
-                //
-                //                NSString *url = [value valueForKey:@"userAvatarURL"];
-                //                //                    NSLog(@"url is %@", url);
-                //
-                //                NSInteger length = [url length];
-                //                NSString *smallImageURL = [url substringWithRange:NSMakeRange(0, length-4)];
-                //                smallImageURL = [smallImageURL stringByAppendingString:@"b.jpg"];
-                //
-                //                NSData * data = [[NSData alloc] initWithContentsOfURL: [NSURL URLWithString:smallImageURL]];
-                //                if( data == nil ){
-                //                    NSLog(@"image is nil");
-                //                    return;
-                //                }
-                //                else{
-                //                    [[tempDict valueForKey:key] setObject:data forKey:@"data"];
-                //                }
-                //                
-                //                //                    NSLog(@"temp dict is %@", tempDict);
-                //                [objectsArray.eventObjectArray addObject:tempDict];
-                //                objectsArray.eventObjectArray = [NSMutableArray arrayWithArray:[[objectsArray.eventObjectArray reverseObjectEnumerator] allObjects]];
-                //            }
-                //            [self.tableView reloadData];
-                //        }
-            }}];
-
-        
-        
-        
-        
-        
-        
-        
-        
+        [self loadReviewsFromFirebase];
     }];
-    
-    
-    
-    
+}
 
+-(void)setUserObject:(NSString *)key FromFirebase:(NSDictionary *)userDict{
+    if (!([[userDict valueForKey:@"badges"]  isEqual: @""])) {
+        NSMutableDictionary *dict = [userDict valueForKey:@"badges"];
+        for (id key in dict) {
+            NSString *value = [dict valueForKey:key];
+            if ([value isEqualToString:@"true"]) {
+                [user.badges addObject:key];
+            }
+        }
+    }
     
+    if (!([[userDict valueForKey:@"checkIns"]  isEqual: @""])) {
+        user.checkIns = [NSMutableArray arrayWithArray:[[userDict valueForKey:@"checkIns"] allKeys]];
+    }
+    
+    NSMutableArray *array3 = [[NSMutableArray alloc] init];
+    if (!([[userDict valueForKey:@"friends"]  isEqual: @""])) {
+        NSArray *keys = [[userDict valueForKey:@"friends"] allKeys];
+        NSArray *sortedKeys = [keys sortedArrayUsingSelector:@selector(compare:)];
+        array3 = [NSMutableArray arrayWithArray:sortedKeys];
+        user.friendsKeys = [NSMutableArray arrayWithArray:sortedKeys];
+    }
+    
+    if (!([[userDict valueForKey:@"storesVisited"]  isEqual: @""])) {
+        user.storesVisited = [NSMutableArray arrayWithArray:[[userDict valueForKey:@"storesVisited"] allKeys]];
+    }
+    
+    if (!([[userDict valueForKey:@"strainsTried"]  isEqual: @""])) {
+        user.strainsTried = [NSMutableArray arrayWithArray:[[userDict valueForKey:@"strainsTried"] allKeys]];
+    }
+    
+    if (!([[userDict valueForKey:@"wishList"]  isEqual: @""])) {
+        user.wishList = [NSMutableArray arrayWithArray:[[userDict valueForKey:@"wishList"] allKeys]];
+    }
+    
+    if (!([[userDict valueForKey:@"friendRequestsIncoming"]  isEqual: @""])) {
+        user.friendRequestsIncomingKeys = [NSMutableArray arrayWithArray:[[userDict valueForKey:@"friendRequestsIncoming"] allKeys]];
+    }
+    
+    if (!([[userDict valueForKey:@"friendRequestsOutgoing"]  isEqual: @""])) {
+        user.friendRequestsOutgoingKeys = [NSMutableArray arrayWithArray:[[userDict valueForKey:@"friendRequestsOutgoing"] allKeys]];
+    }
+    
+    [user setUserObject:key
+         fromDictionary:userDict];
+
+}
+
+-(void)loadReviewsFromFirebase{
+    FIRDatabaseQuery *reviewQuery = [[firebaseRef.reviewsRef queryOrderedByChild:@"userKey"] queryEqualToValue:user.userKey];
+    
+    [reviewQuery observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
+        if (snapshot.value == [NSNull null]) {}
+        else{
+            for (NSInteger i = 0; i < [snapshot.value allKeys].count; i++) {
+                reviewClass *tempReview = [[reviewClass alloc] init];
+                tempReview.reviewKey = [[snapshot.value allKeys] objectAtIndex:i];
+                
+                NSDictionary *dictionary = [[NSDictionary alloc] init];
+                dictionary = [snapshot.value valueForKey:tempReview.reviewKey];
+                tempReview.message = [dictionary valueForKey:@"message"];
+                tempReview.objectImageURL = [dictionary valueForKey:@"objectImage"];
+                tempReview.objectKey = [dictionary valueForKey:@"objectKey"];
+                tempReview.objectName = [dictionary valueForKey:@"objectName"];
+                tempReview.objectType = [dictionary valueForKey:@"objectType"];
+                tempReview.userKey = [dictionary valueForKey:@"userKey"];
+                tempReview.rating = [dictionary valueForKey:@"rating"];
+                
+                
+                NSInteger length = [tempReview.objectImageURL length];
+                NSString *smallImageURL = [tempReview.objectImageURL substringWithRange:NSMakeRange(0, length-4)];
+                smallImageURL = [smallImageURL stringByAppendingString:@"b.jpg"];
+                NSData * data = [[NSData alloc] initWithContentsOfURL: [NSURL URLWithString:smallImageURL]];
+                tempReview.data = data;
+                
+                [user.reviews addObject:tempReview];
+            }
+            
+            [self getAvatarURLData];
+        }}];
     
 }
 

@@ -36,6 +36,7 @@ enum searchType
 @property NSMutableArray *userSearchObjectArray;
 @property (assign, nonatomic) enum selection selection;
 @property (assign, nonatomic) enum searchType searchType;
+@property BOOL flag;
 
 
 + (objectsArrayClass *)sharedInstance;

@@ -96,27 +96,8 @@
     event.objectURL = [dict1 valueForKey:@"objectURL"];
     event.objectData = [dict1 valueForKey:@"objectImageData"];
     
-//            dispatch_async(dispatch_get_global_queue(0,0), ^{
-//
-//                NSInteger length = [event.objectURL length];
-//                NSString *smallImageURL = [event.objectURL substringWithRange:NSMakeRange(0, length-4)];
-//                smallImageURL = [smallImageURL stringByAppendingString:@"b.jpg"];
-//    
-//
-//                NSData * data = [[NSData alloc] initWithContentsOfURL: [NSURL URLWithString:smallImageURL]];
-//                if( data == nil ){
-//                    NSLog(@"image is nil");
-//                }
-//                else{
-//                    event.objectData = data;
-//                }
-//            });
-    
     if ([event.eventType isEqual:@"smokedNew"]) {
         newsFeedCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier forIndexPath:indexPath];
-//        [cell uploadCellWithUsername:event.username
-//                               event:event.message
-//                                data:event.imageData];
         [cell uploadCellWithUsernameEventData:event];
         
         cell.likeButton.tag = indexPath.row;

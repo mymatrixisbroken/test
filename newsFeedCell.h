@@ -25,9 +25,6 @@
 @property (strong, nonatomic) IBOutlet UIImageView *strainImageView;
 @property (strong, nonatomic) IBOutlet UILabel *strainNameLabel;
 @property (strong, nonatomic) IBOutlet HCSStarRatingView *strainRatingView;
-//-(void) uploadCellWithUsername:(NSString *)username
-//                         event:(NSString *)message
-//                          data:(NSData *)imageURL;
-//
+
 -(void) uploadCellWithUsernameEventData:(eventClass *)tempEvent;
 @end
