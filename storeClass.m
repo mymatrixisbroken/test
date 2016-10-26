@@ -23,8 +23,10 @@ storeClass *store;
 @synthesize url;
 @synthesize phone_number;
 @synthesize googlePlaceID;
-@synthesize imageNames;
-@synthesize data;
+@synthesize imagesArray;
+@synthesize reviews;
+@synthesize imageArrayIndex;
+@synthesize indexPath;
 @synthesize ratingCount;
 @synthesize ratingScore;
 @synthesize totalCount;
@@ -60,8 +62,10 @@ storeClass *store;
         self.totalCount = 0;
         self.monthlyCount = 0;
         self.totalUserCount = 0;
-        self.data = [[NSData alloc] init];
-        self.imageNames = [[NSMutableArray alloc] init];
+        self.imageArrayIndex = 0;
+        self.indexPath = [NSIndexPath indexPathForRow:0 inSection:0];
+        self.imagesArray = [[NSMutableArray alloc] init];
+        self.reviews = [[NSMutableArray alloc] init];
     }
     return self;
 }
@@ -78,7 +82,7 @@ storeClass *store;
     self.longitude = [[dict valueForKey:@"location"]valueForKey:@"longitude"];
     self.url = [dict valueForKey:@"url"];
     self.phone_number = [dict valueForKey:@"phoneNumber"];
-    self.imageNames = [NSMutableArray arrayWithArray:array];
+    self.imagesArray = [NSMutableArray arrayWithArray:array];
     self.googlePlaceID = [dict valueForKey:@"googlePlaceID"];
     self.ratingScore = [[dict valueForKey:@"ratingScore"] doubleValue];
     if(![[dict valueForKey:@"ratingCount"] isEqual:@""]){

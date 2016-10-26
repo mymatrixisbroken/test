@@ -10,6 +10,8 @@
 #import "storeClass.h"
 #import "FirebaseReferenceClass.h"
 #import "userClass.h"
+#import "reviewClass.h"
+#import "imageClass.h"
 @import HCSStarRatingView;
 @import Firebase;
 

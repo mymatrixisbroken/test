@@ -30,7 +30,8 @@
 }
 
 -(IBAction) leftButtonPressed:(UIBarButtonItem *)btn{
-    [user goToNewsFeedViewController:self];
+    [self dismissViewControllerAnimated:YES completion:nil];
+//    [user goToNewsFeedViewController:self];
 }
 
 //-(IBAction) barButtonCustomPressed:(UIBarButtonItem*)btn

@@ -16,6 +16,8 @@
 #import "ICHObjectPrinter.h"
 #import <CoreLocation/CoreLocation.h>
 #import "KxMenu.h"
+#import "imageClass.h"
+#import "reviewClass.h"
 
 @interface ViewController : UIViewController <UICollectionViewDataSource, CHTCollectionViewDelegateWaterfallLayout, UISearchBarDelegate, UISearchDisplayDelegate, CLLocationManagerDelegate>
 @property (nonatomic, strong) IBOutlet UICollectionView *collectionView;
@@ -24,7 +26,6 @@
 @property (strong, nonatomic) IBOutlet UISearchBar *searchBar;
 @property (strong, nonatomic) IBOutlet objectsArrayClass *objectsArrayCopy;
 @property     CLLocationManager *locationManager;
-@property (strong, nonatomic) IBOutlet UIBarButtonItem *rightButton;
 @property (strong, nonatomic) IBOutlet UIRefreshControl *refresh;
 
 @end

@@ -11,6 +11,7 @@
 #import "userClass.h"
 #import "YLProgressBar.h"
 #import "FirebaseReferenceClass.h"
+#import "imageClass.h"
 @import HCSStarRatingView;
 @import Firebase;
 

@@ -30,14 +30,7 @@
     CHTCollectionViewWaterfallLayout *layout = [[CHTCollectionViewWaterfallLayout alloc] init];
 
     layout.sectionInset = UIEdgeInsetsMake(3, 3, 3 ,3);
-      
-      if (objectsArray.flag) {
-          layout.headerHeight = 44;
-      }
-      else{
-          layout.headerHeight = 0;
-      }
-      
+    layout.headerHeight = 0;
     layout.footerHeight = 0;
     layout.minimumColumnSpacing = 1;
     layout.minimumInteritemSpacing = 1;
@@ -98,7 +91,7 @@
             
         } completion:^(BOOL finished) {
             
-            self.navigationController.navigationBar.topItem.rightBarButtonItem = nil;
+            self.navigationController.navigationBar.topItem.rightBarButtonItems = nil;
             self.navigationController.navigationBar.topItem.titleView = _searchBar;
             _searchBar.alpha = 0.0;
             
@@ -110,18 +103,6 @@
                              }];
         }];
     }
-    
-    
-//    self.navigationController.navigationBar.topItem.titleView = nil;
-//    
-//    if (objectsArray.selection == 0){
-//        [self.navigationController.navigationBar setTitleTextAttributes:[NSDictionary dictionaryWithObject:[UIColor whiteColor] forKey:NSForegroundColorAttributeName]];
-//        self.navigationController.navigationBar.topItem.title = @"Strains";
-//    }
-//    else if(objectsArray.selection == 1){
-//        [self.navigationController.navigationBar setTitleTextAttributes:[NSDictionary dictionaryWithObject:[UIColor whiteColor] forKey:NSForegroundColorAttributeName]];
-//        self.navigationController.navigationBar.topItem.title = @"Stores";
-//    }
     
     [self loadStoreStrain];
 
@@ -141,23 +122,13 @@
     
     
     
-    UIBarButtonItem *leftButton = [[UIBarButtonItem alloc] initWithTitle:@"Strains" style:UIBarButtonItemStylePlain target:self action:nil];
-    UIBarButtonItem *leftButton1 = [[UIBarButtonItem alloc] initWithTitle:@"Stores" style:UIBarButtonItemStylePlain target:self action:nil];
-    UIBarButtonItem *rightButton1 = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"menu"] style:UIBarButtonItemStylePlain target:self   action:@selector(barButtonMenuPressed:)];
-    UIBarButtonItem *rightButton = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"mapview"] style:UIBarButtonItemStylePlain target:self   action:@selector(barButtonCustomPressed:)];
+    UIBarButtonItem *rightButton1 = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"settings"] style:UIBarButtonItemStylePlain target:self   action:@selector(barButtonMenuPressed:)];
+    self.navigationController.navigationBar.topItem.rightBarButtonItem = rightButton1;
 
-
-    if (objectsArray.selection == 0){
-        [self.navigationController.navigationBar setTitleTextAttributes:[NSDictionary dictionaryWithObject:[UIColor whiteColor] forKey:NSForegroundColorAttributeName]];
-        self.navigationController.navigationBar.topItem.leftBarButtonItem = leftButton;
-        self.navigationController.navigationBar.topItem.rightBarButtonItem = rightButton1;
-    }
-    else if(objectsArray.selection == 1){
-        [self.navigationController.navigationBar setTitleTextAttributes:[NSDictionary dictionaryWithObject:[UIColor whiteColor] forKey:NSForegroundColorAttributeName]];
-        self.navigationController.navigationBar.topItem.leftBarButtonItem = leftButton1;
-//                self.navigationController.navigationBar.topItem.rightBarButtonItem = rightButton;
-        self.navigationController.navigationBar.topItem.rightBarButtonItems = [NSArray arrayWithObjects:rightButton1, rightButton, nil];
-        
+    if ((NSInteger)[store.indexPath row] > 0) {
+        NSIndexPath *ipath = [NSIndexPath indexPathForRow:8 inSection:0];
+//        [store.indexPath setValue:(int)[store.indexPath row]  forKey:@"path"];
+        [self.collectionView scrollToItemAtIndexPath:ipath atScrollPosition:UICollectionViewScrollPositionRight animated:NO];
     }
 }
 
@@ -165,39 +136,124 @@
 
 -(IBAction) barButtonMenuPressed:(UIBarButtonItem*)btn
 {
+    NSArray *menuItems = @[
+                           [KxMenuItem menuItem:@"Wish List"
+                                          image:[UIImage imageNamed:@"search"]
+                                         target:self
+                                         action:@selector(tappedWishListButton:)],
+                           [KxMenuItem menuItem:@"A to Z"
+                                          image:[UIImage imageNamed:@"search"]
+                                         target:self
+                                         action:@selector(tappedAtoZButton:)],
+                           [KxMenuItem menuItem:@"Have Smoked"
+                                          image:[UIImage imageNamed:@"search"]
+                                         target:self
+                                         action:@selector(tappedVisitedSmokedButton:)],
+                           [KxMenuItem menuItem:@"Search"
+                                          image:[UIImage imageNamed:@"search"]
+                                         target:self
+                                         action:@selector(tappedSearchButton:)],
+                           ];
+    
+    NSArray *menuItems1 = @[
+                            [KxMenuItem menuItem:@"Map View"
+                                           image:[UIImage imageNamed:@"search"]
+                                          target:self
+                                          action:@selector(barButtonCustomPressed:)],
+                            [KxMenuItem menuItem:@"Near Me"
+                                           image:[UIImage imageNamed:@"search"]
+                                          target:self
+                                          action:@selector(tappednearMeRecommendedButton:)],
+                            [KxMenuItem menuItem:@"A to Z"
+                                           image:[UIImage imageNamed:@"search"]
+                                          target:self
+                                          action:@selector(tappedAtoZButton:)],
+                            [KxMenuItem menuItem:@"Have Visited"
+                                           image:[UIImage imageNamed:@"search"]
+                                          target:self
+                                          action:@selector(tappedVisitedSmokedButton:)],
+                            [KxMenuItem menuItem:@"Search"
+                                           image:[UIImage imageNamed:@"search"]
+                                          target:self
+                                          action:@selector(tappedSearchButton:)],
+                            ];
+
+    
     UIView *view = [btn valueForKey:@"view"];
-    CGRect width;
-    if(view){
-        width=view.frame;
+    CGRect rect = view.frame;
+    UIWindow *currentWindow = [UIApplication sharedApplication].keyWindow;
+
+    
+    if (objectsArray.selection == 0) {
+        [KxMenu showMenuInView:currentWindow
+                      fromRect:rect
+                     menuItems:menuItems];
     }
-
-    objectsArray.flag = !objectsArray.flag;
-    
-    [KxMenu showMenuInView:self.view
-                  fromRect:width
-                 menuItems:@[
-                             [KxMenuItem menuItem:@"Near Me"
-                                            image:[UIImage imageNamed:@"search"]
-                                           target:self
-                                           action:@selector(menuItemAction:)],
-                             [KxMenuItem menuItem:@"A to Z"
-                                            image:[UIImage imageNamed:@"search"]
-                                           target:self
-                                           action:@selector(menuItemAction:)],
-                             [KxMenuItem menuItem:@"Have Visited"
-                                            image:[UIImage imageNamed:@"search"]
-                                           target:self
-                                           action:@selector(menuItemAction:)],
-                             [KxMenuItem menuItem:@"Wish List"
-                                            image:[UIImage imageNamed:@"search"]
-                                           target:self
-                                           action:@selector(menuItemAction:)],
-                             ]];
-    
-
-
-//    [user goToStrainsStoresViewController:self];
+    else if (objectsArray.selection == 1){
+        [KxMenu showMenuInView:currentWindow
+                      fromRect:rect
+                     menuItems:menuItems1];
+    }
 }
+
+- (IBAction)tappednearMeRecommendedButton:(UIButton *)sender {
+    CLGeocoder *ceo;
+    _locationManager = [[CLLocationManager alloc] init];
+    _locationManager.delegate = self;
+    _locationManager.distanceFilter = kCLDistanceFilterNone;
+    _locationManager.desiredAccuracy = kCLLocationAccuracyBest;
+    
+    if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 8.0)
+        [self.locationManager requestWhenInUseAuthorization];
+    
+    [_locationManager startUpdatingLocation];
+    
+    
+    ceo= [[CLGeocoder alloc]init];
+    [self.locationManager requestWhenInUseAuthorization];
+    if ([self.locationManager respondsToSelector:@selector(requestWhenInUseAuthorization)]) {
+        [self.locationManager requestWhenInUseAuthorization];
+    }
+    CLLocationCoordinate2D coordinate;
+    
+    coordinate.latitude=_locationManager.location.coordinate.latitude;
+    coordinate.longitude=_locationManager.location.coordinate.longitude;
+    
+    NSLog(@"latitude is %f", coordinate.latitude);
+    
+    user.latitude = coordinate.latitude;
+    user.longitude = coordinate.longitude;
+    
+    [_locationManager stopUpdatingLocation];
+
+    objectsArray.searchType = nearMeRecommended;    
+    [self viewDidLoad];
+    
+}
+
+
+- (IBAction)tappedAtoZButton:(UIButton *)sender {
+    objectsArray.searchType = AtoZ;
+    [self viewDidLoad];
+    
+}
+
+- (IBAction)tappedVisitedSmokedButton:(UIButton *)sender {
+    objectsArray.searchType = visitedSmoked;
+    [self viewDidLoad];
+    
+}
+
+- (IBAction)tappedWishListButton:(UIButton *)sender {
+    objectsArray.searchType = wishList;
+    [self viewDidLoad];
+}
+
+- (IBAction)tappedSearchButton:(UIButton *)sender {
+    objectsArray.searchType = search;
+    [self viewDidLoad];
+}
+
 
 
 -(IBAction) barButtonCustomPressed:(UIBarButtonItem*)btn
@@ -214,6 +270,14 @@
     [extView.strainButton addTarget:self action:@selector(strainButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
     [extView.newsFeedButton addTarget:self action:@selector(newsFeedButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
     [extView.userProfileButton addTarget:self action:@selector(userProfileButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
+    
+    if(objectsArray.selection == 0){
+        extView.strainButton.highlighted = YES;
+    }
+    if(objectsArray.selection == 1){
+        extView.storeButton.highlighted = YES;
+    }
+
     [self.view bringSubviewToFront:extView];
     [self.shyNavBarManager setExtensionView:extView];
     [self.shyNavBarManager setStickyExtensionView:NO];
@@ -252,7 +316,7 @@
         
     } completion:^(BOOL finished) {
         
-        self.navigationController.navigationBar.topItem.rightBarButtonItem = nil;
+        self.navigationController.navigationBar.topItem.rightBarButtonItems = nil;
         self.navigationController.navigationBar.topItem.titleView = _searchBar;
         _searchBar.alpha = 0.0;
         
@@ -272,15 +336,22 @@
         _searchBar.alpha = 0.0;
     } completion:^(BOOL finished) {
         self.navigationController.navigationBar.topItem.titleView = nil;
-        self.navigationController.navigationBar.topItem.rightBarButtonItem = _rightButton;
-//        _rightButton.alpha = 0.0;  // set this *after* adding it back
         [UIView animateWithDuration:0.5f animations:^ {
 //            _rightButton.alpha = 1.0;
         }];
         
-        UIBarButtonItem *rightButton = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"mapview"] style:UIBarButtonItemStylePlain target:self   action:@selector(barButtonCustomPressed:)];
 
-        self.navigationController.navigationBar.topItem.rightBarButtonItem = rightButton;
+//        UIBarButtonItem *leftButton1 = [[UIBarButtonItem alloc] initWithTitle:@"Stores" style:UIBarButtonItemStylePlain target:self action:nil];
+        UIBarButtonItem *rightButton1 = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"settings"] style:UIBarButtonItemStylePlain target:self   action:@selector(barButtonMenuPressed:)];
+        rightButton1.width = 40.f;
+//        UIBarButtonItem *rightButton = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"mapview"] style:UIBarButtonItemStylePlain target:self   action:@selector(barButtonCustomPressed:)];
+//        rightButton.width = 40.f;
+
+
+        [self.navigationController.navigationBar setTitleTextAttributes:[NSDictionary dictionaryWithObject:[UIColor whiteColor] forKey:NSForegroundColorAttributeName]];
+//        self.navigationController.navigationBar.topItem.leftBarButtonItem = leftButton1;
+        self.navigationController.navigationBar.topItem.rightBarButtonItem = rightButton1;
+//        self.navigationController.navigationBar.topItem.rightBarButtonItems = [NSArray arrayWithObjects:rightButton1, rightButton, nil];
 
         
         if (objectsArray.selection == 0){
@@ -302,12 +373,6 @@
             [self.collectionView reloadData];}
     }];
 }
-
-//-(IBAction) barButtonCustomPressed:(UIBarButtonItem*)btn
-//{
-//    [user gotoMapViewViewController:self];
-//}
-
 
 - (void) loadStoreStrain{
     switch (objectsArray.searchType) {
@@ -426,7 +491,13 @@
     
     self.navigationController.navigationBar.topItem.titleView = nil;
     [self.navigationController.navigationBar setTitleTextAttributes:[NSDictionary dictionaryWithObject:[UIColor whiteColor] forKey:NSForegroundColorAttributeName]];
-    self.navigationController.navigationBar.topItem.title = @"Near me";
+    
+    if (objectsArray.selection == 0){
+//        self.navigationController.navigationBar.topItem.title = @"Wish List";
+    }
+    else if (objectsArray.selection == 1){
+//        self.navigationController.navigationBar.topItem.title = @"Near me";
+    }
 }
 
 - (void)refreshTableau:(UIRefreshControl *)refresh {
@@ -454,7 +525,27 @@
             NSString *key = keys[i];
             NSDictionary *strainDict = [_strainObjectDictionary valueForKey:key];
             NSDictionary *highDict = [strainDict valueForKey:@"highType"];
-            NSArray *array = [strainDict valueForKey:@"images"] ;
+            NSMutableArray *imagesArray = [[NSMutableArray alloc] init];
+            
+            for (NSInteger j = 0; j < [[strainDict valueForKey:@"images"] count]; j++) {
+                imageClass *image = [[imageClass alloc] init];
+                image.imageURL = [[[strainDict valueForKey:@"images"] objectAtIndex:j] valueForKey:@"imageURL"];
+                
+                image.imageThumbsUp = [NSMutableArray arrayWithArray:[[[[strainDict valueForKey:@"images"] objectAtIndex:j] valueForKey:@"thumbsUp"] allKeys]];
+                image.imageThumbsDown = [NSMutableArray arrayWithArray:[[[[strainDict valueForKey:@"images"] objectAtIndex:j] valueForKey:@"thumbsDown"] allKeys]];
+                
+                image.voteScore = image.imageThumbsUp.count - image.imageThumbsDown.count;
+                image.firebaseIndex = j;
+                
+                image.dataString = [[[strainDict valueForKey:@"images"] objectAtIndex:0] valueForKey:@"data"];
+                image.data =  [[NSData alloc] initWithBase64EncodedString:image.dataString options:0];
+
+                [imagesArray addObject:image];
+            }
+            
+            [imagesArray sortUsingDescriptors:@[[NSSortDescriptor sortDescriptorWithKey:@"voteScore" ascending:NO selector:@selector(compare:)]]];
+
+
             
             NSArray *availableAtArray = [[strainDict valueForKey:@"availableAt"] allKeys];
             
@@ -470,30 +561,33 @@
             [strainLoop setStrainObject:key
                          fromDictionary:strainDict
                                highType:highDict
-                                 images:array
+                                 images:imagesArray
                             availableAt:availableAtArray
                             ratingCount:ratingsArray.count
                             ratingScore:ratingScore];
-            [strainLoop.imageNames removeObjectAtIndex:0];
+//            [strainLoop.imageNames removeObjectAtIndex:0];
             
-            dispatch_async(dispatch_get_global_queue(0,0), ^{
-                NSInteger length = [[strainLoop.imageNames objectAtIndex:0] length];
-                NSString *smallImageURL = [[strainLoop.imageNames objectAtIndex:0] substringWithRange:NSMakeRange(0, length-4)];
-                smallImageURL = [smallImageURL stringByAppendingString:@"m.jpg"];
-
-                NSData * data = [[NSData alloc] initWithContentsOfURL: [NSURL URLWithString:smallImageURL]];
-                if( data == nil ){
-                    NSLog(@"image is nil");
-                    return;
-                }
-                else{
-                    strainLoop.data = data;
-                }
-
+//            dispatch_async(dispatch_get_global_queue(0,0), ^{
+//                imageClass *tempImage = [[imageClass alloc] init];
+//                tempImage = [strainLoop.imagesArray objectAtIndex:0];
+//
+//                NSInteger length = [tempImage.imageURL length];
+//                NSString *smallImageURL = [tempImage.imageURL substringWithRange:NSMakeRange(0, length-4)];
+//                smallImageURL = [smallImageURL stringByAppendingString:@"m.jpg"];
+//
+//                NSData * data = [[NSData alloc] initWithContentsOfURL: [NSURL URLWithString:smallImageURL]];
+//                if( data == nil ){
+//                    NSLog(@"image is nil");
+//                    return;
+//                }
+//                else{
+////                    strainLoop.data = data;
+//                }
+//
                 dispatch_async(dispatch_get_main_queue(), ^{
                     [self.collectionView reloadData];
                 });
-            });
+//            });
             [objectsArray.strainObjectArray addObject:strainLoop];
             [_objectsArrayCopy.strainObjectArray addObject:strainLoop];
             
@@ -546,31 +640,57 @@
         for(int i=0; i<keys.count ; i++){
             NSString *key = keys[i];
             NSDictionary *storeDict = [_storeObjectDictionary valueForKey:key];
-            NSArray *imagesArray = [storeDict valueForKey:@"images"];
+            NSMutableArray *imagesArray = [[NSMutableArray alloc] init];
+
+            for (NSInteger j = 0; j < [[storeDict valueForKey:@"images"] count]; j++) {
+                imageClass *image = [[imageClass alloc] init];
+                image.imageURL = [[[storeDict valueForKey:@"images"] objectAtIndex:j] valueForKey:@"imageURL"];
+                
+                image.imageThumbsUp = [NSMutableArray arrayWithArray:[[[[storeDict valueForKey:@"images"] objectAtIndex:j] valueForKey:@"thumbsUp"] allKeys]];
+                image.imageThumbsDown = [NSMutableArray arrayWithArray:[[[[storeDict valueForKey:@"images"] objectAtIndex:j] valueForKey:@"thumbsDown"] allKeys]];
+                
+                image.voteScore = image.imageThumbsUp.count - image.imageThumbsDown.count;
+                image.firebaseIndex = j;
+                
+                image.dataString = [[[storeDict valueForKey:@"images"] objectAtIndex:0] valueForKey:@"data"];
+                image.data =  [[NSData alloc] initWithBase64EncodedString:image.dataString options:0];
+
+                [imagesArray addObject:image];
+            }
+            
+            [imagesArray sortUsingDescriptors:@[[NSSortDescriptor sortDescriptorWithKey:@"voteScore" ascending:NO selector:@selector(compare:)]]];
             
             //you have to delcare a new object instance to load table cells!!!!!!!!!!!!!!!!!!!
             storeClass *storeloop = [[storeClass alloc] init];
             [storeloop setStoreObject:key
                        fromDictionary:storeDict
                                images:imagesArray];
-            [storeloop.imageNames removeObjectAtIndex:0];
-            dispatch_async(dispatch_get_global_queue(0,0), ^{
-                NSInteger length = [[storeloop.imageNames objectAtIndex:0] length];
-                NSString *smallImageURL = [[storeloop.imageNames objectAtIndex:0] substringWithRange:NSMakeRange(0, length-4)];
-                smallImageURL = [smallImageURL stringByAppendingString:@"m.jpg"];
-                
-                NSData * data = [[NSData alloc] initWithContentsOfURL: [NSURL URLWithString:smallImageURL]];
-                if( data == nil ){
-                    NSLog(@"image is nil");
-                    return;
-                }
-                else{
-                    storeloop.data = data;
-                }
+//            dispatch_async(dispatch_get_global_queue(0,0), ^{
+//                imageClass *tempImage = [[imageClass alloc] init];
+//                tempImage = [storeloop.imagesArray objectAtIndex:0];
+//
+//                NSInteger length = [tempImage.imageURL length];
+//
+//                NSString *smallImageURL = [tempImage.imageURL substringWithRange:NSMakeRange(0, length-4)];
+//                smallImageURL = [smallImageURL stringByAppendingString:@"m.jpg"];
+//                
+//                
+//                NSString *stringForm = [[[storeDict valueForKey:@"images"] objectAtIndex:0] valueForKey:@"data"];
+//                NSData * data = [stringForm dataUsingEncoding:NSUTF8StringEncoding];
+//
+//                if( data == nil ){
+//                    NSLog(@"image is nil");
+//                    return;
+//                }
+//                else{
+////                    storeloop.data = data;
+//
+////                    tempImage.data = data1;
+//                }
                 dispatch_async(dispatch_get_main_queue(), ^{
                     [self.collectionView reloadData];
                 });
-            });
+//            });
             [objectsArray.storeObjectArray addObject:storeloop];
             [_objectsArrayCopy.storeObjectArray addObject:storeloop];
         }
@@ -665,7 +785,10 @@
                 storeClass *tempStore = [[storeClass alloc] init];
                 tempStore = [_objectsArrayCopy.storeObjectArray objectAtIndex:indexPath.row];
                 
-                cell.imageView.image = [UIImage imageWithData:tempStore.data];
+                imageClass *image = [[imageClass alloc] init];
+                image = [tempStore.imagesArray objectAtIndex:0];
+
+                cell.imageView.image = [UIImage imageWithData:image.data];
                 cell.label.text = tempStore.storeName;
                 if(tempStore.distanceToMe != nil){
                     cell.distanceToMeLabel.text = tempStore.distanceToMe;
@@ -679,7 +802,10 @@
                 strainClass *tempStrain = [[strainClass alloc] init];
                 tempStrain = [_objectsArrayCopy.strainObjectArray objectAtIndex:indexPath.row];
                 
-                cell.imageView.image = [UIImage imageWithData:tempStrain.data];
+                imageClass *image = [[imageClass alloc] init];
+                image = [tempStrain.imagesArray objectAtIndex:0];
+
+                cell.imageView.image = [UIImage imageWithData:image.data];
                 cell.label.text = tempStrain.strainName;
                 
                 if ([tempStrain.species isEqual:@"stevia"]) {

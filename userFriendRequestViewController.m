@@ -32,25 +32,14 @@
                 friendRequestor.key = [arr objectAtIndex:0];
                 NSDictionary *dictionary = [snapshot.value valueForKey:friendRequestor.key];
                 friendRequestor.username = [dictionary valueForKey:@"username"];
-                friendRequestor.imageURL = [dictionary valueForKey:@"avatarURL"];
-                
-                dispatch_async(dispatch_get_global_queue(0,0), ^{
-                    NSInteger length = [friendRequestor.imageURL length];
-                    NSString *smallImageURL = [friendRequestor.imageURL substringWithRange:NSMakeRange(0, length-4)];
-                    smallImageURL = [smallImageURL stringByAppendingString:@"t.jpg"];
-                    
-                    NSData * data = [[NSData alloc] initWithContentsOfURL: [NSURL URLWithString:smallImageURL]];
-                    if( data == nil ){
-                        NSLog(@"image is nil");
-                        return;
-                    }
-                    else{
-                        friendRequestor.data = data;
-                    }
-                    dispatch_async(dispatch_get_main_queue(), ^{
-                        [self.tableView reloadData];
-                    });
+                friendRequestor.avatarDataString = [dictionary valueForKey:@"avatarData"];
+                friendRequestor.avatarData =  [[NSData alloc] initWithBase64EncodedString:friendRequestor.avatarDataString options:0];
+
+
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [self.tableView reloadData];
                 });
+
                 [user.friendRequestsIncomingUsers addObject:friendRequestor];
             }
         }];
@@ -76,7 +65,7 @@
 
         findFriendClass *friendRequestor = [user.friendRequestsIncomingUsers objectAtIndex:indexPath.row];
        
-        cell.requestorImageView.image = [UIImage imageWithData:friendRequestor.data];
+        cell.requestorImageView.image = [UIImage imageWithData:friendRequestor.avatarData];
         cell.requestorNameLabel.text = friendRequestor.username;
         
         cell.confirmButton.tag = indexPath.row;

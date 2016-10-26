@@ -19,8 +19,44 @@
     [self loadLabels];
     [self loadImageView];
     [self loadRatingScore];
+    [self loadReviewsFromFirebase];
     // Do any additional setup after loading the view, typically from a nib.
 }
+
+-(void)loadReviewsFromFirebase{
+    FIRDatabaseQuery *reviewQuery = [[firebaseRef.reviewsRef queryOrderedByChild:@"objectKey"] queryEqualToValue:store.storeKey];
+    
+    UITableViewController *tv = [[UITableViewController alloc] init];
+    tv = self.childViewControllers[0];
+
+    [reviewQuery observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
+        if (snapshot.value == [NSNull null]) {}
+        else{
+            for (NSInteger i = 0; i < [snapshot.value allKeys].count; i++) {
+                reviewClass *tempReview = [[reviewClass alloc] init];
+                tempReview.reviewKey = [[snapshot.value allKeys] objectAtIndex:i];
+                NSLog(@"key is %@", tempReview.reviewKey);
+                
+                NSDictionary *dictionary = [[NSDictionary alloc] init];
+                dictionary = [snapshot.value valueForKey:tempReview.reviewKey];
+                tempReview.message = [dictionary valueForKey:@"message"];
+                tempReview.objectImageURL = [dictionary valueForKey:@"objectImage"];
+                tempReview.objectKey = [dictionary valueForKey:@"objectKey"];
+                tempReview.objectName = [dictionary valueForKey:@"objectName"];
+                tempReview.objectType = [dictionary valueForKey:@"objectType"];
+                tempReview.userKey = [dictionary valueForKey:@"userKey"];
+                tempReview.username = [dictionary valueForKey:@"username"];
+                tempReview.rating = [dictionary valueForKey:@"rating"];
+                tempReview.objectDataString = [dictionary valueForKey:@"objectData"];
+                tempReview.objectData = [[NSData alloc] initWithBase64EncodedString:tempReview.objectDataString options:0];
+                
+                [store.reviews addObject:tempReview];
+            }
+    }
+        [tv.tableView reloadData];
+    }];
+}
+
 - (IBAction)tappedImage:(UITapGestureRecognizer *)sender {
     [user goToPopoverImageViewController:self];
 }
@@ -58,14 +94,17 @@
             [[[[[firebaseRef.usersRef child:user.userKey] child:@"checkIns"] child:checkInKey] child:@"date"] setValue:todaysDate];
             [user.checkIns addObject:checkInKey];
             
-//            NSString *messageString = [@"Checked in to " stringByAppendingString:store.storeName];
             NSString *messageString = @"Checked in";
-            [[[firebaseRef.eventsRef child:eventKey] child:@"userAvatarURL"] setValue:user.avatarURL];
+            [[[firebaseRef.eventsRef child:eventKey] child:@"userAvatarData"] setValue:user.avatarDataString];
             [[[firebaseRef.eventsRef child:eventKey] child:@"message"] setValue:messageString];
             [[[firebaseRef.eventsRef child:eventKey] child:@"userID"] setValue:user.userKey];
             [[[firebaseRef.eventsRef child:eventKey] child:@"username"] setValue:user.username];
             [[[firebaseRef.eventsRef child:eventKey] child:@"eventType"] setValue:@"checkIn"];
-            [[[firebaseRef.eventsRef child:eventKey] child:@"objectURL"] setValue:[store.imageNames objectAtIndex:0]];
+
+            imageClass *image = [[imageClass alloc] init];
+            image = [store.imagesArray objectAtIndex:0];
+
+            [[[firebaseRef.eventsRef child:eventKey] child:@"objectData"] setValue:image.dataString];
             [[[firebaseRef.eventsRef child:eventKey] child:@"objectName"] setValue:store.storeName];
             [[[firebaseRef.eventsRef child:eventKey] child:@"objectRating"] setValue:[NSString stringWithFormat:@"%f",store.ratingScore]];
 
@@ -79,17 +118,11 @@
 }
 
 - (void)loadImageView {
-    dispatch_async(dispatch_get_global_queue(0,0), ^{
-        NSData * data = [[NSData alloc] initWithContentsOfURL: [NSURL URLWithString:[store.imageNames objectAtIndex:0]]];
-        if( data == nil ){
-            NSLog(@"image is nil");
-            return;
-        }
-        dispatch_async(dispatch_get_main_queue(), ^{
-            // WARNING: is the cell still using the same data by this point??
-            _store_image_view.image = [UIImage imageWithData: data];
-        });
-    });
+    imageClass *image = [[imageClass alloc] init];
+    NSLog(@"store images array count %lu", store.imagesArray.count);
+    image = [store.imagesArray objectAtIndex:0];
+    _store_image_view.image = [UIImage imageWithData: image.data];
+
 }
 
 - (void)loadLabels {

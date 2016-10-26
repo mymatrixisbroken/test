@@ -1,19 +1,19 @@
 //
-//  userReviewCell.m
+//  StoreReviewCell.m
 //  myProject
 //
-//  Created by Guy on 10/18/16.
+//  Created by Guy on 10/24/16.
 //  Copyright © 2016 Joaquin. All rights reserved.
 //
 
-#import "userReviewCell.h"
+#import "StoreReviewCell.h"
 
-@implementation userReviewCell
+@implementation StoreReviewCell
 
 -(void) uploadCellWithReview:(reviewClass *)tempReview{
-    self.objectImageView.image = [UIImage imageWithData:tempReview.objectData];
-    self.objectNameLabel.text = tempReview.objectName;
-    self.reviewRatingView.value = [tempReview.rating integerValue];;
+    self.userImageView.image = [UIImage imageWithData:tempReview.objectData];
+    self.usernameLabel.text = tempReview.username;
+    self.reviewStarRating.value = [tempReview.rating integerValue];;
     self.reviewMessageLabel.text = tempReview.message;
     
 }
