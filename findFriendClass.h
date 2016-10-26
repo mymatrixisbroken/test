@@ -14,12 +14,12 @@ extern findFriendClass *tempFriend;
 @interface findFriendClass : UITableViewCell
 @property NSString *key;
 @property NSString *username;
-@property NSString *imageURL;
-@property NSData *data;
+@property NSString *avatarDataString;
+@property NSData *avatarData;
 
 + (findFriendClass *)sharedInstance;
 -(id)set:(NSString *)uid
     user:(NSString *)name
-   image:(NSString *)url;
+   image:(NSString *)dataString;
 
 @end

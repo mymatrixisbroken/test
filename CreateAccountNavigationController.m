@@ -24,19 +24,19 @@
     self.navigationBar.topItem.leftBarButtonItem = leftButton;
     
     
-    [UINavigationBar appearance].tintColor = [UIColor whiteColor];
-    UIBarButtonItem *rightButton = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"menu"] style:UIBarButtonItemStylePlain target:self   action:@selector(barButtonCustomPressed:)];
-    self.navigationBar.topItem.rightBarButtonItem = rightButton;
+//    [UINavigationBar appearance].tintColor = [UIColor whiteColor];
+//    UIBarButtonItem *rightButton = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"menu"] style:UIBarButtonItemStylePlain target:self   action:@selector(barButtonCustomPressed:)];
+//    self.navigationBar.topItem.rightBarButtonItem = rightButton;
 }
 
 -(IBAction) leftButtonPressed:(UIBarButtonItem *)btn{
     [user goToUserNotFoundViewController:self];
 }
 
--(IBAction) barButtonCustomPressed:(UIBarButtonItem*)btn
-{
-    [user gotoOptionListViewController:self];
-}
+//-(IBAction) barButtonCustomPressed:(UIBarButtonItem*)btn
+//{
+//    [user gotoOptionListViewController:self];
+//}
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];

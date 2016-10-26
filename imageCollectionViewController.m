@@ -105,10 +105,10 @@
 
 - (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
     if (objectsArray.selection == 1){
-        return [store.imageNames count];
+        return [store.imagesArray count];
     }
     else{
-        return [strain.imageNames count];
+        return [strain.imagesArray count];
     }
 }
 
@@ -121,39 +121,25 @@
     (imageCollectionViewCell *)[collectionView dequeueReusableCellWithReuseIdentifier:CELL_IDENTIFIER forIndexPath:indexPath];
     
     if (objectsArray.selection == 1){
-        dispatch_async(dispatch_get_global_queue(0,0), ^{
-            NSData * data = [[NSData alloc] initWithContentsOfURL: [NSURL URLWithString:[store.imageNames objectAtIndex:indexPath.row]]];
-            if( data == nil ){
-                NSLog(@"image is nil");
-                return;
-            }
-            dispatch_async(dispatch_get_main_queue(), ^{
-                cell.imageView.image = [UIImage imageWithData:data];
-            });
-        });
+        imageClass *image = [[imageClass alloc] init];
+        image = [store.imagesArray objectAtIndex:indexPath.row];
+        cell.imageView.image = [UIImage imageWithData:image.data];
     }
     else if (objectsArray.selection == 0){
-        dispatch_async(dispatch_get_global_queue(0,0), ^{
-            NSData * data = [[NSData alloc] initWithContentsOfURL: [NSURL URLWithString:[strain.imageNames objectAtIndex:indexPath.row]]];
-            if( data == nil ){
-                NSLog(@"image is nil");
-                return;
-            }
-            dispatch_async(dispatch_get_main_queue(), ^{
-                cell.imageView.image = [UIImage imageWithData:data];
-            });
-        });
+        imageClass *image = [[imageClass alloc] init];
+        image = [strain.imagesArray objectAtIndex:indexPath.row];
+        cell.imageView.image = [UIImage imageWithData:image.data];
     }
     return cell;
 }
 
 - (void) collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath{
     if (objectsArray.selection == 1){
-        store.data = [[NSData alloc] initWithContentsOfURL: [NSURL URLWithString:[store.imageNames objectAtIndex:indexPath.row]]];
+        store.imageArrayIndex = indexPath.row;
         [self performSegueWithIdentifier:@"collectionViewToImageView" sender:self];
     }
     else if (objectsArray.selection == 0){
-        strain.data = [[NSData alloc] initWithContentsOfURL: [NSURL URLWithString:[strain.imageNames objectAtIndex:indexPath.row]]];
+        strain.imageArrayIndex = indexPath.row;
         [self performSegueWithIdentifier:@"collectionViewToImageView" sender:self];
     }
 }

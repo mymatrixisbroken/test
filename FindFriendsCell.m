@@ -10,20 +10,35 @@
 
 @implementation FindFriendsCell
 
--(void) uploadCell:(NSString *)key
-      withUsername:(NSString *)username
-              data:(NSData *)data{
-    [_imageview setImage:[UIImage imageWithData: data]];
-    _usernameLabel.text = username;
+-(void) uploadCellWithUsernameData:(userClass *)friend{
+    _imageview.image = [UIImage imageWithData:friend.data];
+    _usernameLabel.text = friend.username;
     
     self.addButton.selected = NO;
-
-    if ([user.friendRequestsOutgoingKeys indexOfObject:key] != NSNotFound) {
+    
+    if ([user.friendRequestsOutgoingKeys indexOfObject:friend.userKey] != NSNotFound) {
         self.addButton.selected = YES;
-            [self.addButton setTitle:@"Pending" forState:UIControlStateSelected];
-            [self.addButton setTitle:@"Add +" forState:UIControlStateNormal];
+        [self.addButton setTitle:@"Pending" forState:UIControlStateSelected];
+        [self.addButton setTitle:@"Add +" forState:UIControlStateNormal];
     }
+
 }
+
+
+//-(void) uploadCell:(NSString *)key
+//      withUsername:(NSString *)username
+//              data:(NSData *)data{
+//    [_imageview setImage:[UIImage imageWithData: data]];
+//    _usernameLabel.text = username;
+//    
+//    self.addButton.selected = NO;
+//
+//    if ([user.friendRequestsOutgoingKeys indexOfObject:key] != NSNotFound) {
+//        self.addButton.selected = YES;
+//            [self.addButton setTitle:@"Pending" forState:UIControlStateSelected];
+//            [self.addButton setTitle:@"Add +" forState:UIControlStateNormal];
+//    }
+//}
 
 - (IBAction)tappedButton:(id)sender {
     FIRUser *youser = [FIRAuth auth].currentUser;

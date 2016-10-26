@@ -52,9 +52,11 @@
     
     userClass *friend = [[userClass alloc] init];
     friend = [objectsArray.userSearchObjectArray objectAtIndex:indexPath.row];
-        [cell uploadCell:friend.userKey
-            withUsername:friend.username
-                    data:friend.data];
+    [cell uploadCellWithUsernameData:friend];
+
+//        [cell uploadCell:friend.userKey
+//            withUsername:friend.username
+//                    data:friend.data];
 
     cell.addButton.tag = indexPath.row;
 
@@ -69,7 +71,7 @@
     NSString *endString = [_searchBar.text substringWithRange:NSMakeRange(0, length)];
     endString = [endString stringByAppendingString:charIncrement];
     
-//    NSLog(@"end string is %@", endString);
+    NSLog(@"end string is %@", endString);
     
     FIRDatabaseQuery *usernamesQuery = [[[firebaseRef.usersRef queryOrderedByChild:@"username"] queryStartingAtValue:_searchBar.text] queryEndingAtValue:endString];
 
@@ -82,30 +84,33 @@
                 
                 if([user.friendsKeys indexOfObject:key] == NSNotFound){
                     NSDictionary *dict = [snapshot.value valueForKey:key];
-                    NSString *username = [dict valueForKey:@"username"];
-                    NSString *imageURL = [dict valueForKey:@"avatarURL"];
                     
                     userClass *friend = [[userClass alloc] init];
+                    friend.userKey = key;
+                    friend.username = [dict valueForKey:@"username"];
+//                    friend.imageURL = [dict valueForKey:@"avatarURL"];
+
+//                    [friend set:key user:username image:imageURL];
+                    friend.avatarDataString = [dict valueForKey:@"avatarData"];
+                    friend.data =  [[NSData alloc] initWithBase64EncodedString:friend.avatarDataString options:0];
                     
-                    [friend set:key user:username image:imageURL];
-                
-                    dispatch_async(dispatch_get_global_queue(0,0), ^{
-                        NSInteger length = [imageURL length];
-                        NSString *smallImageURL = [imageURL substringWithRange:NSMakeRange(0, length-4)];
-                        smallImageURL = [smallImageURL stringByAppendingString:@"b.jpg"];
-                        
-                        NSData * data = [[NSData alloc] initWithContentsOfURL: [NSURL URLWithString:smallImageURL]];
-                        if( data == nil ){
-                            NSLog(@"image is nil");
-                            return;
-                        }
-                        else{
-                            friend.data = data;
-                        }
+//                    dispatch_async(dispatch_get_global_queue(0,0), ^{
+//                        NSInteger length = [imageURL length];
+//                        NSString *smallImageURL = [imageURL substringWithRange:NSMakeRange(0, length-4)];
+//                        smallImageURL = [smallImageURL stringByAppendingString:@"b.jpg"];
+//                        
+//                        NSData * data = [[NSData alloc] initWithContentsOfURL: [NSURL URLWithString:smallImageURL]];
+//                        if( data == nil ){
+//                            NSLog(@"image is nil");
+//                            return;
+//                        }
+//                        else{
+//                            friend.data = [friend.avatarDataString dataUsingEncoding:NSUTF8StringEncoding];
+//                        }
                         dispatch_async(dispatch_get_main_queue(), ^{
                             [self.tableView reloadData];
                         });
-                    });
+//                    });
                     [objectsArray.userSearchObjectArray addObject:friend];
                     [self.tableView reloadData];
                 }

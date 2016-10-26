@@ -21,10 +21,11 @@
     [self.navigationController.navigationBar setTitleTextAttributes:@{NSForegroundColorAttributeName : [UIColor whiteColor]}];
     [UINavigationBar appearance].tintColor = [UIColor whiteColor];
     
-    UIBarButtonItem *rightButton = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"menu"] style:UIBarButtonItemStylePlain target:self   action:@selector(barButtonCustomPressed:)];
-    UIBarButtonItem *leftButton = [[UIBarButtonItem alloc] initWithTitle:@"About me" style:UIBarButtonItemStylePlain target:self action:nil];
+    UIBarButtonItem *leftButton = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"menu"] style:UIBarButtonItemStylePlain target:self   action:@selector(barButtonCustomPressed:)];
+    UIBarButtonItem *rightButton = [[UIBarButtonItem alloc] initWithTitle:@"About me" style:UIBarButtonItemStylePlain target:self action:nil];
     
-    self.navigationBar.topItem.rightBarButtonItem = rightButton;
+//    self.navigationBar.topItem.rightBarButtonItem = rightButton;
+    self.navigationBar.topItem.title = @"About Me";
     self.navigationBar.topItem.leftBarButtonItem = leftButton;
 }
 

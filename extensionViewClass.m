@@ -35,22 +35,22 @@
 - (id) addButtons:(CGFloat ) width{
     storeButton = [UIButton buttonWithType:UIButtonTypeCustom];
     storeButton.frame = CGRectMake(0, 0, (width/4), 40.f);
-    [storeButton setImage:[UIImage imageNamed:@"store"] forState:UIControlStateNormal];
+    [storeButton setImage:[UIImage imageNamed:@"storecopy"] forState:UIControlStateNormal];
     [storeButton setTintColor:[UIColor lightGrayColor]];
     
     strainButton = [UIButton buttonWithType:UIButtonTypeCustom];
     strainButton.frame = CGRectMake((width/4), 0, (width/4), 40.f);
-    [strainButton setImage:[UIImage imageNamed:@"species"] forState:UIControlStateNormal];
+    [strainButton setImage:[UIImage imageNamed:@"speciescopy"] forState:UIControlStateNormal];
     [strainButton setTintColor:[UIColor lightGrayColor]];
     
     newsFeedButton = [UIButton buttonWithType:UIButtonTypeSystem];
     newsFeedButton.frame = CGRectMake((width/4)*2, 0, (width/4), 40.f);
-    [newsFeedButton setImage:[UIImage imageNamed:@"newsFeed"] forState:UIControlStateNormal];
+    [newsFeedButton setImage:[UIImage imageNamed:@"newsfeedcopy"] forState:UIControlStateNormal];
     [newsFeedButton setTintColor:[UIColor lightGrayColor]];
     
     userProfileButton = [UIButton buttonWithType:UIButtonTypeCustom];
     userProfileButton.frame = CGRectMake((width/4)*3, 0, (width/4), 40.f);
-    [userProfileButton setImage:[UIImage imageNamed:@"user"] forState:UIControlStateNormal];
+    [userProfileButton setImage:[UIImage imageNamed:@"usercopy"] forState:UIControlStateNormal];
     [userProfileButton setTintColor:[UIColor lightGrayColor]];
     
     

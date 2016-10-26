@@ -23,7 +23,7 @@
 }
 
 - (void) loadImage {
-    [_image_view setImage:[UIImage imageWithData:store.data]];
+//    [_image_view setImage:[UIImage imageWithData:store.data]];
 }
 
 - (void) loadLabels {

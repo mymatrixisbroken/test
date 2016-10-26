@@ -204,6 +204,27 @@
         UIImage *sizedImage = [[self class] imageWithImage:self.imageView.image scaledToSize:size];
         //NSString *encodedString = [UIImagePNGRepresentation(self.strainImageView.image) base64EncodedStringWithOptions:NSDataBase64Encoding64CharacterLineLength];
         NSData *encodedString = UIImagePNGRepresentation(sizedImage);
+        NSData *encodedString1 = UIImagePNGRepresentation(self.imageView.image);
+        
+        
+        
+        
+        
+        NSString *stringForm = [encodedString base64EncodedStringWithOptions:0];
+        NSString *stringForm1 = [encodedString1 base64EncodedStringWithOptions:0];
+//        [[[firebaseRef.storesRef child:store.storeKey] child:@"data"] setValue:stringForm];
+        NSUInteger bytes = [stringForm lengthOfBytesUsingEncoding:NSUTF8StringEncoding];
+        NSLog(@"%lu bytes", bytes);
+        NSUInteger bytes1 = [stringForm1 lengthOfBytesUsingEncoding:NSUTF8StringEncoding];
+        NSLog(@"XXXXX%lu bytes", bytes1);
+        [[[firebaseRef.storesRef child:store.storeKey] child:@"data"] setValue:stringForm1];
+        NSLog(@"%@", stringForm1);
+
+        
+        
+        
+        
+        
         //NSLog(@"image encoded= %@", encodedString);
         
         NSURL *theURL = [NSURL URLWithString:@"https://api.imgur.com/3/image"];
@@ -229,8 +250,9 @@
         NSString *imageURL = [output valueForKey:@"link"];
         NSLog(@"url is %@", imageURL);
         
-        [store.imageNames removeAllObjects];
-        [store.imageNames addObject:imageURL];
+//        [store.imageNames removeAllObjects];
+//        [store.imageNames addObject:imageURL];
+
         [[[[firebaseRef.storesRef child:store.storeKey] child:@"images"] child:@"1" ] setValue:imageURL];
 
         [self performSegueWithIdentifier:@"createdStoreSegue" sender:self];

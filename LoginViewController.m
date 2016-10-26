@@ -155,14 +155,9 @@ const static CGFloat frameSizeWidth = 600.0f;
                 tempReview.objectType = [dictionary valueForKey:@"objectType"];
                 tempReview.userKey = [dictionary valueForKey:@"userKey"];
                 tempReview.rating = [dictionary valueForKey:@"rating"];
-                
-                
-                NSInteger length = [tempReview.objectImageURL length];
-                NSString *smallImageURL = [tempReview.objectImageURL substringWithRange:NSMakeRange(0, length-4)];
-                smallImageURL = [smallImageURL stringByAppendingString:@"b.jpg"];
-                NSData * data = [[NSData alloc] initWithContentsOfURL: [NSURL URLWithString:smallImageURL]];
-                tempReview.data = data;
-                
+                tempReview.objectDataString = [dictionary valueForKey:@"objectData"];
+                tempReview.objectData = [[NSData alloc] initWithBase64EncodedString:tempReview.objectDataString options:0];
+
                 [user.reviews addObject:tempReview];
             }
             
@@ -172,18 +167,8 @@ const static CGFloat frameSizeWidth = 600.0f;
 }
 
 -(void) getAvatarURLData{
-    dispatch_async(dispatch_get_global_queue(0,0), ^{
-        NSData * data = [[NSData alloc] initWithContentsOfURL: [NSURL URLWithString:user.avatarURL]];
-        if( data == nil ){
-            NSLog(@"image is nil");
-            return;
-        }
-        dispatch_async(dispatch_get_main_queue(), ^{
-            user.data = data;
-            [user goToCurrentUserProfileViewController:self];
-
-        });
-    });
+    user.data =  [[NSData alloc] initWithBase64EncodedString:user.avatarDataString options:0];
+    [user goToCurrentUserProfileViewController:self];
 }
 
 - (CALayer *) customUITextField:(CGFloat) frameHeight{
