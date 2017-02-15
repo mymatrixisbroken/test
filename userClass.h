@@ -20,8 +20,8 @@ extern userClass *user;
 @property NSString *dateJoined;
 @property NSString *lastSignedIn;
 @property NSString *accountType;
-@property NSString *avatarURL;
 @property NSData *data;
+@property NSString *avatarDataString;
 
 @property NSMutableArray *badges;
 @property NSInteger badgeCount;
@@ -55,6 +55,7 @@ extern userClass *user;
 
 @property double latitude;
 @property double longitude;
+@property NSString *county;
 
 
 

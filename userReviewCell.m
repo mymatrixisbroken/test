@@ -11,7 +11,7 @@
 @implementation userReviewCell
 
 -(void) uploadCellWithReview:(reviewClass *)tempReview{
-    self.objectImageView.image = [UIImage imageWithData:tempReview.data];
+    self.objectImageView.image = [UIImage imageWithData:tempReview.objectData];
     self.objectNameLabel.text = tempReview.objectName;
     self.reviewRatingView.value = [tempReview.rating integerValue];;
     self.reviewMessageLabel.text = tempReview.message;

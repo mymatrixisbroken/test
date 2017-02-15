@@ -13,6 +13,7 @@
 #import "reviewClass.h"
 #import "FirebaseReferenceClass.h"
 #import "objectsArrayClass.h"
+#import "imageClass.h"
 @import Firebase;
 @import HCSStarRatingView;
 

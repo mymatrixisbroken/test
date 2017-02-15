@@ -11,51 +11,58 @@
 @implementation ListNavigationController
 - (void)viewDidLoad {
     [super viewDidLoad];
-    [self.navigationController.navigationBar setTitleTextAttributes:@{NSForegroundColorAttributeName : [UIColor whiteColor]}];
-    self.navigationBar.tintColor = [UIColor whiteColor];
-
+//    [self.navigationController.navigationBar setTitleTextAttributes:@{NSForegroundColorAttributeName : [UIColor whiteColor]}];
+//    self.navigationBar.tintColor = [UIColor whiteColor];
+//    
+//    [UINavigationBar appearance].tintColor = [UIColor whiteColor];
+//    
+//    UIBarButtonItem *leftButton = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"menu"] style:UIBarButtonItemStylePlain target:self   action:@selector(barButtonCustomPressed:)];
+//    
+//    self.navigationBar.topItem.leftBarButtonItem = leftButton;
     
-    [UINavigationBar appearance].tintColor = [UIColor whiteColor];
-//    UIBarButtonItem *rightButton = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"mapview"] style:UIBarButtonItemStylePlain target:self   action:@selector(barButtonCustomPressed:)];
-//    UIBarButtonItem *rightButton1 = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"menu"] style:UIBarButtonItemStylePlain target:self   action:@selector(barButtonMenuPressed:)];
-
-//    UIBarButtonItem *leftButton = [[UIBarButtonItem alloc] initWithTitle:@"Strains" style:UIBarButtonItemStylePlain target:self action:nil];
-//
-//    UIBarButtonItem *leftButton1 = [[UIBarButtonItem alloc] initWithTitle:@"Stores" style:UIBarButtonItemStylePlain target:self action:nil];
+    UIImageView *imageViewOne = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 25, 25)];
+    [imageViewOne setImage:[UIImage imageNamed:@"NewsFeedIcon"]];
     
-//    if (objectsArray.selection == 0){
-//        [self.navigationController.navigationBar setTitleTextAttributes:[NSDictionary dictionaryWithObject:[UIColor whiteColor] forKey:NSForegroundColorAttributeName]];
-//            self.navigationBar.topItem.leftBarButtonItem = leftButton;
-//                self.navigationBar.topItem.rightBarButtonItem = rightButton1;
-//    }
-//    else if(objectsArray.selection == 1){
-//        [self.navigationController.navigationBar setTitleTextAttributes:[NSDictionary dictionaryWithObject:[UIColor whiteColor] forKey:NSForegroundColorAttributeName]];
-//            self.navigationBar.topItem.leftBarButtonItem = leftButton1;
-////        self.navigationBar.topItem.rightBarButtonItem = rightButton;
-//        [self.navigationItem setRightBarButtonItems:[NSArray arrayWithObjects:rightButton, rightButton1, nil]];
-//
-//    }
+    UIBarButtonItem *buttonOne = [[UIBarButtonItem alloc] initWithCustomView:imageViewOne];
+
+    UIImageView *imageViewTwo = [[UIImageView alloc] initWithFrame:CGRectMake(self.view.bounds.size.width/5, 0, 25, 25)];
+    [imageViewTwo setImage:[UIImage imageNamed:@"StrainIcon"]];
+    
+    UIBarButtonItem *buttonTwo = [[UIBarButtonItem alloc] initWithCustomView:imageViewTwo];
+
+    UIImageView *imageViewThree = [[UIImageView alloc] initWithFrame:CGRectMake((self.view.bounds.size.width/5)*2, 0, 25, 25)];
+    [imageViewThree setImage:[UIImage imageNamed:@"SearchIcon"]];
+    
+    UIBarButtonItem *buttonThree = [[UIBarButtonItem alloc] initWithCustomView:imageViewThree];
+
+    UIImageView *imageViewFour = [[UIImageView alloc] initWithFrame:CGRectMake((self.view.bounds.size.width/5)*3, 0, 25, 25)];
+    [imageViewFour setImage:[UIImage imageNamed:@"StoresIcon"]];
+    
+    UIBarButtonItem *buttonFour = [[UIBarButtonItem alloc] initWithCustomView:imageViewFour];
+
+    UIImageView *imageViewFive = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 25, 25)];
+    [imageViewFive setImage:[UIImage imageNamed:@"HamburgerIcon"]];
+    
+    UIBarButtonItem *buttonFive = [[UIBarButtonItem alloc] initWithCustomView:imageViewFive];
+    
+    UIBarButtonItem *space = [[UIBarButtonItem alloc]initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:self action:nil];
+//    space.width = 30;
+    
+    NSArray *buttons = @[buttonOne, space, buttonTwo, space, buttonThree, space, buttonFour, space, buttonFive];
+    
+    self.navigationBar.topItem.leftBarButtonItems = buttons;
 
 
-//    UIBarButtonItem *leftButton = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"arrow_left"] style:UIBarButtonItemStylePlain target:self   action:@selector(leftButtonPressed:)];
 //    self.navigationBar.topItem.rightBarButtonItem = rightButton;
+//    [self.navigationBar.topItem setLeftBarButtonItems:[NSArray arrayWithObjects:, nil]];
+
+
 }
 
-//-(IBAction) leftButtonPressed:(UIBarButtonItem *)btn{
-//    objectsArray.searchType = 0;
-//    [user goToNewsFeedViewController:self];
-//}
-
-//-(IBAction) barButtonMenuPressed:(UIBarButtonItem*)btn
-//{
-//    objectsArray.flag = !objectsArray.flag;
-//}
-//
-//
-//-(IBAction) barButtonCustomPressed:(UIBarButtonItem*)btn
-//{
-//    [user gotoMapViewViewController:self];
-//}
+-(IBAction)barButtonCustomPressed:(UIBarButtonItem*)btn
+{
+    [user gotoOptionListViewController:self];
+}
 
 @end
 

@@ -18,25 +18,33 @@
     [super viewDidLoad];
     
     [self.navigationController.navigationBar setTitleTextAttributes:@{NSForegroundColorAttributeName : [UIColor whiteColor]}];
-    self.navigationBar.topItem.title = @"Login";
+//    self.navigationBar.topItem.title = @"Login";
+    UILabel *yourLabel = [[UILabel alloc] initWithFrame:CGRectMake(20,0, self.view.bounds.size.width,50)];
+    yourLabel.text = @"SIGN IN";
+    yourLabel.font = [UIFont fontWithName:@"NEXA LIGHT" size:14.0];
+    yourLabel.textColor = [UIColor colorWithRed:255.0/255.0 green:255.0/255.0 blue:255.0/255.0 alpha:1];
     
-    UIBarButtonItem *leftButton = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"arrow_left"] style:UIBarButtonItemStylePlain target:self   action:@selector(leftButtonPressed:)];
-    self.navigationBar.topItem.leftBarButtonItem = leftButton;
+    [self.navigationBar addSubview:yourLabel];
+
+    
+//    UIBarButtonItem *leftButton = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"arrow_left"] style:UIBarButtonItemStylePlain target:self   action:@selector(leftButtonPressed:)];
+//    self.navigationBar.topItem.leftBarButtonItem = leftButton;
     
     
-    [UINavigationBar appearance].tintColor = [UIColor whiteColor];
-    UIBarButtonItem *rightButton = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"menu"] style:UIBarButtonItemStylePlain target:self   action:@selector(barButtonCustomPressed:)];
-    self.navigationBar.topItem.rightBarButtonItem = rightButton;
+//    [UINavigationBar appearance].tintColor = [UIColor whiteColor];
+//    UIBarButtonItem *rightButton = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"menu"] style:UIBarButtonItemStylePlain target:self   action:@selector(barButtonCustomPressed:)];
+//    self.navigationBar.topItem.rightBarButtonItem = rightButton;
 }
 
 -(IBAction) leftButtonPressed:(UIBarButtonItem *)btn{
-    [user goToUserNotFoundViewController:self];
+    [self dismissViewControllerAnimated:YES completion:nil];
+//    [user goToUserNotFoundViewController:self];
 }
 
--(IBAction) barButtonCustomPressed:(UIBarButtonItem*)btn
-{
-    [user gotoOptionListViewController:self];
-}
+//-(IBAction) barButtonCustomPressed:(UIBarButtonItem*)btn
+//{
+//    [user gotoOptionListViewController:self];
+//}
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];

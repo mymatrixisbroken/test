@@ -10,6 +10,7 @@
 
 @interface optionListViewController : UIViewController
 
+@property (strong, nonatomic) IBOutlet UIView *menuView;
 
 @end
 

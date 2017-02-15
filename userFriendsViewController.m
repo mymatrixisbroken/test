@@ -32,25 +32,13 @@
             tempFriend.key = [arr objectAtIndex:0];
             NSDictionary *dictionary = [snapshot.value valueForKey:tempFriend.key];
             tempFriend.username = [dictionary valueForKey:@"username"];
-            tempFriend.imageURL = [dictionary valueForKey:@"avatarURL"];
-            
-            dispatch_async(dispatch_get_global_queue(0,0), ^{
-                NSInteger length = [tempFriend.imageURL length];
-                NSString *smallImageURL = [tempFriend.imageURL substringWithRange:NSMakeRange(0, length-4)];
-                smallImageURL = [smallImageURL stringByAppendingString:@"t.jpg"];
-                
-                NSData * data = [[NSData alloc] initWithContentsOfURL: [NSURL URLWithString:smallImageURL]];
-                if( data == nil ){
-                    NSLog(@"image is nil");
-                    return;
-                }
-                else{
-                    tempFriend.data = data;
-                }
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    [self.tableView reloadData];
-                });
+            tempFriend.avatarDataString = [dictionary valueForKey:@"avatarData"];
+            tempFriend.avatarData =  [[NSData alloc] initWithBase64EncodedString:tempFriend.avatarDataString options:0];
+
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [self.tableView reloadData];
             });
+            
             [user.friendsUsers addObject:tempFriend];
         }];
     }
@@ -111,7 +99,7 @@
         cell.delegate = self;
 
         cell.userFriendLabel.text = friend.username;
-        cell.imageView.image = [UIImage imageWithData:friend.data];
+        cell.imageView.image = [UIImage imageWithData:friend.avatarData];
     }
     return cell;
 }

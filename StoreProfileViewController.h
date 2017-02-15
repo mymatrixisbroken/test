@@ -10,10 +10,13 @@
 #import "storeClass.h"
 #import "FirebaseReferenceClass.h"
 #import "userClass.h"
+#import "reviewClass.h"
+#import "imageClass.h"
 @import HCSStarRatingView;
 @import Firebase;
+@import GoogleMaps;
 
-@interface StoreProfileViewController : UIViewController
+@interface StoreProfileViewController : UIViewController <GMSMapViewDelegate, UITabBarDelegate>
 
 @property (strong, nonatomic) IBOutlet UIButton *back_button;
 @property (strong, nonatomic) IBOutlet UIButton *edit_button;
@@ -27,6 +30,18 @@
 @property (strong, nonatomic) IBOutlet UILabel *store_url_label;
 @property (strong, nonatomic) IBOutlet UILabel *store_phone_number_label;
 @property (strong, nonatomic) IBOutlet UIButton *checkInButton;
+@property (strong, nonatomic) IBOutlet UILabel *distanceLabel;
+@property (strong, nonatomic) IBOutlet UILabel *hoursLabel;
+@property (strong, nonatomic) IBOutlet UILabel *openNowLabel;
+@property (strong, nonatomic) IBOutlet UIView *mapView;
+@property (strong, nonatomic) IBOutlet UITabBar *tabBar;
+@property (strong, nonatomic) IBOutlet UITabBarItem *aboutBarItem;
+@property (strong, nonatomic) IBOutlet UITabBarItem *strainsBarItem;
+@property (strong, nonatomic) IBOutlet UITabBarItem *reviewsBarItem;
+@property (strong, nonatomic) IBOutlet UITabBarItem *photosBarItem;
+@property (strong, nonatomic) IBOutlet UITabBarItem *favoriteBarItem;
+@property (strong, nonatomic) IBOutlet UIView *containerView;
+@property (strong, nonatomic) IBOutlet UITableViewController *tablevc;
 
 
 @end

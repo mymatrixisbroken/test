@@ -16,8 +16,10 @@
 @synthesize objectName;
 @synthesize objectType;
 @synthesize userKey;
+@synthesize username;
 @synthesize rating;
-@synthesize data;
+@synthesize objectDataString;
+@synthesize objectData;
 
 
 - (id)init {
@@ -30,8 +32,10 @@
         self.objectName = @"";
         self.objectType = @"";
         self.userKey = @"";
+        self.username = @"";
         self.rating = @"";
-        self.data = [[NSData alloc] init];
+        self.objectDataString = @"";
+        self.objectData = [[NSData alloc] init];
     }
     return self;
 }

@@ -10,8 +10,16 @@
 #import "strainClass.h"
 #import "objectsArrayClass.h"
 #import "storeClass.h"
+#import "userClass.h"
+#import "imageClass.h"
+#import "firebaseReferenceClass.h"
 
 @interface popOverImageViewController : UIViewController
 @property (strong, nonatomic) IBOutlet UIImageView *imageView;
+@property (strong, nonatomic) IBOutlet UILabel *indexLabel;
+@property (strong, nonatomic) IBOutlet UIButton *thumbsUpButton;
+@property (strong, nonatomic) IBOutlet UIButton *thumbsDownButton;
+@property (strong, nonatomic) IBOutlet UILabel *voteCountLabel;
+@property (strong, nonatomic) IBOutlet UILabel *voteThumbsUpLabel;
 @end
 

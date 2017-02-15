@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="11762" systemVersion="16D32" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" launchScreen="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="01J-lp-oVM">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11757"/>
+        <capability name="Alignment constraints to the first baseline" minToolsVersion="6.0"/>
+        <capability name="Alignment constraints with different attributes" minToolsVersion="5.1"/>
+        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <customFonts key="customFonts">
+        <array key="NEXA BOLD.OTF">
+            <string>NexaBold</string>
+        </array>
+    </customFonts>
+    <scenes>
+        <!--View Controller-->
+        <scene sceneID="EHf-IW-A2E">
+            <objects>
+                <viewController id="01J-lp-oVM" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="Llm-lL-Icb"/>
+                        <viewControllerLayoutGuide type="bottom" id="xb3-aO-Qok"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="Lp0-Pd-aj3">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Map Graphic" translatesAutoresizingMaskIntoConstraints="NO" id="Bba-79-VCy">
+                                <rect key="frame" x="67" y="159" width="240" height="128"/>
+                            </imageView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Find local dispensaries" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="9aB-NO-Eqv">
+                                <rect key="frame" x="84" y="343" width="209" height="38"/>
+                                <fontDescription key="fontDescription" name="NexaBold" family="Nexa Bold" pointSize="19"/>
+                                <color key="textColor" red="0.0" green="0.22352941179999999" blue="0.1843137255" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="with the greatest of ease." textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="kJX-Kw-74q">
+                                <rect key="frame" x="71" y="362" width="236" height="44"/>
+                                <fontDescription key="fontDescription" name="NexaBold" family="Nexa Bold" pointSize="19"/>
+                                <color key="textColor" red="0.0" green="0.22352941179999999" blue="0.1843137255" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
+                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <constraints>
+                            <constraint firstItem="Bba-79-VCy" firstAttribute="top" secondItem="Llm-lL-Icb" secondAttribute="bottom" constant="139" id="1qe-sN-XRV"/>
+                            <constraint firstItem="xb3-aO-Qok" firstAttribute="top" secondItem="kJX-Kw-74q" secondAttribute="bottom" constant="261" id="3Pg-vm-b4c"/>
+                            <constraint firstItem="Bba-79-VCy" firstAttribute="centerX" secondItem="Lp0-Pd-aj3" secondAttribute="centerX" id="7s2-Av-fht"/>
+                            <constraint firstItem="9aB-NO-Eqv" firstAttribute="top" secondItem="Bba-79-VCy" secondAttribute="bottom" constant="56" id="AOt-nc-Qcw"/>
+                            <constraint firstItem="kJX-Kw-74q" firstAttribute="top" secondItem="Bba-79-VCy" secondAttribute="bottom" constant="75" id="HhR-yA-fpB"/>
+                            <constraint firstItem="9aB-NO-Eqv" firstAttribute="centerX" secondItem="kJX-Kw-74q" secondAttribute="centerX" id="R2Y-8R-EXW"/>
+                            <constraint firstItem="Bba-79-VCy" firstAttribute="trailing" secondItem="kJX-Kw-74q" secondAttribute="trailing" id="YyM-YK-Ngx"/>
+                            <constraint firstItem="9aB-NO-Eqv" firstAttribute="baseline" secondItem="kJX-Kw-74q" secondAttribute="firstBaseline" id="byO-Jg-NpT"/>
+                            <constraint firstItem="9aB-NO-Eqv" firstAttribute="leading" secondItem="Lp0-Pd-aj3" secondAttribute="leadingMargin" constant="68" id="meq-Qd-vKP"/>
+                            <constraint firstItem="Bba-79-VCy" firstAttribute="leading" secondItem="Lp0-Pd-aj3" secondAttribute="leadingMargin" constant="51" id="nDY-dX-epP"/>
+                            <constraint firstItem="xb3-aO-Qok" firstAttribute="top" secondItem="9aB-NO-Eqv" secondAttribute="bottom" constant="286" id="nhC-9i-g3w"/>
+                            <constraint firstItem="kJX-Kw-74q" firstAttribute="leading" secondItem="Lp0-Pd-aj3" secondAttribute="leadingMargin" constant="55" id="ykT-gF-2oc"/>
+                        </constraints>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="iYj-Kq-Ea1" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="53" y="375"/>
+        </scene>
+    </scenes>
+    <resources>
+        <image name="Map Graphic" width="900" height="517"/>
+    </resources>
+</document>

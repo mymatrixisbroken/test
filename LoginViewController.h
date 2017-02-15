@@ -11,6 +11,7 @@
 #import "strainClass.h"
 #import "reviewClass.h"
 #import "FirebaseReferenceClass.h"
+#import "imageClass.h"
 @import Firebase;
 @import JVFloatLabeledTextField;
 
@@ -23,6 +24,8 @@
 @property (weak, nonatomic) IBOutlet UIButton *SignInButton;
 @property (strong, nonatomic) IBOutlet NSMutableArray *queriesArray;
 @property (strong, nonatomic) IBOutlet NSMutableDictionary *dict;
+@property (strong, nonatomic) IBOutlet CAGradientLayer *gradientMask;
+@property (strong, nonatomic) IBOutlet CAGradientLayer *gradientMask1;
 
 
 @end

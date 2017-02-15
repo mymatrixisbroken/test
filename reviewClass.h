@@ -16,8 +16,10 @@
 @property NSString *objectName;
 @property NSString *objectType;
 @property NSString *userKey;
+@property NSString *username;
 @property NSString *rating;
-@property NSData *data;
+@property NSString *objectDataString;
+@property NSData *objectData;
 
 
 @end

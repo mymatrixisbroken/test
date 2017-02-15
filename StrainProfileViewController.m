@@ -27,17 +27,11 @@
 }
 
 - (void)loadImageView {
-    dispatch_async(dispatch_get_global_queue(0,0), ^{
-        NSData * data = [[NSData alloc] initWithContentsOfURL: [NSURL URLWithString:[strain.imageNames objectAtIndex:0]]];
-        if( data == nil ){
-            NSLog(@"image is nil");
-            return;
-        }
-        dispatch_async(dispatch_get_main_queue(), ^{
-            // WARNING: is the cell still using the same data by this point??
-            _strainImage.image = [UIImage imageWithData: data];
-        });
-    });
+    imageClass *image = [[imageClass alloc] init];
+    image = [strain.imagesArray objectAtIndex:0];
+
+    _strainImage.image = [UIImage imageWithData: image.data];
+
 }
 - (IBAction)tappedStrainImage:(UITapGestureRecognizer *)sender {
     [user goToPopoverImageViewController:self];
@@ -120,14 +114,16 @@
             [[[[firebaseRef.usersRef child:user.userKey] child:@"strainsTried"] child:strain.strainKey] setValue:@"test"];
             [user.strainsTried addObject:strain.strainKey];
 
-//            NSString *messageString = [@"Smoked a new strain " stringByAppendingString:strain.strainName];
             NSString *messageString = @"Smoked a new strain";
-            [[[firebaseRef.eventsRef child:eventKey] child:@"userAvatarURL"] setValue:user.avatarURL];
+            [[[firebaseRef.eventsRef child:eventKey] child:@"userAvatarData"] setValue:user.avatarDataString];
             [[[firebaseRef.eventsRef child:eventKey] child:@"message"] setValue:messageString];
             [[[firebaseRef.eventsRef child:eventKey] child:@"userID"] setValue:user.userKey];
             [[[firebaseRef.eventsRef child:eventKey] child:@"username"] setValue:user.username];
             [[[firebaseRef.eventsRef child:eventKey] child:@"eventType"] setValue:@"smokedNew"];
-            [[[firebaseRef.eventsRef child:eventKey] child:@"objectURL"] setValue:[strain.imageNames objectAtIndex:0]];
+            imageClass *image = [[imageClass alloc] init];
+            image = [strain.imagesArray objectAtIndex:0];
+
+            [[[firebaseRef.eventsRef child:eventKey] child:@"objectData"] setValue:image.dataString];
             [[[firebaseRef.eventsRef child:eventKey] child:@"objectName"] setValue:strain.strainName];
             [[[firebaseRef.eventsRef child:eventKey] child:@"objectRating"] setValue:[NSString stringWithFormat:@"%f",strain.ratingScore]];
         }

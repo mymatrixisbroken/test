@@ -17,8 +17,8 @@ userClass *user;
 @synthesize dateJoined;
 @synthesize lastSignedIn;
 @synthesize accountType;
-@synthesize avatarURL;
 @synthesize data;
+@synthesize avatarDataString;
 @synthesize badges;
 @synthesize badgeCount;
 
@@ -51,6 +51,7 @@ userClass *user;
 
 @synthesize latitude;
 @synthesize longitude;
+@synthesize county;
 
 
 
@@ -73,8 +74,8 @@ userClass *user;
         self.dateJoined = @"";
         self.lastSignedIn = @"";
         self.accountType = @"user";
-        self.avatarURL = @"";
         self.data = [[NSData alloc] init];
+        self.avatarDataString = @"";
         self.badges = [[NSMutableArray alloc] init];
         self.badgeCount = 0;
         
@@ -107,6 +108,7 @@ userClass *user;
         
         self.latitude = 0;
         self.longitude = 0;
+        self.county = @"";
     }
     return self;
 }
@@ -120,10 +122,9 @@ userClass *user;
 
 -(id)set:(NSString *)uid
     user:(NSString *)name
-   image:(NSString *)url{
+   image:(NSString *)avatarString{
     self.userKey = uid;
     self.username = name;
-    self.avatarURL = url;
     
     return self;
 }
@@ -136,8 +137,7 @@ userClass *user;
     self.dateJoined = [userDict valueForKey:@"dateJoined"];
     self.lastSignedIn = [userDict valueForKey:@"lastSignedIn"];
     self.accountType = [userDict valueForKey:@"accountType"];
-    self.avatarURL = [userDict valueForKey:@"avatarURL"];
-    
+    self.avatarDataString = [userDict valueForKey:@"avatarData"];
     self.badgeCount = 0;
     self.checkInCount = 0;
     self.friendsEventsCount = 0;
@@ -169,7 +169,6 @@ friendRequestsKeys:(NSMutableArray *)array8{
     self.dateJoined = [userDict valueForKey:@"dateJoined"];
     self.lastSignedIn = [userDict valueForKey:@"lastSignedIn"];
     self.accountType = [userDict valueForKey:@"accountType"];
-    self.avatarURL = [userDict valueForKey:@"avatarURL"];
     
     self.badges = array1;
     self.badgeCount = 0;

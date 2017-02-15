@@ -21,22 +21,79 @@ const static CGFloat frameSizeWidth = 600.0f;
     _queriesArray = [[NSMutableArray alloc] init];
     _dict = [[NSMutableDictionary alloc] init];
     [self setTextFields];
+    
+    
+    
+    CALayer *topBorder = [CALayer layer];
+    topBorder.frame = CGRectMake(20,0,self.view.bounds.size.width-20,1);
+    topBorder.backgroundColor = [UIColor colorWithRed:0.0/255.0 green:57.0/255.0 blue:47.0/255.0 alpha:1].CGColor;
+    
+    [self.view.layer addSublayer:topBorder];
+    
+    _SignInUsername.floatingLabelFont = [UIFont fontWithName:@"NEXA BOLD" size:14.0];
+    UIColor *color = [UIColor whiteColor];
+    _SignInUsername.attributedPlaceholder = [[NSAttributedString alloc] initWithString:@"EMAIL ADDRESS" attributes:@{NSForegroundColorAttributeName: color}];
+
+    _SignInPassword.floatingLabelFont = [UIFont fontWithName:@"NEXA BOLD" size:14.0];
+    _SignInPassword.attributedPlaceholder = [[NSAttributedString alloc] initWithString:@"PASSWORD" attributes:@{NSForegroundColorAttributeName: color}];
+
+
+    _gradientMask = [CAGradientLayer layer];
+    _gradientMask.frame = _SignInUsername.frame;
+    _gradientMask.colors = @[(id)[UIColor clearColor].CGColor,
+                             (id)[UIColor colorWithRed:0.0/255.0 green:57.0/255.0 blue:47.0/255.0 alpha:1.0].CGColor];
+    _gradientMask.startPoint = CGPointMake(0.0, 0.5);   // start at left middle
+    _gradientMask.endPoint = CGPointMake(1.0, 0.5);     // end at right middle
+    
+    //    _gradientMask.colors = @[(id)[UIColor clearColor].CGColor,
+    //                             (id)[UIColor whiteColor].CGColor];
+    _gradientMask1 = [CAGradientLayer layer];
+    _gradientMask1.frame = _SignInPassword.frame;
+    _gradientMask1.colors = @[(id)[UIColor clearColor].CGColor,
+                              (id)[UIColor colorWithRed:0.0/255.0 green:57.0/255.0 blue:47.0/255.0 alpha:1.0].CGColor];
+    _gradientMask1.startPoint = CGPointMake(0.0, 0.5);   // start at left middle
+    _gradientMask1.endPoint = CGPointMake(1.0, 0.5);     // end at right middle
+
+
 }
 
+- (IBAction)emailDidBeginEditing:(JVFloatLabeledTextField *)sender {
+    //    _emailField.background = [UIImage imageNamed:@"SelectionBar"];
+    [_SignInUsername.layer addSublayer:_gradientMask];
+    _SignInUsername.font = [UIFont fontWithName:@"CERVO-THIN" size:14.0];
+}
+
+- (IBAction)emailDidEndEditing:(JVFloatLabeledTextField *)sender {
+    //    _emailField.background = nil;
+    [_gradientMask removeFromSuperlayer];
+}
+
+- (IBAction)passwordDidBeginEditing:(JVFloatLabeledTextField *)sender {
+    //    _passwordField.background = [UIImage imageNamed:@"SelectionBar"];
+    [_SignInPassword.layer addSublayer:_gradientMask];
+    _SignInPassword.font = [UIFont fontWithName:@"CERVO-THIN" size:14.0];
+}
+
+- (IBAction)passwordDidEndEditing:(JVFloatLabeledTextField *)sender {
+    //    _passwordField.background = nil;
+    [_gradientMask1 removeFromSuperlayer];
+}
+
+
 - (void) setTextFields {
-    [_SignInUsername.layer addSublayer:[self customUITextField:70]];
+//    [_SignInUsername.layer addSublayer:[self customUITextField:70]];
     _SignInUsername.layer.masksToBounds = YES;
-    [_SignInUsername becomeFirstResponder];
+//    [_SignInUsername becomeFirstResponder];
     
     //Custom format uiTextField
-    [_SignInPassword.layer addSublayer:[self customUITextField:70]];
+//    [_SignInPassword.layer addSublayer:[self customUITextField:70]];
     _SignInPassword.layer.masksToBounds = YES;
     
     _SignInButton.enabled = NO;
     _SignInButton.alpha = 0.5;
     _SignInButton.contentEdgeInsets = UIEdgeInsetsMake(5, 22, 5, 0);
     
-    [_signInVIew.layer addSublayer:[self customUITextField:75]];
+//    [_signInVIew.layer addSublayer:[self customUITextField:75]];
     _signInVIew.layer.masksToBounds = YES;
 }
 
@@ -155,14 +212,9 @@ const static CGFloat frameSizeWidth = 600.0f;
                 tempReview.objectType = [dictionary valueForKey:@"objectType"];
                 tempReview.userKey = [dictionary valueForKey:@"userKey"];
                 tempReview.rating = [dictionary valueForKey:@"rating"];
-                
-                
-                NSInteger length = [tempReview.objectImageURL length];
-                NSString *smallImageURL = [tempReview.objectImageURL substringWithRange:NSMakeRange(0, length-4)];
-                smallImageURL = [smallImageURL stringByAppendingString:@"b.jpg"];
-                NSData * data = [[NSData alloc] initWithContentsOfURL: [NSURL URLWithString:smallImageURL]];
-                tempReview.data = data;
-                
+                tempReview.objectDataString = [dictionary valueForKey:@"objectData"];
+                tempReview.objectData = [[NSData alloc] initWithBase64EncodedString:tempReview.objectDataString options:0];
+
                 [user.reviews addObject:tempReview];
             }
             
@@ -172,18 +224,8 @@ const static CGFloat frameSizeWidth = 600.0f;
 }
 
 -(void) getAvatarURLData{
-    dispatch_async(dispatch_get_global_queue(0,0), ^{
-        NSData * data = [[NSData alloc] initWithContentsOfURL: [NSURL URLWithString:user.avatarURL]];
-        if( data == nil ){
-            NSLog(@"image is nil");
-            return;
-        }
-        dispatch_async(dispatch_get_main_queue(), ^{
-            user.data = data;
-            [user goToCurrentUserProfileViewController:self];
-
-        });
-    });
+    user.data =  [[NSData alloc] initWithBase64EncodedString:user.avatarDataString options:0];
+    [user goToCurrentUserProfileViewController:self];
 }
 
 - (CALayer *) customUITextField:(CGFloat) frameHeight{
