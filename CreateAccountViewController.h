@@ -18,6 +18,12 @@
 @property (weak, nonatomic) IBOutlet JVFloatLabeledTextField *passwordField;
 @property (strong, nonatomic) IBOutlet JVFloatLabeledTextField *usernameField;
 @property (weak, nonatomic) IBOutlet NSString* todaysDate;
+@property (strong, nonatomic) IBOutlet UIView *termsView;
+@property (strong, nonatomic) IBOutlet UIView *createAccountView;
+@property (strong, nonatomic) IBOutlet UIView *fieldsView;
+@property (strong, nonatomic) IBOutlet CAGradientLayer *gradientMask;
+@property (strong, nonatomic) IBOutlet CAGradientLayer *gradientMask1;
+@property (strong, nonatomic) IBOutlet CAGradientLayer *gradientMask2;
 
 @end
 

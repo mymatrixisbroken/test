@@ -13,6 +13,7 @@
 #import "objectsArrayClass.h"
 #import <TLYShyNavBar/TLYShyNavBarManager.h>
 #import "extensionViewClass.h"
+#import "imageClass.h"
 
 @interface imageCollectionViewController : UIViewController  <UICollectionViewDataSource, imageCollectionViewDelegateLayout>
 @property (nonatomic, strong) IBOutlet UICollectionView *collectionView;

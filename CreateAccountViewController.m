@@ -18,8 +18,118 @@ const static CGFloat frameSizeWidth = 600.0f;
 @implementation CreateAccountViewController
 - (void)viewDidLoad {
     [super viewDidLoad];
-    [self setTextFields];
+//    [self setTextFields];
     // Do any additional setup after loading the view, typically from a nib.
+    
+    CALayer *topBorder = [CALayer layer];
+    topBorder.frame = CGRectMake(20,0,_usernameField.bounds.size.width,1);
+    topBorder.backgroundColor = [UIColor colorWithRed:0.0/255.0 green:57.0/255.0 blue:47.0/255.0 alpha:1].CGColor;
+
+    
+    CALayer *topBorder1 = [CALayer layer];
+    topBorder1.frame = CGRectMake(20,0,_usernameField.bounds.size.width,1);
+    topBorder1.backgroundColor = [UIColor colorWithRed:0.0/255.0 green:57.0/255.0 blue:47.0/255.0 alpha:1].CGColor;
+    
+    CALayer *topBorder2 = [CALayer layer];
+    topBorder2.frame = CGRectMake(20,0,_usernameField.bounds.size.width,1);
+    topBorder2.backgroundColor = [UIColor colorWithRed:0.0/255.0 green:57.0/255.0 blue:47.0/255.0 alpha:1].CGColor;
+
+    [_createAccountView.layer addSublayer:topBorder];
+    [_fieldsView.layer addSublayer:topBorder1];
+    [_termsView.layer addSublayer:topBorder2];
+
+    
+    
+    _usernameField.floatingLabelFont = [UIFont fontWithName:@"NEXA BOLD" size:14.0];
+    _emailField.floatingLabelFont = [UIFont fontWithName:@"NEXA BOLD" size:14.0];
+    _passwordField.floatingLabelFont = [UIFont fontWithName:@"NEXA BOLD" size:14.0];
+
+//    _usernameField.placeholderColor = [UIColor whiteColor];
+    UIColor *color = [UIColor whiteColor];
+    _usernameField.attributedPlaceholder = [[NSAttributedString alloc] initWithString:@"First Name" attributes:@{NSForegroundColorAttributeName: color}];
+    _emailField.attributedPlaceholder = [[NSAttributedString alloc] initWithString:@"Email" attributes:@{NSForegroundColorAttributeName: color}];
+    _passwordField.attributedPlaceholder = [[NSAttributedString alloc] initWithString:@"Password" attributes:@{NSForegroundColorAttributeName: color}];
+
+//    _usernameField.floatingLabelFont = [UIFont fontWithName:@"Nexa Bold" size:16];
+//    _usernameField.font = [UIFont fontWithName:@"Cervo" size:20];
+
+
+//    UIButton *clearButton = [UIButton buttonWithType:UIButtonTypeCustom];
+//    [clearButton setImage:[UIImage imageNamed:@"Exit_Back Button"] forState:UIControlStateNormal];
+//    [clearButton setFrame:CGRectMake(0, 0, 50, 50)];
+//    [clearButton addTarget:self action:@selector(clearTextField:) forControlEvents:UIControlEventTouchUpInside];
+//    
+//    _usernameField.rightViewMode = UITextFieldViewModeWhileEditing; //can be changed to UITextFieldViewModeNever,    UITextFieldViewModeAlways,   UITextFieldViewModeUnlessEditing
+//    [_usernameField setRightView:clearButton];
+//
+//    _passwordField.rightViewMode = UITextFieldViewModeWhileEditing; //can be changed to UITextFieldViewModeNever,    UITextFieldViewModeAlways,   UITextFieldViewModeUnlessEditing
+//    [_passwordField setRightView:clearButton];
+//
+//    _emailField.rightViewMode = UITextFieldViewModeWhileEditing; //can be changed to UITextFieldViewModeNever,    UITextFieldViewModeAlways,   UITextFieldViewModeUnlessEditing
+//    [_emailField setRightView:clearButton];
+
+    //    _gradientMask.colors = @[(id)[UIColor clearColor].CGColor,
+    //                             (id)[UIColor whiteColor].CGColor];
+    _gradientMask = [CAGradientLayer layer];
+    _gradientMask.frame = _usernameField.frame;
+    _gradientMask.colors = @[(id)[UIColor clearColor].CGColor,
+                             (id)[UIColor colorWithRed:0.0/255.0 green:57.0/255.0 blue:47.0/255.0 alpha:1.0].CGColor];
+    _gradientMask.startPoint = CGPointMake(0.0, 0.5);   // start at left middle
+    _gradientMask.endPoint = CGPointMake(1.0, 0.5);     // end at right middle
+
+    //    _gradientMask.colors = @[(id)[UIColor clearColor].CGColor,
+    //                             (id)[UIColor whiteColor].CGColor];
+    _gradientMask1 = [CAGradientLayer layer];
+    _gradientMask1.frame = _emailField.frame;
+    _gradientMask1.colors = @[(id)[UIColor clearColor].CGColor,
+                             (id)[UIColor colorWithRed:0.0/255.0 green:57.0/255.0 blue:47.0/255.0 alpha:1.0].CGColor];
+    _gradientMask1.startPoint = CGPointMake(0.0, 0.5);   // start at left middle
+    _gradientMask1.endPoint = CGPointMake(1.0, 0.5);     // end at right middle
+
+    
+    //    _gradientMask.colors = @[(id)[UIColor clearColor].CGColor,
+    //                             (id)[UIColor whiteColor].CGColor];
+    _gradientMask2 = [CAGradientLayer layer];
+    _gradientMask2.frame = _passwordField.frame;
+    _gradientMask2.colors = @[(id)[UIColor clearColor].CGColor,
+                             (id)[UIColor colorWithRed:0.0/255.0 green:57.0/255.0 blue:47.0/255.0 alpha:1.0].CGColor];
+    _gradientMask2.startPoint = CGPointMake(0.0, 0.5);   // start at left middle
+    _gradientMask2.endPoint = CGPointMake(1.0, 0.5);     // end at right middle
+
+}
+
+- (IBAction)usernameDidBeginEditing:(JVFloatLabeledTextField *)sender {
+    //        _usernameField.background = [UIImage imageNamed:@"SelectionBar"];
+    [_usernameField.layer addSublayer:_gradientMask];
+    _usernameField.font = [UIFont fontWithName:@"CERVO-THIN" size:14.0];
+}
+
+- (IBAction)usernameDidEndEditing:(JVFloatLabeledTextField *)sender {
+//    _usernameField.font = [UIFont fontWithName:@"Nexa Bold" size:14];
+//    _usernameField.background = nil;
+    [_gradientMask removeFromSuperlayer];
+}
+
+- (IBAction)emailDidBeginEditing:(JVFloatLabeledTextField *)sender {
+    //    _emailField.background = [UIImage imageNamed:@"SelectionBar"];
+    [_emailField.layer addSublayer:_gradientMask];
+    _emailField.font = [UIFont fontWithName:@"CERVO-THIN" size:14.0];
+}
+
+- (IBAction)emailDidEndEditing:(JVFloatLabeledTextField *)sender {
+//    _emailField.background = nil;
+    [_gradientMask1 removeFromSuperlayer];
+}
+
+- (IBAction)passwordDidBeginEditing:(JVFloatLabeledTextField *)sender {
+    //    _passwordField.background = [UIImage imageNamed:@"SelectionBar"];
+    [_passwordField.layer addSublayer:_gradientMask];
+    _passwordField.font = [UIFont fontWithName:@"CERVO-THIN" size:14.0];
+}
+
+- (IBAction)passwordDidEndEditing:(JVFloatLabeledTextField *)sender {
+//    _passwordField.background = nil;
+    [_gradientMask2 removeFromSuperlayer];
 }
 
 - (IBAction)tappedSignUp:(UIButton *)sender {

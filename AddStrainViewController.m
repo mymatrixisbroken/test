@@ -67,8 +67,8 @@
         NSString *imageURL = [output valueForKey:@"link"];
         NSLog(@"url is %@", imageURL);
         
-        [strain.imageNames removeAllObjects];
-        [strain.imageNames addObject:imageURL];
+//        [strain.imageNames removeAllObjects];
+//        [strain.imageNames addObject:imageURL];
         [[[[firebaseRef.strainsRef child:strain.strainKey] child:@"images"] child:@"1" ] setValue:imageURL];
         
 

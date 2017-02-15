@@ -64,6 +64,7 @@
     [extView.strainButton addTarget:self action:@selector(strainButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
     [extView.newsFeedButton addTarget:self action:@selector(newsFeedButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
     [extView.userProfileButton addTarget:self action:@selector(userProfileButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
+    extView.userProfileButton.highlighted = YES;
     [self.shyNavBarManager setExtensionView:extView];
     [self.shyNavBarManager setStickyExtensionView:YES];
 }
@@ -184,10 +185,8 @@
     
     
     NSDictionary *output = [dataDictionaryResponse valueForKey:@"data"];
-    user.avatarURL = [output valueForKey:@"link"];
-    NSLog(@"url is %@", user.avatarURL);
-    
-    [[[firebaseRef.usersRef child:user.userKey] child:@"avatarURL"] setValue:user.avatarURL];
+
+    [[[firebaseRef.usersRef child:user.userKey] child:@"avatarData"] setValue:user.avatarDataString];
 
 
     

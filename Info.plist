@@ -2,6 +2,19 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>UIAppFonts</key>
+	<array>
+		<string>CERVO-THINITALIC.OTF</string>
+		<string>CERVO-THIN.OTF</string>
+		<string>CERVO-REGULARITALIC.OTF</string>
+		<string>CERVO-REGULAR.OTF</string>
+		<string>CERVO-MEDIUMITALIC.OTF</string>
+		<string>CERVO-MEDIUM.OTF</string>
+		<string>CERVO-LIGHTITALIC.OTF</string>
+		<string>CERVO-LIGHT.OTF</string>
+		<string>NEXA LIGHT.OTF</string>
+		<string>NEXA BOLD.OTF</string>
+	</array>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleExecutable</key>
@@ -35,8 +48,8 @@
 	<string>myProject</string>
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
-        <string>googlechromes</string>
-        <string>comgooglemaps</string>
+		<string>googlechromes</string>
+		<string>comgooglemaps</string>
 		<string>fbapi</string>
 		<string>fb-messenger-api</string>
 		<string>fbauth2</string>

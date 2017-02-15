@@ -13,8 +13,8 @@ findFriendClass *tempFriend;
 @implementation findFriendClass
 @synthesize key;
 @synthesize username;
-@synthesize imageURL;
-@synthesize data;
+@synthesize avatarDataString;
+@synthesize avatarData;
 
 + (findFriendClass *)sharedInstance {
     static dispatch_once_t onceToken;
@@ -30,18 +30,18 @@ findFriendClass *tempFriend;
     if (self) {
         self.key = @"";
         self.username = @"";
-        self.imageURL = @"";
-        self.data = [[NSData alloc] init];
+        self.avatarDataString = @"";
+        self.avatarData = [[NSData alloc] init];
     }
     return self;
 }
 
 -(id)set:(NSString *)uid
     user:(NSString *)name
-   image:(NSString *)url{
+   image:(NSString *)dataString{
     self.key = uid;
     self.username = name;
-    self.imageURL = url;
+    self.avatarDataString = dataString;
     
     return self;
 }

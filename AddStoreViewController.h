@@ -11,6 +11,7 @@
 #import "storeClass.h"
 #import "userClass.h"
 #import "FirebaseReferenceClass.h"
+#import "objectsArrayClass.h"
 @import Firebase;
 @import GooglePlaces;
 @import JVFloatLabeledTextField;

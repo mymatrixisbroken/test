@@ -90,28 +90,167 @@
     }];
 }
 - (IBAction)tappedImageView:(UITapGestureRecognizer *)sender {
-    UIAlertController *actionSheet = [UIAlertController alertControllerWithTitle:@"Select Image" message:nil preferredStyle:UIAlertControllerStyleActionSheet];
+    NSString *geocodingBaseURL = @"https://maps.googleapis.com/maps/api/place/textsearch/json?";
+    NSString *url = [NSString stringWithFormat:@"%@query=dispensary&location=%f,%f&radius=13000&type=dispensary&key=AIzaSyAsZ171sgZHuTcapToLRQ5-W9dl_WRLOh4",geocodingBaseURL, user.latitude, user.longitude];
+    url = [url stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    NSURL *queryURL = [NSURL URLWithString:url];
+    NSData *data = [NSData dataWithContentsOfURL:queryURL];
+    NSError *error;
+    NSDictionary *json = [NSJSONSerialization
+                          JSONObjectWithData:data
+                          options:kNilOptions
+                          error:&error];
+    NSArray *results = [json objectForKey:@"results"];
+    //    NSLog(@"results are %@", results);
     
-    picker2 = [[UIImagePickerController alloc] init];
-    picker = [[UIImagePickerController alloc] init];
+    
+
+    NSArray *storeNames = [objectsArray.storeObjectArray valueForKey:@"storeName"];
+    UIAlertController *actionSheet = [UIAlertController alertControllerWithTitle:@"Are you trying to add.." message:@"" preferredStyle:UIAlertControllerStyleAlert];
+
+
+    for (NSInteger i = 0; i < results.count; i++) {
+        NSDictionary *result = [results objectAtIndex:i];
+//        NSLog(@"result is %@", result);
+        NSString *name = [result objectForKey:@"name"];
+        NSString *placeID = [result objectForKey:@"place_id"];
+
+        
+        
+        
+    NSString * address = [result objectForKey:@"formatted_address"];
+    NSError * err;
+    NSDataDetector * addrParser = [NSDataDetector dataDetectorWithTypes:NSTextCheckingTypeAddress
+                                                                  error:&err];
+    __block NSDictionary * addressParts;
+    if( addrParser ){
+        [addrParser enumerateMatchesInString:address
+                                     options:0
+                                       range:(NSRange){0, [address length]}
+                                  usingBlock:^(NSTextCheckingResult *result, NSMatchingFlags flags, BOOL *stop) {
+                                      addressParts = [result addressComponents];
+                                  }];
+    }
+    
+//    NSLog(@"%@", addressParts);
+
+        //    NSDictionary *geometry = [result objectForKey:@"geometry"];
+        //    NSDictionary *location = [geometry objectForKey:@"location"];
+        //    store.latitude = [location objectForKey:@"lat"];
+        //    store.longitude = [location objectForKey:@"lng"];
+        //    store.googlePlaceID = [result objectForKey:@"place_id"];
+        if (![storeNames containsObject:name]) {
+            [actionSheet addAction:[UIAlertAction actionWithTitle:name style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+                
+                _store_name_field.text = name;
+                _address_field.text = [addressParts objectForKey:@"Street"];
+                _city_field.text = [addressParts objectForKey:@"City"];
+                _state_field.text = [addressParts objectForKey:@"State"];
+                
+            
+                NSString *geocodingBaseURL = @"https://maps.googleapis.com/maps/api/place/details/json?";
+                NSString *url = [NSString stringWithFormat:@"%@placeid=%@&key=AIzaSyAsZ171sgZHuTcapToLRQ5-W9dl_WRLOh4",geocodingBaseURL, placeID];
+                url = [url stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+                NSURL *queryURL = [NSURL URLWithString:url];
+                NSData *data = [NSData dataWithContentsOfURL:queryURL];
+                NSError *error;
+                NSDictionary *json = [NSJSONSerialization
+                                      JSONObjectWithData:data
+                                      options:kNilOptions
+                                      error:&error];
+                NSDictionary *results = [json objectForKey:@"result"];
+//                NSLog(@"result is %@", json );
+//                NSLog(@"result is %@", results );
+                _phone_number_field.text = [results objectForKey:@"formatted_phone_number"];
+                
+                    [[GMSPlacesClient sharedClient]
+                     lookUpPhotosForPlaceID:placeID
+                     callback:^(GMSPlacePhotoMetadataList *_Nullable photos,
+                                NSError *_Nullable error) {
+                         if (error) {
+                             // TODO: handle the error.
+                             NSLog(@"Error: %@", [error description]);
+                         } else {
+                             if (photos.results.count > 0) {
+                                 GMSPlacePhotoMetadata *firstPhoto = photos.results.firstObject;
+                                 [[GMSPlacesClient sharedClient]
+                                  loadPlacePhoto:firstPhoto
+                                  constrainedToSize:self.imageView.bounds.size
+                                  scale:self.imageView.window.screen.scale
+                                  callback:^(UIImage *_Nullable photo, NSError *_Nullable error) {
+                                      if (error) {
+                                          // TODO: handle the error.
+                                          NSLog(@"Error: %@", [error description]);
+                                      } else {
+                                          self.imageView.image = photo;
+                                          //self.attributionTextView.attributedText = firstPhoto.attributions;
+                                      }
+                                  }];
+                             }
+                         }
+                     }];
+
+
+            }]];
+
+        }
+    }
+    
+    
+    
+    
+//    [actionSheet addAction:[UIAlertAction actionWithTitle:[mArray objectAtIndex:0] style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+//        
+//        // Cancel button tappped.
+//        [self dismissViewControllerAnimated:YES completion:^{
+//        }];
+//    }]];
+
+//    [actionSheet addAction:[UIAlertAction actionWithTitle:[mArray objectAtIndex:1] style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+//        
+//        // Cancel button tappped.
+//        [self dismissViewControllerAnimated:YES completion:^{
+//        }];
+//    }]];
+//
+//    [actionSheet addAction:[UIAlertAction actionWithTitle:[mArray objectAtIndex:2] style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+//        
+//        // Cancel button tappped.
+//        [self dismissViewControllerAnimated:YES completion:^{
+//        }];
+//    }]];
+    
+
+    [self presentViewController:actionSheet animated:YES completion:nil];
 
     
-    [actionSheet addAction:[UIAlertAction actionWithTitle:@"Gallery" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
-        self->picker2.delegate = self;
-        [picker2 setSourceType:UIImagePickerControllerSourceTypePhotoLibrary];
-        [self presentViewController:picker2 animated:YES completion:NULL];
-        // Distructive button tapped.[self dismissViewControllerAnimated:YES completion:^{}];
-    }]];
     
-    [actionSheet addAction:[UIAlertAction actionWithTitle:@"Photo" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
-        self->picker.delegate = self;
-        [picker setSourceType:UIImagePickerControllerSourceTypeCamera];
-        [self presentViewController:picker animated:YES completion:NULL];
-        // OK button tapped. [self dismissViewControllerAnimated:YES completion:^{}];
-    }]];
     
-    // Present action sheet.
-    [self presentViewController:actionSheet animated:YES completion:nil];
+    
+
+    
+//    UIAlertController *actionSheet = [UIAlertController alertControllerWithTitle:@"Select Image" message:nil preferredStyle:UIAlertControllerStyleActionSheet];
+//    
+//    picker2 = [[UIImagePickerController alloc] init];
+//    picker = [[UIImagePickerController alloc] init];
+//
+//    
+//    [actionSheet addAction:[UIAlertAction actionWithTitle:@"Gallery" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+//        self->picker2.delegate = self;
+//        [picker2 setSourceType:UIImagePickerControllerSourceTypePhotoLibrary];
+//        [self presentViewController:picker2 animated:YES completion:NULL];
+//        // Distructive button tapped.[self dismissViewControllerAnimated:YES completion:^{}];
+//    }]];
+//    
+//    [actionSheet addAction:[UIAlertAction actionWithTitle:@"Photo" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+//        self->picker.delegate = self;
+//        [picker setSourceType:UIImagePickerControllerSourceTypeCamera];
+//        [self presentViewController:picker animated:YES completion:NULL];
+//        // OK button tapped. [self dismissViewControllerAnimated:YES completion:^{}];
+//    }]];
+//    
+//    // Present action sheet.
+//    [self presentViewController:actionSheet animated:YES completion:nil];
 
 }
 
@@ -204,6 +343,27 @@
         UIImage *sizedImage = [[self class] imageWithImage:self.imageView.image scaledToSize:size];
         //NSString *encodedString = [UIImagePNGRepresentation(self.strainImageView.image) base64EncodedStringWithOptions:NSDataBase64Encoding64CharacterLineLength];
         NSData *encodedString = UIImagePNGRepresentation(sizedImage);
+        NSData *encodedString1 = UIImagePNGRepresentation(self.imageView.image);
+        
+        
+        
+        
+        
+        NSString *stringForm = [encodedString base64EncodedStringWithOptions:0];
+        NSString *stringForm1 = [encodedString1 base64EncodedStringWithOptions:0];
+//        [[[firebaseRef.storesRef child:store.storeKey] child:@"data"] setValue:stringForm];
+        NSUInteger bytes = [stringForm lengthOfBytesUsingEncoding:NSUTF8StringEncoding];
+        NSLog(@"%lu bytes", bytes);
+        NSUInteger bytes1 = [stringForm1 lengthOfBytesUsingEncoding:NSUTF8StringEncoding];
+        NSLog(@"XXXXX%lu bytes", bytes1);
+        [[[firebaseRef.storesRef child:store.storeKey] child:@"data"] setValue:stringForm1];
+        NSLog(@"%@", stringForm1);
+
+        
+        
+        
+        
+        
         //NSLog(@"image encoded= %@", encodedString);
         
         NSURL *theURL = [NSURL URLWithString:@"https://api.imgur.com/3/image"];
@@ -229,8 +389,9 @@
         NSString *imageURL = [output valueForKey:@"link"];
         NSLog(@"url is %@", imageURL);
         
-        [store.imageNames removeAllObjects];
-        [store.imageNames addObject:imageURL];
+//        [store.imageNames removeAllObjects];
+//        [store.imageNames addObject:imageURL];
+
         [[[[firebaseRef.storesRef child:store.storeKey] child:@"images"] child:@"1" ] setValue:imageURL];
 
         [self performSegueWithIdentifier:@"createdStoreSegue" sender:self];

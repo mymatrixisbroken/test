@@ -31,6 +31,40 @@
 }
 
 - (void) signinFirebaseAnonymously {
+//    [[FIRAuth auth] addAuthStateDidChangeListener:^(FIRAuth *_Nonnull auth,
+//                                                    FIRUser *_Nullable user) {
+////        if (user != nil) {
+////            // User is signed in.
+////            [self loadCurrentLocation];
+////        }
+////        else {
+////            FIRUser *youser = [FIRAuth auth].currentUser;
+//            if (user.email == nil) {
+//                [[FIRAuth auth] signInAnonymouslyWithCompletion:^(FIRUser * _Nullable user, NSError * _Nullable error) {
+//                    if (error != nil) {
+//                        // Uh-oh, an error occurred!
+//                        NSLog(@"Anonymous Firebase User is NOT signed in..");
+//                        NSLog(@"%@", error.localizedDescription);
+//                        //NSLog(@"UID:%@.",error.userInfo);
+//                    }
+//                    else {
+//                        //Assign current Firebase user to a variable called user
+//                        FIRUser *user = [FIRAuth auth].currentUser;
+//                        BOOL isAnonymous = user.anonymous;  // YES
+//                        NSLog(@"Anonymous Firebase User is signed in.. ");
+//                        NSLog(isAnonymous ? @"Yes" : @"No");
+//                        NSLog(@"UID:%@.",user.uid);
+//                        //NSLog(@"ref %@ strains %@ stores %@ users %@", firebaseRef.ref, firebaseRef.strainsRef, firebaseRef.storesRef, firebaseRef.usersRef);
+//                        [self loadCurrentLocation];
+//                    }
+//                }];
+//            }
+//            else{
+//                [self loadCurrentLocation];
+//            }
+////        }
+//    }];
+    
     [[FIRAuth auth] signInAnonymouslyWithCompletion:^(FIRUser * _Nullable user, NSError * _Nullable error) {
         if (error != nil) {
             // Uh-oh, an error occurred!
