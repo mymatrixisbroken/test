@@ -11,52 +11,82 @@
 @implementation ListNavigationController
 - (void)viewDidLoad {
     [super viewDidLoad];
-//    [self.navigationController.navigationBar setTitleTextAttributes:@{NSForegroundColorAttributeName : [UIColor whiteColor]}];
-//    self.navigationBar.tintColor = [UIColor whiteColor];
-//    
-//    [UINavigationBar appearance].tintColor = [UIColor whiteColor];
-//    
-//    UIBarButtonItem *leftButton = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"menu"] style:UIBarButtonItemStylePlain target:self   action:@selector(barButtonCustomPressed:)];
-//    
-//    self.navigationBar.topItem.leftBarButtonItem = leftButton;
-    
-    UIImageView *imageViewOne = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 25, 25)];
-    [imageViewOne setImage:[UIImage imageNamed:@"NewsFeedIcon"]];
-    
-    UIBarButtonItem *buttonOne = [[UIBarButtonItem alloc] initWithCustomView:imageViewOne];
 
-    UIImageView *imageViewTwo = [[UIImageView alloc] initWithFrame:CGRectMake(self.view.bounds.size.width/5, 0, 25, 25)];
-    [imageViewTwo setImage:[UIImage imageNamed:@"StrainIcon"]];
-    
-    UIBarButtonItem *buttonTwo = [[UIBarButtonItem alloc] initWithCustomView:imageViewTwo];
+    UIButton *btn1 =  [UIButton buttonWithType:UIButtonTypeCustom];
+    btn1.frame = CGRectMake(0,0,25,25);
+    [btn1 setBackgroundImage:[UIImage imageNamed:@"notSelectedNewsFeedIcon"] forState:UIControlStateNormal];
+    [btn1 addTarget:self action:@selector(newsFeedButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
+    UIBarButtonItem *buttonOne = [[UIBarButtonItem alloc] initWithCustomView:btn1];
 
-    UIImageView *imageViewThree = [[UIImageView alloc] initWithFrame:CGRectMake((self.view.bounds.size.width/5)*2, 0, 25, 25)];
-    [imageViewThree setImage:[UIImage imageNamed:@"SearchIcon"]];
     
-    UIBarButtonItem *buttonThree = [[UIBarButtonItem alloc] initWithCustomView:imageViewThree];
+    UIButton *btn2 =  [UIButton buttonWithType:UIButtonTypeCustom];
+    btn2.frame = CGRectMake(0,0,25,25);
+    if (objectsArray.selection == 0) {
+        [btn2 setBackgroundImage:[UIImage imageNamed:@"selectedStrainIcon"] forState:UIControlStateNormal];
+    } else {
+        [btn2 setBackgroundImage:[UIImage imageNamed:@"notSelectedStrainIcon"] forState:UIControlStateNormal];
+    }
+    [btn2 addTarget:self action:@selector(strainButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
+    UIBarButtonItem *buttonTwo = [[UIBarButtonItem alloc] initWithCustomView:btn2];
 
-    UIImageView *imageViewFour = [[UIImageView alloc] initWithFrame:CGRectMake((self.view.bounds.size.width/5)*3, 0, 25, 25)];
-    [imageViewFour setImage:[UIImage imageNamed:@"StoresIcon"]];
     
-    UIBarButtonItem *buttonFour = [[UIBarButtonItem alloc] initWithCustomView:imageViewFour];
+    UIButton *btn3 =  [UIButton buttonWithType:UIButtonTypeCustom];
+    btn3.frame = CGRectMake(0,0,25,25);
+    [btn3 setBackgroundImage:[UIImage imageNamed:@"notSelectedSearchIcon"] forState:UIControlStateNormal];
+    [btn3 addTarget:self action:@selector(userProfileButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
+    UIBarButtonItem *buttonThree = [[UIBarButtonItem alloc] initWithCustomView:btn3];
 
-    UIImageView *imageViewFive = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 25, 25)];
-    [imageViewFive setImage:[UIImage imageNamed:@"HamburgerIcon"]];
     
-    UIBarButtonItem *buttonFive = [[UIBarButtonItem alloc] initWithCustomView:imageViewFive];
+    UIButton *btn4 =  [UIButton buttonWithType:UIButtonTypeCustom];
+    btn4.frame = CGRectMake(0,0,25,25);
+    if (objectsArray.selection == 1) {
+        [btn4 setBackgroundImage:[UIImage imageNamed:@"selectedStoresIcon"] forState:UIControlStateNormal];
+    } else {
+        [btn4 setBackgroundImage:[UIImage imageNamed:@"notSelectedStoresIcon"] forState:UIControlStateNormal];
+    }
+
+    [btn4 addTarget:self action:@selector(storeButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
+    UIBarButtonItem *buttonFour = [[UIBarButtonItem alloc] initWithCustomView:btn4];
+
+    
+    UIButton *btn5 =  [UIButton buttonWithType:UIButtonTypeCustom];
+    btn5.frame = CGRectMake(0,0,25,25);
+    [btn5 setBackgroundImage:[UIImage imageNamed:@"notSelectedHamburgerIcon"] forState:UIControlStateNormal];
+    [btn5 addTarget:self action:@selector(barButtonCustomPressed:) forControlEvents:UIControlEventTouchUpInside];
+    UIBarButtonItem *buttonFive = [[UIBarButtonItem alloc] initWithCustomView:btn5];
+
     
     UIBarButtonItem *space = [[UIBarButtonItem alloc]initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:self action:nil];
-//    space.width = 30;
     
     NSArray *buttons = @[buttonOne, space, buttonTwo, space, buttonThree, space, buttonFour, space, buttonFive];
     
     self.navigationBar.topItem.leftBarButtonItems = buttons;
+}
 
+-(IBAction)storeButtonPressed:(UIButton*)btn {
+    objectsArray.searchType = 0;
+    objectsArray.selection = 1;
+    [user goToStrainsStoresViewController:self];
+}
 
-//    self.navigationBar.topItem.rightBarButtonItem = rightButton;
-//    [self.navigationBar.topItem setLeftBarButtonItems:[NSArray arrayWithObjects:, nil]];
+-(IBAction)strainButtonPressed:(UIButton*)btn {
+    objectsArray.searchType = 0;
+    objectsArray.selection = 0;
+    [user goToStrainsStoresViewController:self];
+}
 
+-(IBAction)newsFeedButtonPressed:(UIButton*)btn {
+    [user goToNewsFeedViewController:self];
+}
 
+-(IBAction)userProfileButtonPressed:(UIButton*)btn {
+    FIRUser *youser = [FIRAuth auth].currentUser;
+    if(youser.anonymous){
+        [user goToUserNotSignedInViewController:self];
+    }
+    else{
+        [user goToCurrentUserProfileViewController:self];
+    }
 }
 
 -(IBAction)barButtonCustomPressed:(UIBarButtonItem*)btn

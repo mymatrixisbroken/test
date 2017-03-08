@@ -205,7 +205,7 @@
 //        [self dismissViewControllerAnimated:YES completion:^{
 //        }];
 //    }]];
-
+//
 //    [actionSheet addAction:[UIAlertAction actionWithTitle:[mArray objectAtIndex:1] style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
 //        
 //        // Cancel button tappped.
@@ -219,7 +219,7 @@
 //        [self dismissViewControllerAnimated:YES completion:^{
 //        }];
 //    }]];
-    
+//    
 
     [self presentViewController:actionSheet animated:YES completion:nil];
 
@@ -349,15 +349,15 @@
         
         
         
-        NSString *stringForm = [encodedString base64EncodedStringWithOptions:0];
-        NSString *stringForm1 = [encodedString1 base64EncodedStringWithOptions:0];
+//        NSString *stringForm = [encodedString base64EncodedStringWithOptions:0];
+//        NSString *stringForm1 = [encodedString1 base64EncodedStringWithOptions:0];
 //        [[[firebaseRef.storesRef child:store.storeKey] child:@"data"] setValue:stringForm];
-        NSUInteger bytes = [stringForm lengthOfBytesUsingEncoding:NSUTF8StringEncoding];
-        NSLog(@"%lu bytes", bytes);
-        NSUInteger bytes1 = [stringForm1 lengthOfBytesUsingEncoding:NSUTF8StringEncoding];
-        NSLog(@"XXXXX%lu bytes", bytes1);
-        [[[firebaseRef.storesRef child:store.storeKey] child:@"data"] setValue:stringForm1];
-        NSLog(@"%@", stringForm1);
+//        NSUInteger bytes = [stringForm lengthOfBytesUsingEncoding:NSUTF8StringEncoding];
+//        NSLog(@"%lu bytes", bytes);
+//        NSUInteger bytes1 = [stringForm1 lengthOfBytesUsingEncoding:NSUTF8StringEncoding];
+//        NSLog(@"XXXXX%lu bytes", bytes1);
+//        [[[firebaseRef.storesRef child:store.storeKey] child:@"data"] setValue:stringForm1];
+//        NSLog(@"%@", stringForm1);
 
         
         
@@ -376,7 +376,7 @@
         [theRequest setValue:@"Client-ID bceb6364428afba" forHTTPHeaderField:@"Authorization"];
         
         //[theRequest setValue:encodedString forHTTPHeaderField:@"image"];
-        [theRequest setHTTPBody:encodedString];
+        [theRequest setHTTPBody:encodedString1];
         NSURLResponse *theResponse = NULL;
         NSError *theError = NULL;
         NSData *theResponseData = [NSURLConnection sendSynchronousRequest:theRequest returningResponse:&theResponse error:&theError];

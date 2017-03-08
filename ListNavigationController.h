@@ -9,6 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "userClass.h"
 #import "objectsArrayClass.h"
+@import Firebase;
 
 @interface ListNavigationController : UINavigationController <UISearchBarDelegate, UISearchDisplayDelegate>
 

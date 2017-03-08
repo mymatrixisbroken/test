@@ -41,7 +41,7 @@
         CGSize size = CGSizeMake(500, 500);
         UIImage *sizedImage = [[self class] imageWithImage:self.strainImageView.image scaledToSize:size];
         //NSString *encodedString = [UIImagePNGRepresentation(self.strainImageView.image) base64EncodedStringWithOptions:NSDataBase64Encoding64CharacterLineLength];
-        NSData *encodedString = UIImagePNGRepresentation(sizedImage);
+        NSData *encodedString = UIImagePNGRepresentation(self.strainImageView.image);
         NSLog(@"image encoded= %@", encodedString);
         
         NSURL *theURL = [NSURL URLWithString:@"https://api.imgur.com/3/image"];

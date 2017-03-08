@@ -13,40 +13,79 @@
 @end
 
 @implementation CurrentUserNavigationController
-
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    //    self.navigationBar.topItem.title = @"Blazed";
-    [self.navigationController.navigationBar setTitleTextAttributes:@{NSForegroundColorAttributeName : [UIColor whiteColor]}];
-    [UINavigationBar appearance].tintColor = [UIColor whiteColor];
+    UIButton *btn1 =  [UIButton buttonWithType:UIButtonTypeCustom];
+    btn1.frame = CGRectMake(0,0,25,25);
+    [btn1 setBackgroundImage:[UIImage imageNamed:@"notSelectedNewsFeedIcon"] forState:UIControlStateNormal];
+    [btn1 addTarget:self action:@selector(newsFeedButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
+    UIBarButtonItem *buttonOne = [[UIBarButtonItem alloc] initWithCustomView:btn1];
     
-    UIBarButtonItem *leftButton = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"menu"] style:UIBarButtonItemStylePlain target:self   action:@selector(barButtonCustomPressed:)];
-    UIBarButtonItem *rightButton = [[UIBarButtonItem alloc] initWithTitle:@"About me" style:UIBarButtonItemStylePlain target:self action:nil];
     
-//    self.navigationBar.topItem.rightBarButtonItem = rightButton;
-    self.navigationBar.topItem.title = @"About Me";
-    self.navigationBar.topItem.leftBarButtonItem = leftButton;
+    UIButton *btn2 =  [UIButton buttonWithType:UIButtonTypeCustom];
+    btn2.frame = CGRectMake(0,0,25,25);
+    [btn2 setBackgroundImage:[UIImage imageNamed:@"notSelectedStrainIcon"] forState:UIControlStateNormal];
+    [btn2 addTarget:self action:@selector(strainButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
+    UIBarButtonItem *buttonTwo = [[UIBarButtonItem alloc] initWithCustomView:btn2];
+    
+    
+    UIButton *btn3 =  [UIButton buttonWithType:UIButtonTypeCustom];
+    btn3.frame = CGRectMake(0,0,25,25);
+    [btn3 setBackgroundImage:[UIImage imageNamed:@"notSelectedSearchIcon"] forState:UIControlStateNormal];
+    [btn3 addTarget:self action:@selector(userProfileButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
+    UIBarButtonItem *buttonThree = [[UIBarButtonItem alloc] initWithCustomView:btn3];
+    
+    
+    UIButton *btn4 =  [UIButton buttonWithType:UIButtonTypeCustom];
+    btn4.frame = CGRectMake(0,0,25,25);
+    [btn4 setBackgroundImage:[UIImage imageNamed:@"notSelectedStoresIcon"] forState:UIControlStateNormal];
+    [btn4 addTarget:self action:@selector(storeButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
+    UIBarButtonItem *buttonFour = [[UIBarButtonItem alloc] initWithCustomView:btn4];
+    
+    
+    UIButton *btn5 =  [UIButton buttonWithType:UIButtonTypeCustom];
+    btn5.frame = CGRectMake(0,0,25,25);
+    [btn5 setBackgroundImage:[UIImage imageNamed:@"notSelectedHamburgerIcon"] forState:UIControlStateNormal];
+    [btn5 addTarget:self action:@selector(barButtonCustomPressed:) forControlEvents:UIControlEventTouchUpInside];
+    UIBarButtonItem *buttonFive = [[UIBarButtonItem alloc] initWithCustomView:btn5];
+    
+    
+    UIBarButtonItem *space = [[UIBarButtonItem alloc]initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:self action:nil];
+    
+    NSArray *buttons = @[buttonOne, space, buttonTwo, space, buttonThree, space, buttonFour, space, buttonFive];
+    
+    self.navigationBar.topItem.leftBarButtonItems = buttons;
+}
+
+-(IBAction)storeButtonPressed:(UIButton*)btn {
+    objectsArray.searchType = 0;
+    objectsArray.selection = 1;
+    [user goToStrainsStoresViewController:self];
+}
+
+-(IBAction)strainButtonPressed:(UIButton*)btn {
+    objectsArray.searchType = 0;
+    objectsArray.selection = 0;
+    [user goToStrainsStoresViewController:self];
+}
+
+-(IBAction)newsFeedButtonPressed:(UIButton*)btn {
+    [user goToNewsFeedViewController:self];
+}
+
+-(IBAction)userProfileButtonPressed:(UIButton*)btn {
+    FIRUser *youser = [FIRAuth auth].currentUser;
+    if(youser.anonymous){
+        [user goToUserNotSignedInViewController:self];
+    }
+    else{
+        [user goToCurrentUserProfileViewController:self];
+    }
 }
 
 -(IBAction)barButtonCustomPressed:(UIBarButtonItem*)btn
 {
     [user gotoOptionListViewController:self];
 }
-
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
-}
-
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
-
 @end
