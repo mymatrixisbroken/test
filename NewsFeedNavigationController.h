@@ -9,6 +9,8 @@
 #import <UIKit/UIKit.h>
 #import "userClass.h"
 #import <TLYShyNavBar/TLYShyNavBarManager.h>
+#import "objectsArrayClass.h"
+@import Firebase;
 
 
 @interface NewsFeedNavigationController : UINavigationController

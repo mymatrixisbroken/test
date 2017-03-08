@@ -9,6 +9,8 @@
 #import <UIKit/UIKit.h>
 #import "userClass.h"
 #import "storeClass.h"
+#import "objectsArrayClass.h"
+@import Firebase;
 
 @interface StoreProfileNavigationController : UINavigationController
 

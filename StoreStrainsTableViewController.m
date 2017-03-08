@@ -59,6 +59,27 @@
     //    return [store.imagesArray count];
 }
 
+- (IBAction)didTapFilterButton:(UIButton *)sender {
+    UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+    UIViewController *vc = [sb instantiateViewControllerWithIdentifier:@"strainsFilterSBID"];
+    vc.modalPresentationStyle = UIModalPresentationPopover;
+    vc.preferredContentSize = CGSizeMake(175, 300);
+
+    UIPopoverPresentationController *popOver = vc.popoverPresentationController;
+    popOver.delegate = self;
+    popOver.sourceView = self.view;
+    popOver.sourceRect = sender.frame;
+    popOver.permittedArrowDirections = UIPopoverArrowDirectionUp;
+    popOver.backgroundColor = [UIColor colorWithRed:7.0/255.0 green:18.0/255.0 blue:17.0/255.0 alpha:1.0];
+
+//    vc.navigationBarHidden = YES;
+
+    [self presentViewController:vc animated:YES completion:NULL];
+}
+
+- (UIModalPresentationStyle) adaptivePresentationStyleForPresentationController: (UIPresentationController * ) controller {
+    return UIModalPresentationNone;
+}
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     NSString *cellIdentifier = @"StoreStrainCell";

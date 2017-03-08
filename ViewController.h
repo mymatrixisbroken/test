@@ -19,13 +19,15 @@
 #import "imageClass.h"
 #import "reviewClass.h"
 
-@interface ViewController : UIViewController <UICollectionViewDataSource, CHTCollectionViewDelegateWaterfallLayout, UISearchBarDelegate, UISearchDisplayDelegate, CLLocationManagerDelegate>
+@interface ViewController : UIViewController <UICollectionViewDataSource, CHTCollectionViewDelegateWaterfallLayout, UISearchBarDelegate, UISearchDisplayDelegate, CLLocationManagerDelegate, UIPopoverPresentationControllerDelegate>
 @property (nonatomic, strong) IBOutlet UICollectionView *collectionView;
 @property (strong, nonatomic) IBOutlet NSDictionary *storeObjectDictionary;
 @property (strong, nonatomic) IBOutlet NSDictionary *strainObjectDictionary;
 @property (strong, nonatomic) IBOutlet UISearchBar *searchBar;
 @property (strong, nonatomic) IBOutlet objectsArrayClass *objectsArrayCopy;
-@property     CLLocationManager *locationManager;
+@property CLLocationManager *locationManager;
 @property (strong, nonatomic) IBOutlet UIRefreshControl *refresh;
+@property extensionViewClass *extView;
+
 
 @end

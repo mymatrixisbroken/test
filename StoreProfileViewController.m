@@ -86,22 +86,23 @@
 //    _tabBar.translucent = NO;
 //    _aboutBarItem.title = nil;
 
-    _aboutBarItem.image = [[UIImage imageNamed:@"aboutSmartObject"] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal ];
-    _aboutBarItem.selectedImage = [[UIImage imageNamed:@"aboutSmartObject"]imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
+    _aboutBarItem.image = [[UIImage imageNamed:@"notSelectedAboutIcon"] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal ];
+    _aboutBarItem.selectedImage = [[UIImage imageNamed:@"selectedAboutIcon"]imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
 
-    _strainsBarItem.image = [[UIImage imageNamed:@"StrainIcon"] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal ];
-    _strainsBarItem.selectedImage = [[UIImage imageNamed:@"StrainIcon"]imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
+    _strainsBarItem.image = [[UIImage imageNamed:@"notSelectedStrainIcon"] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal ];
+    _strainsBarItem.selectedImage = [[UIImage imageNamed:@"selectedStrainIcon"]imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
 
-    _reviewsBarItem.image = [[UIImage imageNamed:@"reviewsSmartObject"] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal ];
-    _reviewsBarItem.selectedImage = [[UIImage imageNamed:@"reviewsSmartObject"]imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
+    _reviewsBarItem.image = [[UIImage imageNamed:@"notSelectedReviewsIcon"] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
+    _reviewsBarItem.selectedImage = [[UIImage imageNamed:@"selectedReviewsIcon"]imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
+    _tabBar.selectedItem = _reviewsBarItem;
 
 //    [_photosBarItem performSelectorOnMainThread:@selector(didTapPhotosBarItem) withObject:nil waitUntilDone:NO];
     _photosBarItem.enabled = YES;
-    _photosBarItem.image = [[UIImage imageNamed:@"photosSmartObject"] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal ];
-    _photosBarItem.selectedImage = [[UIImage imageNamed:@"photosSmartObject"]imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
+    _photosBarItem.image = [[UIImage imageNamed:@"notSelectedPhotosIcon"] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal ];
+    _photosBarItem.selectedImage = [[UIImage imageNamed:@"selectedPhotosIcon"]imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
 
-    _favoriteBarItem.image = [[UIImage imageNamed:@"favoritesSmartObject"] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal ];
-    _favoriteBarItem.selectedImage = [[UIImage imageNamed:@"favoritesSmartObject"]imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
+    _favoriteBarItem.image = [[UIImage imageNamed:@"notSelectedFavoriteIcon"] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal ];
+    _favoriteBarItem.selectedImage = [[UIImage imageNamed:@"selectedFavoriteIcon"]imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
 //    _aboutBarItem.imageInsets = UIEdgeInsetsMake(6, 0, -6, 0);
 
 
@@ -126,7 +127,7 @@
 
     
 
-    
+
     
     
     
@@ -146,7 +147,7 @@
 //    _containerView = viewController;
 
     
-    
+
     
     
     
@@ -158,21 +159,33 @@
 
     
     if(item.tag == 1) {
+
+    }
+    else if(item.tag == 2) {
+        UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+        UITableViewController *vc = [sb instantiateViewControllerWithIdentifier:@"strainsSBID"];
+        [self addChildViewController:vc];
+        vc.tableView.frame = CGRectMake(0, 0, _containerView.frame.size.width, _containerView.frame.size.height);
+        [_containerView addSubview:vc.tableView];
+        [vc didMoveToParentViewController:self];
+    }
+    else if(item.tag == 3) {
+        UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+        UITableViewController *vc = [sb instantiateViewControllerWithIdentifier:@"reviewsSBID"];
+        [self addChildViewController:vc];
+        vc.tableView.frame = CGRectMake(0, 0, _containerView.frame.size.width, _containerView.frame.size.height);
+        [_containerView addSubview:vc.tableView];
+        [vc didMoveToParentViewController:self];
+        
+    }
+    else if(item.tag == 4) {
         UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
         UITableViewController *vc = [sb instantiateViewControllerWithIdentifier:@"photosSBID"];
         [self addChildViewController:vc];
         vc.tableView.frame = CGRectMake(0, 0, _containerView.frame.size.width, _containerView.frame.size.height);
         [_containerView addSubview:vc.tableView];
         [vc didMoveToParentViewController:self];
-
-    }
-    else if(item.tag == 2) {
-            UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-            UITableViewController *vc = [sb instantiateViewControllerWithIdentifier:@"strainsSBID"];
-            [self addChildViewController:vc];
-            vc.tableView.frame = CGRectMake(0, 0, _containerView.frame.size.width, _containerView.frame.size.height);
-            [_containerView addSubview:vc.tableView];
-            [vc didMoveToParentViewController:self];
+        
     }
 }
 
@@ -205,6 +218,8 @@
 //    UITableViewController *tv = [[UITableViewController alloc] init];
 //    tv = self.childViewControllers[0];
     
+
+
     UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
     UITableViewController *vc = [sb instantiateViewControllerWithIdentifier:@"reviewsSBID"];
     [self addChildViewController:vc];

@@ -14,6 +14,6 @@
 @import Firebase;
 
 
-@interface StoreStrainsTableViewController : UITableViewController  <UITableViewDelegate, UITableViewDataSource>
+@interface StoreStrainsTableViewController : UITableViewController  <UITableViewDelegate, UITableViewDataSource, UIPopoverPresentationControllerDelegate>
 
 @end
