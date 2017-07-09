@@ -24,7 +24,7 @@
 @property (strong, nonatomic) IBOutlet NSDictionary *storeObjectDictionary;
 @property (strong, nonatomic) IBOutlet NSDictionary *strainObjectDictionary;
 @property (strong, nonatomic) IBOutlet UISearchBar *searchBar;
-@property (strong, nonatomic) IBOutlet objectsArrayClass *objectsArrayCopy;
+@property (strong, nonatomic) IBOutlet objectsArrayClass *filteredObjectsArray;
 @property CLLocationManager *locationManager;
 @property (strong, nonatomic) IBOutlet UIRefreshControl *refresh;
 @property extensionViewClass *extView;

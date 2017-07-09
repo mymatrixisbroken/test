@@ -32,7 +32,7 @@
 }
 
 -(void) loadImageIntoView{
-    if (objectsArray.selection == 1){
+    if (objectsArray.strainOrStore == 1){
         imageClass *image = [[imageClass alloc] init];
         image = [store.imagesArray objectAtIndex:store.imageArrayIndex];
         
@@ -76,7 +76,7 @@
 }
 
 -(void) screenSwipedLeft{
-    if (objectsArray.selection == 1){
+    if (objectsArray.strainOrStore == 1){
         if(store.imageArrayIndex < (store.imagesArray.count -1)){
         store.imageArrayIndex+= 1;
         [self loadImageIntoView];
@@ -91,7 +91,7 @@
 }
 
 -(void) screenSwipedRight{
-    if (objectsArray.selection == 1){
+    if (objectsArray.strainOrStore == 1){
         if(store.imageArrayIndex > 0){
             store.imageArrayIndex-= 1;
             [self loadImageIntoView];
@@ -110,7 +110,7 @@
     if (youser.email == nil) {
         [user goToUserNotSignedInViewController:self];
     } else {
-        if (objectsArray.selection == 1){
+        if (objectsArray.strainOrStore == 1){
             imageClass *image = [[imageClass alloc] init];
             image = [store.imagesArray objectAtIndex:store.imageArrayIndex];
 
@@ -160,7 +160,7 @@
     if (youser.email == nil) {
         [user goToUserNotSignedInViewController:self];
     } else {
-        if (objectsArray.selection == 1){
+        if (objectsArray.strainOrStore == 1){
             imageClass *image = [[imageClass alloc] init];
             image = [store.imagesArray objectAtIndex:store.imageArrayIndex];
             

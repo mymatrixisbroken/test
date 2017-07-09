@@ -35,7 +35,7 @@
 }
 
 - (void) updateFirebaseValues:reviewKey {
-    if(objectsArray.selection == 0){
+    if(objectsArray.strainOrStore == 0){
 //        [[[[firebaseRef.reviewsRef child:@"strains"] child:reviewKey] child:@"message"] setValue:_review_text.text];
 //        [[[[firebaseRef.reviewsRef child:@"strains"] child:reviewKey] child:@"strainKey"] setValue:strain.strainKey];
 //        [[[[firebaseRef.reviewsRef child:@"strains"] child:reviewKey]  child:@"userKey"] setValue:user.userKey];

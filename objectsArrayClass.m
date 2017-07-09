@@ -16,8 +16,8 @@ objectsArrayClass *objectsArray;
 @synthesize storeObjectArray;
 @synthesize eventObjectArray;
 @synthesize userSearchObjectArray;
-@synthesize selection;
-@synthesize searchType;
+@synthesize strainOrStore;
+@synthesize filterSelected;
 @synthesize flag;
 
 + (objectsArrayClass *)sharedInstance {

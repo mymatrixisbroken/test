@@ -30,9 +30,9 @@
 }
 
 -(IBAction) leftButtonPressed:(UIBarButtonItem *)btn{
-    if (objectsArray.selection == 0){
+    if (objectsArray.strainOrStore == 0){
         [user goToStrainProfileViewController:self];}
-    else if (objectsArray.selection == 1){
+    else if (objectsArray.strainOrStore == 1){
         [user goToStoreProfileViewController:self];}
 }
 
