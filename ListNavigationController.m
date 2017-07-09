@@ -21,7 +21,7 @@
     
     UIButton *btn2 =  [UIButton buttonWithType:UIButtonTypeCustom];
     btn2.frame = CGRectMake(0,0,25,25);
-    if (objectsArray.selection == 0) {
+    if (objectsArray.strainOrStore == 0) {
         [btn2 setBackgroundImage:[UIImage imageNamed:@"selectedStrainIcon"] forState:UIControlStateNormal];
     } else {
         [btn2 setBackgroundImage:[UIImage imageNamed:@"notSelectedStrainIcon"] forState:UIControlStateNormal];
@@ -39,7 +39,7 @@
     
     UIButton *btn4 =  [UIButton buttonWithType:UIButtonTypeCustom];
     btn4.frame = CGRectMake(0,0,25,25);
-    if (objectsArray.selection == 1) {
+    if (objectsArray.strainOrStore == 1) {
         [btn4 setBackgroundImage:[UIImage imageNamed:@"selectedStoresIcon"] forState:UIControlStateNormal];
     } else {
         [btn4 setBackgroundImage:[UIImage imageNamed:@"notSelectedStoresIcon"] forState:UIControlStateNormal];
@@ -64,14 +64,14 @@
 }
 
 -(IBAction)storeButtonPressed:(UIButton*)btn {
-    objectsArray.searchType = 0;
-    objectsArray.selection = 1;
+    objectsArray.filterSelected = 10;
+    objectsArray.strainOrStore = 1;
     [user goToStrainsStoresViewController:self];
 }
 
 -(IBAction)strainButtonPressed:(UIButton*)btn {
-    objectsArray.searchType = 0;
-    objectsArray.selection = 0;
+    objectsArray.filterSelected = 10;
+    objectsArray.strainOrStore = 0;
     [user goToStrainsStoresViewController:self];
 }
 

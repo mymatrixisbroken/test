@@ -60,22 +60,22 @@
     extensionViewClass *extView = [[extensionViewClass alloc] init];
     [extView setView:CGRectGetWidth(self.view.bounds)];
     [extView addButtons:CGRectGetWidth(self.view.bounds)];
-    [extView.storeButton addTarget:self action:@selector(storeButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
-    [extView.strainButton addTarget:self action:@selector(strainButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
-    [extView.newsFeedButton addTarget:self action:@selector(newsFeedButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
-    [extView.userProfileButton addTarget:self action:@selector(userProfileButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
-    extView.userProfileButton.highlighted = YES;
+    [extView.firstButton addTarget:self action:@selector(storeButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
+    [extView.secondButton addTarget:self action:@selector(strainButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
+    [extView.thirdButton addTarget:self action:@selector(newsFeedButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
+    [extView.fourthButton addTarget:self action:@selector(userProfileButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
+    extView.fourthButton.highlighted = YES;
     [self.shyNavBarManager setExtensionView:extView];
     [self.shyNavBarManager setStickyExtensionView:YES];
 }
 
 -(IBAction)storeButtonPressed:(UIButton*)btn {
-    objectsArray.selection = 1;
+    objectsArray.strainOrStore = 1;
     [user goToStrainsStoresViewController:self];
 }
 
 -(IBAction)strainButtonPressed:(UIButton*)btn {
-    objectsArray.selection = 0;
+    objectsArray.strainOrStore = 0;
     [user goToStrainsStoresViewController:self];
 }
 

@@ -59,14 +59,14 @@
 }
 
 -(IBAction)storeButtonPressed:(UIButton*)btn {
-    objectsArray.searchType = 0;
-    objectsArray.selection = 1;
+    objectsArray.filterSelected = 10;
+    objectsArray.strainOrStore = 1;
     [user goToStrainsStoresViewController:self];
 }
 
 -(IBAction)strainButtonPressed:(UIButton*)btn {
-    objectsArray.searchType = 0;
-    objectsArray.selection = 0;
+    objectsArray.filterSelected = 10;
+    objectsArray.strainOrStore = 0;
     [user goToStrainsStoresViewController:self];
 }
 

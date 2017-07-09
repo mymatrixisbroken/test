@@ -69,7 +69,7 @@
         
         CLLocationCoordinate2D position = CLLocationCoordinate2DMake(lat, lon);
         GMSMarker *marker = [GMSMarker markerWithPosition:position];
-        marker.icon = [UIImage imageNamed:@"green marker"];
+        marker.icon = [UIImage imageNamed:@"markerSmartObject"];
         marker.infoWindowAnchor = CGPointMake(0.44f, 0.45f);
 //        marker.title = tempStore.storeName;
         marker.map = mapView;
@@ -91,10 +91,10 @@
     
     storeClass *tempStore = [objectsArray.storeObjectArray objectAtIndex:i];
 
-    imageClass *image = [[imageClass alloc] init];
-    image = [store.imagesArray objectAtIndex:0];
+    imageClass *tempImage = [[imageClass alloc] init];
+    tempImage = [tempStore.imagesArray objectAtIndex:0];
 
-    infoWindow.storeImageView.image = [UIImage imageWithData:image.data];
+    infoWindow.storeImageView.image = [UIImage imageWithData:tempImage.data];
     infoWindow.storeNameLabel.text = tempStore.storeName;
     infoWindow.starRatingView.value = tempStore.ratingScore;
     infoWindow.reviewCountLabel.text = [[NSString stringWithFormat: @"%ld", (long)tempStore.ratingCount] stringByAppendingString:@"reviews"];

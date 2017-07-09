@@ -30,7 +30,7 @@
 
 -(IBAction)barButtonCustomPressed:(UIBarButtonItem*)btn
 {
-    objectsArray.searchType = 0;
+    objectsArray.filterSelected = 10;
     [user goToStrainsStoresViewController:self];
 }
 

@@ -104,7 +104,7 @@
 #pragma mark - UICollectionViewDataSource
 
 - (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
-    if (objectsArray.selection == 1){
+    if (objectsArray.strainOrStore == 1){
         return [store.imagesArray count];
     }
     else{
@@ -120,12 +120,12 @@
     imageCollectionViewCell *cell =
     (imageCollectionViewCell *)[collectionView dequeueReusableCellWithReuseIdentifier:CELL_IDENTIFIER forIndexPath:indexPath];
     
-    if (objectsArray.selection == 1){
+    if (objectsArray.strainOrStore == 1){
         imageClass *image = [[imageClass alloc] init];
         image = [store.imagesArray objectAtIndex:indexPath.row];
         cell.imageView.image = [UIImage imageWithData:image.data];
     }
-    else if (objectsArray.selection == 0){
+    else if (objectsArray.strainOrStore == 0){
         imageClass *image = [[imageClass alloc] init];
         image = [strain.imagesArray objectAtIndex:indexPath.row];
         cell.imageView.image = [UIImage imageWithData:image.data];
@@ -134,11 +134,11 @@
 }
 
 - (void) collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath{
-    if (objectsArray.selection == 1){
+    if (objectsArray.strainOrStore == 1){
         store.imageArrayIndex = indexPath.row;
         [self performSegueWithIdentifier:@"collectionViewToImageView" sender:self];
     }
-    else if (objectsArray.selection == 0){
+    else if (objectsArray.strainOrStore == 0){
         strain.imageArrayIndex = indexPath.row;
         [self performSegueWithIdentifier:@"collectionViewToImageView" sender:self];
     }

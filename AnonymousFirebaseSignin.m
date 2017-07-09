@@ -120,8 +120,8 @@
 
 - (void) loadfirebaseRef {
     firebaseRef = [FirebaseReferenceClass sharedInstance];
-    objectsArray.selection = 1;
-    objectsArray.searchType = loadObjects;
+    objectsArray.strainOrStore = 1;
+    objectsArray.filterSelected = loadObjects;
     [user goToStrainsStoresViewController:self];
 }
 

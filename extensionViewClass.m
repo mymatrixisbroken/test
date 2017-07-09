@@ -9,10 +9,11 @@
 #import "extensionViewClass.h"
 
 @implementation extensionViewClass
-@synthesize storeButton;
-@synthesize strainButton;
-@synthesize newsFeedButton;
-@synthesize userProfileButton;
+@synthesize firstButton;
+@synthesize secondButton;
+@synthesize thirdButton;
+@synthesize fourthButton;
+@synthesize extensionViewLabel;
 
 - (id)init {
     self = [super init];
@@ -48,23 +49,23 @@
 //    [newsFeedButton setImage:[UIImage imageNamed:@"newsfeedcopy"] forState:UIControlStateNormal];
 //    [newsFeedButton setTintColor:[UIColor lightGrayColor]];
     
-    UILabel *storesLabel = [[UILabel alloc] initWithFrame:CGRectMake(20, -27, 150, 100)];
-    [storesLabel setText:@"Stores & Clubs"];
-    [storesLabel setFont:[UIFont fontWithName:@"CERVO-THIN" size:25.0]];
+    extensionViewLabel = [[UILabel alloc] initWithFrame:CGRectMake(20, -27, 150, 100)];
+    [extensionViewLabel setText:@"Stores & Clubs"];
+    [extensionViewLabel setFont:[UIFont fontWithName:@"CERVO-THIN" size:25.0]];
 //    [storesLabel sizeToFit];
 //    [storesLabel setTextColor:[UIColor blueColor]];
-    [storesLabel setTextColor:[UIColor colorWithRed:18.0/255.0f green:24.0/255.0f blue:23.0/255.0f alpha:1.0]];
+    [extensionViewLabel setTextColor:[UIColor colorWithRed:18.0/255.0f green:24.0/255.0f blue:23.0/255.0f alpha:1.0]];
     
-    userProfileButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    userProfileButton.frame = CGRectMake(self.bounds.size.width-45, (self.bounds.size.height-15)/2, 25.0f, 15.0f);
-    [userProfileButton setImage:[UIImage imageNamed:@"FilterSmartObject"] forState:UIControlStateNormal];
-    [userProfileButton setTintColor:[UIColor lightGrayColor]];
+    fourthButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    fourthButton.frame = CGRectMake(self.bounds.size.width-45, (self.bounds.size.height-15)/2, 25.0f, 15.0f);
+    [fourthButton setImage:[UIImage imageNamed:@"FilterSmartObject"] forState:UIControlStateNormal];
+    [fourthButton setTintColor:[UIColor lightGrayColor]];
     
     
-    [self addSubview:storeButton];
-    [self addSubview:strainButton];
-    [self addSubview:storesLabel];
-    [self addSubview:userProfileButton];
+//    [self addSubview:storeButton];
+//    [self addSubview:strainButton];
+    [self addSubview:extensionViewLabel];
+    [self addSubview:fourthButton];
     
     return self;
 }
