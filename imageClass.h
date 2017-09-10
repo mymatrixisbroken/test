@@ -9,6 +9,7 @@
 #import <Foundation/Foundation.h>
 
 @interface imageClass : NSObject
+@property NSString *imageKey;
 @property NSString *imageURL;
 @property NSMutableArray *imageThumbsUp;
 @property NSMutableArray *imageThumbsDown;

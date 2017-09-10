@@ -9,6 +9,7 @@
 #import "imageClass.h"
 
 @implementation imageClass
+@synthesize imageKey;
 @synthesize imageURL;
 @synthesize imageThumbsUp;
 @synthesize imageThumbsDown;
@@ -20,6 +21,7 @@
 - (id)init {
     self = [super init];
     if (self) {
+        self.imageKey = @"";
         self.imageURL = @"";
         self.imageThumbsUp = [[NSMutableArray alloc] init];
         self.imageThumbsDown = [[NSMutableArray alloc] init];

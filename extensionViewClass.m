@@ -33,6 +33,12 @@
     return self;
 }
 
+- (id) addTexField:(CGFloat ) width{
+    UITextField *textField = [[UITextField alloc] initWithFrame:self.frame];
+    
+    return self;
+}
+
 - (id) addButtons:(CGFloat ) width{
 //    storeButton = [UIButton buttonWithType:UIButtonTypeCustom];
 //    storeButton.frame = CGRectMake(0, 0, (width/4), 40.f);

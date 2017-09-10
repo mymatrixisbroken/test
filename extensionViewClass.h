@@ -11,6 +11,7 @@
 @interface extensionViewClass : UIView
 - (id) setView:(CGFloat ) width;
 - (id) addButtons:(CGFloat ) width;
+- (id) addTexField:(CGFloat ) width;
 @property UIButton *firstButton;
 @property UIButton *secondButton;
 @property UIButton *thirdButton;
