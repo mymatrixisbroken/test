@@ -9,6 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "storeClass.h"
 #import "FirebaseReferenceClass.h"
+#import <QuartzCore/QuartzCore.h>
 #import "userClass.h"
 #import "reviewClass.h"
 #import "imageClass.h"

@@ -9,6 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "userClass.h"
 #import "strainClass.h"
+@import Firebase;
 
 @interface StrainProfileNavigationController : UINavigationController
 

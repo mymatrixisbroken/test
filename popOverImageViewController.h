@@ -12,7 +12,7 @@
 #import "storeClass.h"
 #import "userClass.h"
 #import "imageClass.h"
-#import "firebaseReferenceClass.h"
+#import "FirebaseReferenceClass.h"
 
 @interface popOverImageViewController : UIViewController
 @property (strong, nonatomic) IBOutlet UIImageView *imageView;

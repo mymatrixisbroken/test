@@ -8,12 +8,14 @@
 
 #import <UIKit/UIKit.h>
 #import "storeClass.h"
+#import "imageClass.h"
 
 @interface popOverStoreImageViewController : UIViewController
 @property (strong, nonatomic) IBOutlet UIImageView *imageView;
 @property (nonatomic, assign) NSInteger i;
 @property (strong, nonatomic) IBOutlet NSString *count;
 @property (strong, nonatomic) IBOutlet UILabel *label;
+@property (strong, nonatomic) IBOutlet imageClass *tempImage;
 
 @end
 

@@ -18,10 +18,31 @@ const static CGFloat frameSizeWidth = 600.0f;
 @implementation LoginViewController
 - (void)viewDidLoad {
     [super viewDidLoad];
+    [self loadNavController];
     _queriesArray = [[NSMutableArray alloc] init];
     _dict = [[NSMutableDictionary alloc] init];
     [self setTextFields];
+    [_SignInUsername addTarget:self
+                        action:@selector(usernameFieldDidChange:)
+              forControlEvents:UIControlEventEditingChanged];
+    [_SignInPassword addTarget:self
+                        action:@selector(passwordFieldDidChange:)
+              forControlEvents:UIControlEventEditingChanged];
+
+    CGFloat myWidth = 20.0f;
+    CGFloat myHeight = 20.0f;
+    UIButton *myButton = [[UIButton alloc] initWithFrame:CGRectMake(0.0f, 0.0f, myWidth, myHeight)];
+    UIButton *myButton2 = [[UIButton alloc] initWithFrame:CGRectMake(0.0f, 0.0f, myWidth, myHeight)];
+    [myButton setImage:[UIImage imageNamed:@"clearWhiteIcon"] forState:UIControlStateNormal];
+    [myButton2 setImage:[UIImage imageNamed:@"clearWhiteIcon"] forState:UIControlStateNormal];
     
+    [myButton addTarget:self action:@selector(doClear:) forControlEvents:UIControlEventTouchUpInside];
+    [myButton2 addTarget:self action:@selector(doClear2:) forControlEvents:UIControlEventTouchUpInside];
+    
+    _SignInUsername.rightView = myButton;
+    _SignInUsername.rightViewMode = UITextFieldViewModeWhileEditing;
+    _SignInPassword.rightView = myButton2;
+    _SignInPassword.rightViewMode = UITextFieldViewModeWhileEditing;
     
     
     CALayer *topBorder = [CALayer layer];
@@ -39,7 +60,7 @@ const static CGFloat frameSizeWidth = 600.0f;
 
 
     _gradientMask = [CAGradientLayer layer];
-    _gradientMask.frame = _SignInUsername.frame;
+    _gradientMask.frame = _SignInUsername.bounds;
     _gradientMask.colors = @[(id)[UIColor clearColor].CGColor,
                              (id)[UIColor colorWithRed:0.0/255.0 green:57.0/255.0 blue:47.0/255.0 alpha:1.0].CGColor];
     _gradientMask.startPoint = CGPointMake(0.0, 0.5);   // start at left middle
@@ -57,25 +78,62 @@ const static CGFloat frameSizeWidth = 600.0f;
 
 }
 
+- (void) doClear:(UIButton *) btn{
+    _SignInUsername.text = nil;
+    _SignInUsername.font = [UIFont fontWithName:@"NEXA BOLD" size:17.0];
+}
+- (void) doClear2:(UIButton *) btn{
+    _SignInPassword.text = nil;
+    _SignInPassword.font = [UIFont fontWithName:@"NEXA BOLD" size:17.0];
+}
+
+//- (void) textFieldDidChange:(JVFloatLabeledTextField *) textField{
+//    if(textField.text.length == 0){
+//        textField.font = [UIFont fontWithName:@"NEXA BOLD" size:17.0];
+//    }
+//    else{
+//        textField.font = [UIFont fontWithName:@"CERVO-THIN" size:24.0];
+//        textField.floatingLabelFont = [UIFont fontWithName:@"NEXA BOLD" size:14.0];
+//        textField.attributedPlaceholder = [[NSAttributedString alloc] initWithString:@"EMAIL ADDRESS" attributes:@{NSForegroundColorAttributeName: [UIColor whiteColor]}];
+//    }
+//}
+
+
+- (void) usernameFieldDidChange:(UITextField *) textField{
+    if(_SignInUsername.text.length == 0){
+        _SignInUsername.font = [UIFont fontWithName:@"NEXA BOLD" size:17.0];
+    }
+    else{
+        _SignInUsername.font = [UIFont fontWithName:@"CERVO-THIN" size:24.0];
+        _SignInUsername.floatingLabelFont = [UIFont fontWithName:@"NEXA BOLD" size:14.0];
+        _SignInUsername.attributedPlaceholder = [[NSAttributedString alloc] initWithString:@"EMAIL ADDRESS" attributes:@{NSForegroundColorAttributeName: [UIColor whiteColor]}];
+    }
+}
+
+- (void) passwordFieldDidChange:(UITextField *) textField{
+    if(_SignInPassword.text.length == 0){
+        _SignInPassword.font = [UIFont fontWithName:@"NEXA BOLD" size:17.0];
+    }
+    else{
+        _SignInPassword.font = [UIFont fontWithName:@"CERVO-THIN" size:24.0];
+        _SignInPassword.floatingLabelFont = [UIFont fontWithName:@"NEXA BOLD" size:14.0];
+        _SignInPassword.attributedPlaceholder = [[NSAttributedString alloc] initWithString:@"PASSWORD" attributes:@{NSForegroundColorAttributeName: [UIColor whiteColor]}];
+    }
+}
+
 - (IBAction)emailDidBeginEditing:(JVFloatLabeledTextField *)sender {
-    //    _emailField.background = [UIImage imageNamed:@"SelectionBar"];
     [_SignInUsername.layer addSublayer:_gradientMask];
-    _SignInUsername.font = [UIFont fontWithName:@"CERVO-THIN" size:14.0];
 }
 
 - (IBAction)emailDidEndEditing:(JVFloatLabeledTextField *)sender {
-    //    _emailField.background = nil;
     [_gradientMask removeFromSuperlayer];
 }
 
 - (IBAction)passwordDidBeginEditing:(JVFloatLabeledTextField *)sender {
-    //    _passwordField.background = [UIImage imageNamed:@"SelectionBar"];
     [_SignInPassword.layer addSublayer:_gradientMask];
-    _SignInPassword.font = [UIFont fontWithName:@"CERVO-THIN" size:14.0];
 }
 
 - (IBAction)passwordDidEndEditing:(JVFloatLabeledTextField *)sender {
-    //    _passwordField.background = nil;
     [_gradientMask1 removeFromSuperlayer];
 }
 
@@ -236,6 +294,116 @@ const static CGFloat frameSizeWidth = 600.0f;
     border.frame = CGRectMake(0, frameHeight - borderWidth, frameSizeWidth, frameHeight);
     border.borderWidth = borderWidth;
     return border;
+}
+
+- (void) loadNavController{
+    
+    UIButton *btn1 =  [UIButton buttonWithType:UIButtonTypeCustom];
+    btn1.frame = CGRectMake(0,0,25,25);
+    if (user.mainNavigationSelected == 0) {
+        [btn1 setBackgroundImage:[UIImage imageNamed:@"newsFeedGreenIcon"] forState:UIControlStateNormal];
+    } else {
+        [btn1 setBackgroundImage:[UIImage imageNamed:@"newsFeedWhiteIcon"] forState:UIControlStateNormal];
+    }
+    [btn1 addTarget:self action:@selector(newsFeedButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
+    UIBarButtonItem *buttonOne = [[UIBarButtonItem alloc] initWithCustomView:btn1];
+    
+    
+    UIButton *btn2 =  [UIButton buttonWithType:UIButtonTypeCustom];
+    btn2.frame = CGRectMake(0,0,25,25);
+    if (user.mainNavigationSelected == 1) {
+        [btn2 setBackgroundImage:[UIImage imageNamed:@"mapWhiteIcon"] forState:UIControlStateNormal];
+    } else {
+        [btn2 setBackgroundImage:[UIImage imageNamed:@"mapWhiteIcon"] forState:UIControlStateNormal];
+    }
+    [btn2 addTarget:self action:@selector(strainButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
+    UIBarButtonItem *buttonTwo = [[UIBarButtonItem alloc] initWithCustomView:btn2];
+    
+    
+    UIButton *btn3 =  [UIButton buttonWithType:UIButtonTypeCustom];
+    btn3.frame = CGRectMake(0,0,25,25);
+    if (user.mainNavigationSelected == 2) {
+        [btn3 setBackgroundImage:[UIImage imageNamed:@"searchGreenIcon"] forState:UIControlStateNormal];
+    } else {
+        [btn3 setBackgroundImage:[UIImage imageNamed:@"searchWhiteIcon"] forState:UIControlStateNormal];
+    }
+    [btn3 addTarget:self action:@selector(searchButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
+    UIBarButtonItem *buttonThree = [[UIBarButtonItem alloc] initWithCustomView:btn3];
+    
+    
+    UIButton *btn4 =  [UIButton buttonWithType:UIButtonTypeCustom];
+    btn4.frame = CGRectMake(0,0,25,25);
+    if (user.mainNavigationSelected == 3) {
+        [btn4 setBackgroundImage:[UIImage imageNamed:@"storesGreenIcon"] forState:UIControlStateNormal];
+    } else {
+        [btn4 setBackgroundImage:[UIImage imageNamed:@"storesWhiteIcon"] forState:UIControlStateNormal];
+    }
+    [btn4 addTarget:self action:@selector(storeButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
+    UIBarButtonItem *buttonFour = [[UIBarButtonItem alloc] initWithCustomView:btn4];
+    
+    
+    UIButton *btn5 =  [UIButton buttonWithType:UIButtonTypeCustom];
+    btn5.frame = CGRectMake(0,0,25,25);
+    [btn5 setBackgroundImage:[UIImage imageNamed:@"hamburgerWhiteIcon"] forState:UIControlStateNormal];
+    [btn5 addTarget:self action:@selector(barButtonCustomPressed:) forControlEvents:UIControlEventTouchUpInside];
+    UIBarButtonItem *buttonFive = [[UIBarButtonItem alloc] initWithCustomView:btn5];
+    
+    
+    UIBarButtonItem *space = [[UIBarButtonItem alloc]initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:self action:nil];
+    
+    NSArray *buttons = @[buttonOne, space, buttonTwo, space, buttonThree, space, buttonFour, space, buttonFive];
+    
+    self.navigationController.navigationBar.topItem.leftBarButtonItems = buttons;
+}
+
+-(IBAction)newsFeedButtonPressed:(UIButton*)btn {
+    user.mainNavigationSelected = 0;
+    [user goToNewsFeedViewController:self];
+}
+
+-(IBAction)strainButtonPressed:(UIButton*)btn {
+    [user gotoMapViewViewController:self];
+    
+    //    user.mainNavigationSelected = 1;
+    //    objectsArray.filterSelected = 10;
+    //    objectsArray.strainOrStore = 0;
+    //    [user goToStrainsViewController:self];
+}
+
+-(IBAction)searchButtonPressed:(UIButton*)btn {
+    user.mainNavigationSelected = 2;
+    [user goToSearchViewController:self];
+}
+
+
+-(IBAction)userProfileButtonPressed:(UIButton*)btn {
+    user.mainNavigationSelected = 2;
+    FIRUser *youser = [FIRAuth auth].currentUser;
+    if(youser.anonymous){
+        [user goToUserNotSignedInViewController:self];
+    }
+    else{
+        [user goToCurrentUserProfileViewController:self];
+    }
+}
+
+-(IBAction)storeButtonPressed:(UIButton*)btn {
+    user.mainNavigationSelected = 3;
+    objectsArray.filterSelected = 10;
+    objectsArray.strainOrStore = 1;
+    [user goToStrainsStoresViewController:self];
+}
+
+
+-(IBAction)barButtonCustomPressed:(UIBarButtonItem*)btn
+{
+    FIRUser *currentUser = [FIRAuth auth].currentUser;
+    if(currentUser.anonymous){
+        [user gotoOptionListViewController:self];
+        
+    } else {
+        [user gotoOptionListSignedInViewController:self];
+    }
 }
 
 - (void)didReceiveMemoryWarning {

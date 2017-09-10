@@ -1,31 +1,37 @@
 //
-//  optionsListTableViewController.m
+//  optionsListTableSignedIn.m
 //  myProject
 //
-//  Created by Guy on 9/20/16.
-//  Copyright © 2016 Joaquin. All rights reserved.
+//  Created by Guy on 8/25/17.
+//  Copyright © 2017 Joaquin. All rights reserved.
 //
 
-#import "optionsListTableViewController.h"
+#import "optionsListTableSignedIn.h"
 
-@implementation optionsListTableViewController
+@interface optionsListTableSignedIn ()
+
+@end
+
+@implementation optionsListTableSignedIn
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    
+    _usernameLabel.text = user.username;
+    _activityCountLabel.text = [NSString stringWithFormat: @"%ld",user.reviewsCount];
+    _photoCountLabel.text = @"need to udpate";
 //    _currentUser = [FIRAuth auth].currentUser;
 //    
 //    _sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-//     _vc = [_sb instantiateViewControllerWithIdentifier:@"Login View SB ID"];
+//    _vc = [_sb instantiateViewControllerWithIdentifier:@"Login View SB ID"];
 //    
 //    if (!(_currentUser.anonymous)){
 //        NSIndexPath *cellIndexPath = [NSIndexPath indexPathForRow:0 inSection:0] ;
-//        NSIndexPath *cellIndexPath [self.tableView indexPathForCell:cell];
-//        [self.tableView deleteRowsAtIndexPaths:@[cellIndexPath] withRowAnimation:UITableViewRowAnimationNone];
-
+        //        NSIndexPath *cellIndexPath [self.tableView indexPathForCell:cell];
+        //        [self.tableView deleteRowsAtIndexPaths:@[cellIndexPath] withRowAnimation:UITableViewRowAnimationNone];
+        
 //    }
-//    vc.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
-//    [viewController presentViewController:vc animated:YES completion:NULL];
+    //    vc.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
+    //    [viewController presentViewController:vc animated:YES completion:NULL];
 }
 
 //- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
@@ -49,7 +55,7 @@
 //            cell.textLabel
 //
 //            break;
-//            
+//
 //        default:
 //            cell = [tableView dequeueReusableCellWithIdentifier:@"headerCell" forIndexPath:indexPath];
 //
@@ -61,41 +67,42 @@
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
     cell.selectionStyle = UITableViewCellSelectionStyleGray;
-//    CAGradientLayer *gradientLayer = [CAGradientLayer layer];
-//    gradientLayer.frame = cell.frame;
-//    gradientLayer.colors = @[(id)[UIColor clearColor].CGColor,
-//                             (id)[UIColor colorWithRed:255.0/255.0 green:255/255.0 blue:255/255.0 alpha:1.0].CGColor];
-//    gradientLayer.startPoint = CGPointMake(0.0, 0.5);   // start at left middle
-//    gradientLayer.endPoint = CGPointMake(1.0, 0.5);     // end at right middle
-//    UIView *bgColorView = [[UIView alloc] init];
-//    [bgColorView.layer addSublayer:gradientLayer];
-//    bgColorView.backgroundColor = [UIColor redColor];
-//    
-//    cell.selectedBackgroundView = bgColorView;
-
-//    [cell high:bgColorView];
+    //    CAGradientLayer *gradientLayer = [CAGradientLayer layer];
+    //    gradientLayer.frame = cell.frame;
+    //    gradientLayer.colors = @[(id)[UIColor clearColor].CGColor,
+    //                             (id)[UIColor colorWithRed:255.0/255.0 green:255/255.0 blue:255/255.0 alpha:1.0].CGColor];
+    //    gradientLayer.startPoint = CGPointMake(0.0, 0.5);   // start at left middle
+    //    gradientLayer.endPoint = CGPointMake(1.0, 0.5);     // end at right middle
+    //    UIView *bgColorView = [[UIView alloc] init];
+    //    [bgColorView.layer addSublayer:gradientLayer];
+    //    bgColorView.backgroundColor = [UIColor redColor];
+    //
+    //    cell.selectedBackgroundView = bgColorView;
+    
+    //    [cell high:bgColorView];
     
     UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
     UIViewController *vc = [sb instantiateViewControllerWithIdentifier:@"Strains View Controller SB ID"];
     vc.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
-
-    UIViewController *vc2 = [sb instantiateViewControllerWithIdentifier:@"Login View VC SB ID"];
+    
+    UIViewController *vc2 = [sb instantiateViewControllerWithIdentifier:@"Current User Profile VC SB ID"];
     vc2.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
 
     
     switch (indexPath.row) {
         case 0:
             [self.navigationController pushViewController:vc2 animated:false];
-//            [user goToLoginViewController:self];
+//            [self showDetailViewController:_vc sender:self];
+//            [user goToCurrentUserProfileViewController:self.parentViewController];
+//            NSLog(@"%@",self.parentViewController);
             break;
         case 1:
-                user.mainNavigationSelected = 1;
-                objectsArray.filterSelected = 10;
-                objectsArray.strainOrStore = 0;
-            
+            user.mainNavigationSelected = 1;
+            objectsArray.filterSelected = 10;
+            objectsArray.strainOrStore = 0;
             [self.navigationController pushViewController:vc animated:false];
 //            [user goToStrainsViewController:self];
-            break;
+//            [user gotoMapViewViewController:self];
         case 3:
             [user goToSearchUsersViewController:self];
             break;

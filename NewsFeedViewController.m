@@ -19,7 +19,7 @@
     self.tableView.dataSource = self;
     self.tableView.tableFooterView = [UIView new];
     self.shyNavBarManager.scrollView = self.tableView;
-    [self loadExtView];
+//    [self loadExtView];
     
     _queriesArray = [[NSMutableArray alloc] init];
     _dict = [[NSMutableDictionary alloc] init];
@@ -55,7 +55,7 @@
 
 -(IBAction)strainButtonPressed:(UIButton*)btn {
     objectsArray.strainOrStore = 0;
-    [user goToStrainsStoresViewController:self];
+    [user goToStrainsViewController:self];
 }
 
 -(IBAction)newsFeedButtonPressed:(UIButton*)btn {
@@ -77,7 +77,7 @@
 }
 
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
-    NSString *cellIdentifier = @"newsFeedCell";
+    NSString *cellIdentifier = @"newsFeedAddedPhotosCell";
     NSString *cellIdentifier1 = @"newsFeedCheckInCell";
     NSString *cellIdentifier2 = @"newsFeedWroteReviewStoreCell";
     NSString *cellIdentifier3 = @"newsFeedWroteReviewStrainCell";
@@ -102,7 +102,7 @@
     
     
     if ([event.eventType isEqual:@"smokedNew"]) {
-        newsFeedCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier forIndexPath:indexPath];
+        newsFeedAddedPhotosCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier forIndexPath:indexPath];
         [cell uploadCellWithUsernameEventData:event];
         
         cell.likeButton.tag = indexPath.row;

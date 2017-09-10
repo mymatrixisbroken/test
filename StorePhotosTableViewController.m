@@ -53,6 +53,10 @@
     return 1;
 }
 
+- (IBAction)selectedAddPhoto:(UIButton *)sender {
+    //Go to select photos to add
+}
+
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     NSLog(@"store reviews count %lu", store.imagesArray.count);
     return [store.imagesArray count];
@@ -62,13 +66,18 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     NSString *cellIdentifier = @"StorePhotoCell";
     StorePhotosCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier forIndexPath:indexPath];
-    
-//    reviewClass *tempReview = [[reviewClass alloc] init];
-//    tempReview = [store.reviews objectAtIndex:indexPath.row];
-    
+        
     [cell uploadCellWithPhoto];
+    imageClass *tempImage = [[imageClass alloc] init];
+    tempImage = [store.imagesArray objectAtIndex:indexPath.row];
+    cell.photoImageView.image = [UIImage imageWithData:tempImage.data];
     
     return cell;
+}
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(nonnull NSIndexPath *)indexPath{
+    store.imageArrayIndex = indexPath.row;
+    [user goToPopoverImageViewController:self];
 }
 
 @end

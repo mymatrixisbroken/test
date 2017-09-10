@@ -95,6 +95,7 @@
     tempImage = [tempStore.imagesArray objectAtIndex:0];
 
     infoWindow.storeImageView.image = [UIImage imageWithData:tempImage.data];
+    [infoWindow bringSubviewToFront:infoWindow.storeImageView];
     infoWindow.storeNameLabel.text = tempStore.storeName;
     infoWindow.starRatingView.value = tempStore.ratingScore;
     infoWindow.reviewCountLabel.text = [[NSString stringWithFormat: @"%ld", (long)tempStore.ratingCount] stringByAppendingString:@"reviews"];

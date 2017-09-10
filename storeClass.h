@@ -18,7 +18,9 @@ extern storeClass *store;
 @property NSString *storeName;
 @property NSString *address;
 @property NSString *city;
+@property NSString *county;
 @property NSString *state;
+@property NSString *zipcode;
 @property NSString *latitude;
 @property NSString *longitude;
 @property NSString *distanceToMe;
@@ -27,13 +29,15 @@ extern storeClass *store;
 @property NSString *phone_number;
 @property NSString *googlePlaceID;
 @property NSMutableArray *imagesArray;
+@property NSArray *imageKeys;
 @property NSMutableArray *reviews;
 @property (nonatomic, assign) NSInteger imageArrayIndex;
 @property NSIndexPath *indexPath;
 @property (nonatomic, assign) float ratingScore;
 @property (nonatomic, assign) NSInteger ratingCount;
-@property (nonatomic, assign) NSInteger totalCount;
-@property (nonatomic, assign) NSInteger monthlyCount;
+@property (nonatomic, assign) NSInteger totalViews;
+@property (nonatomic, assign) NSInteger monthlyViews;
+@property (nonatomic, assign) NSInteger dailyViews;
 @property (nonatomic, assign) NSInteger totalUserCount;
 
 

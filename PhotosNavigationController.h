@@ -10,6 +10,7 @@
 #import <TLYShyNavBar/TLYShyNavBarManager.h>
 #import "userClass.h"
 #import "objectsArrayClass.h"
+@import Firebase;
 
 @interface PhotosNavigationController : UINavigationController
 

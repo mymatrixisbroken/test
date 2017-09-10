@@ -52,6 +52,9 @@ userClass *user;
 @synthesize latitude;
 @synthesize longitude;
 @synthesize county;
+@synthesize mainNavigationSelected;
+
+
 
 
 
@@ -214,6 +217,23 @@ friendRequestsKeys:(NSMutableArray *)array8{
     [viewController showDetailViewController:vc sender:viewController];
 }
 
+-(void)goToSearchViewController:(UIViewController *)viewController{
+    UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+    UIViewController *vc = [sb instantiateViewControllerWithIdentifier:@"Search Navigation SB ID"];
+    vc.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
+    //    [viewController presentViewController:vc animated:YES completion:NULL];
+    [viewController showDetailViewController:vc sender:viewController];
+}
+
+-(void)goToStrainsViewController:(UIViewController *)viewController{
+    UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+    UIViewController *vc = [sb instantiateViewControllerWithIdentifier:@"List Strains View Controller  SB ID"];
+    vc.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
+    //    [viewController presentViewController:vc animated:YES completion:NULL];
+//    [viewController showDetailViewController:vc sender:viewController];
+    [viewController showViewController:vc sender:viewController];
+}
+
 -(void)goToSearchUsersViewController:(UIViewController *)viewController{
     UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
     UIViewController *vc = [sb instantiateViewControllerWithIdentifier:@"Friends Navigation SB ID"];
@@ -259,7 +279,17 @@ friendRequestsKeys:(NSMutableArray *)array8{
     UIViewController *vc = [sb instantiateViewControllerWithIdentifier:@"Option list SB ID"];
     //    vc.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
     //    [viewController presentViewController:vc animated:YES completion:NULL];
-    [viewController showDetailViewController:vc sender:viewController];
+//    [viewController showDetailViewController:vc sender:viewController];
+    [viewController presentViewController:vc animated:YES completion:nil];
+}
+
+-(void)gotoOptionListSignedInViewController:(UIViewController *)viewController{
+    UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+    UIViewController *vc = [sb instantiateViewControllerWithIdentifier:@"Option list signed in SB ID"];
+    //    vc.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
+    //    [viewController presentViewController:vc animated:YES completion:NULL];
+    [viewController showViewController:vc sender:viewController];
+//    [viewController presentViewController:vc animated:YES completion:nil];
 }
 
 -(void)gotoMapViewViewController:(UIViewController *)viewController{
@@ -267,7 +297,7 @@ friendRequestsKeys:(NSMutableArray *)array8{
     UIViewController *vc = [sb instantiateViewControllerWithIdentifier:@"Map view SB ID"];
     //    vc.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
     //    [viewController presentViewController:vc animated:YES completion:NULL];
-    [viewController showDetailViewController:vc sender:viewController];
+    [viewController showViewController:vc sender:viewController];
 }
 
 -(void)goToStrainProfileViewController:(UIViewController *)viewController{

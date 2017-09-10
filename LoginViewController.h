@@ -12,6 +12,7 @@
 #import "reviewClass.h"
 #import "FirebaseReferenceClass.h"
 #import "imageClass.h"
+#import "objectsArrayClass.h"
 @import Firebase;
 @import JVFloatLabeledTextField;
 

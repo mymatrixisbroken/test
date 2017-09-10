@@ -28,7 +28,11 @@
 
 - (void)loadImageView {
     imageClass *image = [[imageClass alloc] init];
-    image = [strain.imagesArray objectAtIndex:0];
+    
+    if ([strain.imagesArray objectAtIndex:0] != [NSNull null]) {
+        image = [strain.imagesArray objectAtIndex:0];
+
+    }
 
     _strainImage.image = [UIImage imageWithData: image.data];
 
@@ -71,25 +75,25 @@
     _strainFlavorLabel.text = strain.flavor;
     _strainAromaLabel.text = strain.aroma;
     if (!(strain.availableAt.count == 0)) {
-        _availableAtLabel.text = [strain.availableAt objectAtIndex:0];
+//        _availableAtLabel.text = [strain.availableAt objectAtIndex:0];
     }
     [self loadRatingCount];
     
     
-    NSArray *array = [NSArray arrayWithObjects:_happinessView, _upliftedView, _energeticView,_euphoricView,_relaxedView,nil];
-    NSArray *array1 = @[@(strain.happiness), @(strain.uplifting), @(strain.energetic), @(strain.euphoric), @(strain.relaxed)];
+//    NSArray *array = [NSArray arrayWithObjects:_happinessView, _upliftedView, _energeticView,_euphoricView,_relaxedView,nil];
+//    NSArray *array1 = @[@(strain.happiness), @(strain.uplifting), @(strain.energetic), @(strain.euphoric), @(strain.relaxed)];
     
-    for (int i = 0; i < 5; i++) {
-        YLProgressBar *str = [array objectAtIndex:i];
-        int x = [[array1 objectAtIndex:i] intValue];
-        str.progressTintColor        = [UIColor colorWithRed:19.0/255.0 green:128.0/255.0 blue:0.0/255.0 alpha:1];
-        [str setProgress: x*.01];
-        str.indicatorTextLabel.text = [NSString stringWithFormat:@"%@", [array1 objectAtIndex:i]];
-        str.indicatorTextDisplayMode = YLProgressBarIndicatorTextDisplayModeProgress;
-        str.hideStripes = YES;
-        str.trackTintColor = [UIColor colorWithRed:199.0/255.0 green:199.0/255.0 blue:205.0/255.0 alpha:1];
-        
-    }
+//    for (int i = 0; i < 5; i++) {
+//        YLProgressBar *str = [array objectAtIndex:i];
+//        int x = [[array1 objectAtIndex:i] intValue];
+//        str.progressTintColor        = [UIColor colorWithRed:19.0/255.0 green:128.0/255.0 blue:0.0/255.0 alpha:1];
+//        [str setProgress: x*.01];
+//        str.indicatorTextLabel.text = [NSString stringWithFormat:@"%@", [array1 objectAtIndex:i]];
+//        str.indicatorTextDisplayMode = YLProgressBarIndicatorTextDisplayModeProgress;
+//        str.hideStripes = YES;
+//        str.trackTintColor = [UIColor colorWithRed:199.0/255.0 green:199.0/255.0 blue:205.0/255.0 alpha:1];
+//        
+//    }
 }
 
 

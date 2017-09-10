@@ -56,8 +56,17 @@ extern userClass *user;
 @property double latitude;
 @property double longitude;
 @property NSString *county;
+@property (assign, nonatomic) enum mainNavigationSelected mainNavigationSelected;
 
 
+
+enum mainNavigationSelected
+{
+    newsFeed = 0,
+    map = 1,
+    searchStuff = 2,
+    storesNew = 3,
+};
 
 
 + (userClass *)sharedInstance;
@@ -84,12 +93,15 @@ friendRequestsKeys:(NSMutableArray *)array8;
 
 -(void)goToNewsFeedViewController:(UIViewController *)viewController;
 -(void)goToStrainsStoresViewController:(UIViewController *)viewController;
+-(void)goToStrainsViewController:(UIViewController *)viewController;
+-(void)goToSearchViewController:(UIViewController *)viewController;
 -(void)goToSearchUsersViewController:(UIViewController *)viewController;
 -(void)goToUserNotSignedInViewController:(UIViewController *)viewController;
 -(void)goToCurrentUserProfileViewController:(UIViewController *)viewController;
 -(void)goToLoginViewController:(UIViewController *)viewController;
 -(void)goToWriteReviewViewController:(UIViewController *)viewController;
 -(void)gotoOptionListViewController:(UIViewController *)viewController;
+-(void)gotoOptionListSignedInViewController:(UIViewController *)viewController;
 -(void)gotoMapViewViewController:(UIViewController *)viewController;
 -(void)goToStrainProfileViewController:(UIViewController *)viewController;
 -(void)goToStoreProfileViewController:(UIViewController *)viewController;

@@ -11,6 +11,7 @@
 #import "storeClass.h"
 #import "reviewClass.h"
 #import "userClass.h"
+#import "imageClass.h"
 @import Firebase;
 
 

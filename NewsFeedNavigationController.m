@@ -63,7 +63,7 @@
 -(IBAction)strainButtonPressed:(UIButton*)btn {
     objectsArray.filterSelected = 10;
     objectsArray.strainOrStore = 0;
-    [user goToStrainsStoresViewController:self];
+    [user goToStrainsViewController:self];
 }
 
 -(IBAction)newsFeedButtonPressed:(UIButton*)btn {
@@ -82,7 +82,13 @@
 
 -(IBAction)barButtonCustomPressed:(UIBarButtonItem*)btn
 {
-    [user gotoOptionListViewController:self];
+    FIRUser *currentUser = [FIRAuth auth].currentUser;
+    if(currentUser.anonymous){
+        [user gotoOptionListViewController:self];
+        
+    } else {
+        [user gotoOptionListSignedInViewController:self];
+    }
 }
 
 @end

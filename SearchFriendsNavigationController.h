@@ -8,6 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import "userClass.h"
+@import Firebase;
 
 @interface SearchFriendsNavigationController : UINavigationController <UISearchBarDelegate, UISearchDisplayDelegate>
 

@@ -20,6 +20,7 @@
     [self loadImageView];
     [self loadRatingScore];
     [self loadReviewsFromFirebase];
+    [self loadStoresAllImages];
     _tabBar.delegate = self;
     
     
@@ -31,24 +32,24 @@
 
     [_store_image_view.layer addSublayer:gradientMask];
     
-    _distanceLabel.textColor = [UIColor colorWithRed:255.0/255.0 green:255.0/255.0 blue:255.0/255.0 alpha:1.0];
-    _distanceLabel.font = [UIFont fontWithName:@"NEXA BOLD" size:7.0];
-    _distanceLabel.userInteractionEnabled=NO;
-    _distanceLabel.text = store.distanceToMe;
-    _distanceLabel.textAlignment = NSTextAlignmentRight;
-    
-    _hoursLabel.textColor = [UIColor colorWithRed:254.0/255.0 green:255.0/255.0 blue:255.0/255.0 alpha:1.0];
-    _hoursLabel.font = [UIFont fontWithName:@"NEXA BOLD" size:9.0];
-    _hoursLabel.userInteractionEnabled=NO;
-    _hoursLabel.text = @"10:30AM - 11:30PM";
-    _hoursLabel.textAlignment = NSTextAlignmentRight;
-
-
-    _openNowLabel.textColor = [UIColor colorWithRed:8.0/255.0 green:197.0/255.0 blue:103.0/255.0 alpha:1.0];
-    _openNowLabel.font = [UIFont fontWithName:@"NEXA BOLD" size:7.0];
-    _openNowLabel.userInteractionEnabled=NO;
-    _openNowLabel.text = @"Open Now";
-    _openNowLabel.textAlignment = NSTextAlignmentRight;
+//    _distanceLabel.textColor = [UIColor colorWithRed:255.0/255.0 green:255.0/255.0 blue:255.0/255.0 alpha:1.0];
+//    _distanceLabel.font = [UIFont fontWithName:@"NEXA BOLD" size:7.0];
+//    _distanceLabel.userInteractionEnabled=NO;
+//    _distanceLabel.text = store.distanceToMe;
+//    _distanceLabel.textAlignment = NSTextAlignmentRight;
+//    
+//    _hoursLabel.textColor = [UIColor colorWithRed:254.0/255.0 green:255.0/255.0 blue:255.0/255.0 alpha:1.0];
+//    _hoursLabel.font = [UIFont fontWithName:@"NEXA BOLD" size:9.0];
+//    _hoursLabel.userInteractionEnabled=NO;
+//    _hoursLabel.text = @"10:30AM - 11:30PM";
+//    _hoursLabel.textAlignment = NSTextAlignmentRight;
+//
+//
+//    _openNowLabel.textColor = [UIColor colorWithRed:8.0/255.0 green:197.0/255.0 blue:103.0/255.0 alpha:1.0];
+//    _openNowLabel.font = [UIFont fontWithName:@"NEXA BOLD" size:7.0];
+//    _openNowLabel.userInteractionEnabled=NO;
+//    _openNowLabel.text = @"Open Now";
+//    _openNowLabel.textAlignment = NSTextAlignmentRight;
 
 
     double lat = [store.latitude doubleValue];
@@ -61,6 +62,11 @@
     GMSMapView *mapView = [GMSMapView mapWithFrame:_mapView.bounds camera:camera];
     mapView.delegate = self;
     mapView.myLocationEnabled = true;
+    mapView.layer.masksToBounds = NO;
+    mapView.layer.shadowOffset = CGSizeMake(0, 3);
+    mapView.layer.shadowRadius = 3;
+    mapView.layer.shadowOpacity = 0.5;
+
     [_mapView addSubview: mapView];
     
     NSLog(@"store lat is %f",lat);
@@ -154,12 +160,48 @@
     // Do any additional setup after loading the view, typically from a nib.
 }
 
+- (void) loadStoresAllImages {
+    dispatch_async(dispatch_get_global_queue(0,0), ^{
+        FIRStorage *storage = [FIRStorage storage];
+        FIRStorageReference *storageRef = [storage reference];
+        
+        
+        for (int i = 0; i<store.imagesArray.count;i++) {
+            imageClass *tempImage = [[imageClass alloc] init];
+            tempImage = [store.imagesArray objectAtIndex:i];
+
+            FIRStorageReference *spaceRef = [storageRef child:tempImage.imageURL];
+            
+            [spaceRef dataWithMaxSize:1 * 1024 * 1024 completion:^(NSData *data, NSError *error){
+                if (error != nil) {
+                    NSLog(@"Uh-oh, an error occurred! %@", error);
+                }
+                else {
+                    tempImage.data = data;
+                    [store.imagesArray replaceObjectAtIndex:i withObject:tempImage];
+                }
+            }];
+            
+            if( tempImage.data == nil ){
+                NSLog(@"image is nil");
+                return;
+            }
+        }
+    });
+
+}
+
 -(void)tabBar:(UITabBar *)tabBar didSelectItem:(UITabBarItem *)item {
     [_tablevc.tableView removeFromSuperview];
 
     
     if(item.tag == 1) {
-
+        UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+        UITableViewController *vc = [sb instantiateViewControllerWithIdentifier:@"promosSBID"];
+        [self addChildViewController:vc];
+        vc.tableView.frame = CGRectMake(0, 0, _containerView.frame.size.width, _containerView.frame.size.height);
+        [_containerView addSubview:vc.tableView];
+        [vc didMoveToParentViewController:self];
     }
     else if(item.tag == 2) {
         UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
@@ -342,34 +384,38 @@
 
 - (void) setLabelValues {
     _store_name_label.text = store.storeName;
-    _store_name_label.textColor = [UIColor colorWithRed:18.0/255.0 green:24.0/255.0 blue:23.0/255.0 alpha:1.0];
-    _store_name_label.font = [UIFont fontWithName:@"CERVO-THIN" size:24.0];
+//    _store_name_label.textColor = [UIColor colorWithRed:18.0/255.0 green:24.0/255.0 blue:23.0/255.0 alpha:1.0];
+//    _store_name_label.font = [UIFont fontWithName:@"CERVO-THIN" size:24.0];
     _store_name_label.userInteractionEnabled=NO;
 
     _store_address_label.text = store.address;
-    _store_address_label.textColor = [UIColor colorWithRed:122.0/255.0 green:122.0/255.0 blue:122.0/255.0 alpha:1.0];
-    _store_address_label.font = [UIFont fontWithName:@"NEXA LIGHT" size:12.0];
+//    _store_address_label.textColor = [UIColor colorWithRed:122.0/255.0 green:122.0/255.0 blue:122.0/255.0 alpha:1.0];
+//    _store_address_label.font = [UIFont fontWithName:@"NEXA LIGHT" size:16.0];
     _store_address_label.userInteractionEnabled=NO;
 
-    _store_city_label.text = store.city;
-    _store_city_label.textColor = [UIColor colorWithRed:122.0/255.0 green:122.0/255.0 blue:122.0/255.0 alpha:1.0];
-    _store_city_label.font = [UIFont fontWithName:@"NEXA LIGHT" size:12.0];
+    NSString *string = [[[[store.city stringByAppendingString:@", "]
+                        stringByAppendingString:store.state]
+                         stringByAppendingString:@" "]
+                        stringByAppendingString:store.zipcode ];
+    _store_city_label.text = string ;
+//    _store_city_label.textColor = [UIColor colorWithRed:122.0/255.0 green:122.0/255.0 blue:122.0/255.0 alpha:1.0];
+//    _store_city_label.font = [UIFont fontWithName:@"NEXA LIGHT" size:16.0];
     _store_city_label.userInteractionEnabled=NO;
 
     _store_state_label.text = store.state;
-    _store_state_label.textColor = [UIColor colorWithRed:122.0/255.0 green:122.0/255.0 blue:122.0/255.0 alpha:1.0];
-    _store_state_label.font = [UIFont fontWithName:@"NEXA LIGHT" size:12.0];
+//    _store_state_label.textColor = [UIColor colorWithRed:122.0/255.0 green:122.0/255.0 blue:122.0/255.0 alpha:1.0];
+//    _store_state_label.font = [UIFont fontWithName:@"NEXA LIGHT" size:16.0];
     _store_state_label.userInteractionEnabled=NO;
 
     _store_phone_number_label.text = store.phone_number;
-    _store_phone_number_label.textColor = [UIColor colorWithRed:122.0/255.0 green:122.0/255.0 blue:122.0/255.0 alpha:1.0];
-    _store_phone_number_label.font = [UIFont fontWithName:@"NEXA BOLD" size:12.0];
+//    _store_phone_number_label.textColor = [UIColor colorWithRed:122.0/255.0 green:122.0/255.0 blue:122.0/255.0 alpha:1.0];
+//    _store_phone_number_label.font = [UIFont fontWithName:@"NEXA BOLD" size:16.0];
     _store_phone_number_label.userInteractionEnabled=YES;
     
     NSLog(@"phone is %@",store.phone_number);
     
-    _store_rating_count.textColor = [UIColor colorWithRed:255.0/255.0 green:255.0/255.0 blue:255.0/255.0 alpha:1.0];
-    _store_rating_count.font = [UIFont fontWithName:@"NEXA BOLD" size:12.0];
+//    _store_rating_count.textColor = [UIColor colorWithRed:255.0/255.0 green:255.0/255.0 blue:255.0/255.0 alpha:1.0];
+//    _store_rating_count.font = [UIFont fontWithName:@"NEXA BOLD" size:12.0];
     _store_rating_count.text = [[NSString stringWithFormat:@"%lu", (unsigned long)store .ratingCount] stringByAppendingString:@" Reviews"];
 
     

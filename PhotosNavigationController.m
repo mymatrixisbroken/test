@@ -38,7 +38,13 @@
 
 -(IBAction) barButtonCustomPressed:(UIBarButtonItem*)btn
 {
-    [user gotoOptionListViewController:self];
+    FIRUser *currentUser = [FIRAuth auth].currentUser;
+    if(currentUser.anonymous){
+        [user gotoOptionListViewController:self];
+        
+    } else {
+        [user gotoOptionListSignedInViewController:self];
+    }
 }
 
 - (void)didReceiveMemoryWarning {

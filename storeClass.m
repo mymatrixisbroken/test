@@ -15,7 +15,9 @@ storeClass *store;
 @synthesize storeName;
 @synthesize address;
 @synthesize city;
+@synthesize county;
 @synthesize state;
+@synthesize zipcode;
 @synthesize latitude;
 @synthesize longitude;
 @synthesize distanceToMe;
@@ -26,11 +28,13 @@ storeClass *store;
 @synthesize imagesArray;
 @synthesize reviews;
 @synthesize imageArrayIndex;
+@synthesize imageKeys;
 @synthesize indexPath;
 @synthesize ratingCount;
 @synthesize ratingScore;
-@synthesize totalCount;
-@synthesize monthlyCount;
+@synthesize totalViews;
+@synthesize monthlyViews;
+@synthesize dailyViews;
 @synthesize totalUserCount;
 
 
@@ -59,10 +63,12 @@ storeClass *store;
         self.googlePlaceID = @"";
         self.ratingCount = 0;
         self.ratingScore = 0;
-        self.totalCount = 0;
-        self.monthlyCount = 0;
+        self.totalViews = 0;
+        self.monthlyViews = 0;
+        self.dailyViews = 0;
         self.totalUserCount = 0;
         self.imageArrayIndex = 0;
+        self.imageKeys = [[NSArray alloc] init];
         self.indexPath = [NSIndexPath indexPathForRow:0 inSection:0];
         self.imagesArray = [[NSMutableArray alloc] init];
         self.reviews = [[NSMutableArray alloc] init];
@@ -88,8 +94,8 @@ storeClass *store;
     if(![[dict valueForKey:@"ratingCount"] isEqual:@""]){
         self.ratingCount = [[[dict valueForKey:@"ratingCount"] allValues] count];
     }
-    self.totalCount = [[dict valueForKey:@"totalCount"] integerValue];
-    self.monthlyCount = [[dict valueForKey:@"monthlyCount"] integerValue];
+    self.totalViews= [[dict valueForKey:@"totalCount"] integerValue];
+    self.monthlyViews = [[dict valueForKey:@"monthlyCount"] integerValue];
     self.totalUserCount = [[dict valueForKey:@"totalUserCount"] integerValue];
 
     

@@ -11,7 +11,7 @@
 #import "extensionViewClass.h"
 #import "userClass.h"
 #import "eventClass.h"
-#import "newsFeedCell.h"
+#import "newsFeedAddedPhotosCell.h"
 #import "newsFeedCheckInCell.h"
 #import "newsFeedWroteReviewStoreCell.h"
 #import "newsFeedWroteReviewStrainCell.h"

@@ -31,14 +31,9 @@
 //    self.reviewLikesLabel.text = @"4";
 //    self.reviewLikesLabel.textColor = [UIColor colorWithRed:8.0/255.0 green:197.0/255.0 blue:103.0/255.0 alpha:1.0];
 //    self.reviewLikesLabel.font = [UIFont fontWithName:@"NEXA BOLD" size:7.0];
-    
     self.photoLikesLabel.text = @"4";
     self.photoLikesLabel.textColor = [UIColor colorWithRed:8.0/255.0 green:197.0/255.0 blue:103.0/255.0 alpha:1.0];
     self.photoLikesLabel.font = [UIFont fontWithName:@"NEXA BOLD" size:7.0];
-
-    
-    
-    
 }
 
 - (void)awakeFromNib {
