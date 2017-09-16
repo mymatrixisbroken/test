@@ -18,7 +18,8 @@
     [super viewDidLoad];
     [self loadNavController];
     _usernameLabel.text = user.username;
-    [self loadProfilePicture];
+    [self loadUserFromFirebaseDatabase];
+//    [self loadProfilePicture];
     self.scrollView.contentSize = self.view.bounds.size;
     self.shyNavBarManager.scrollView = self.scrollView;
 //    [self loadExtView];
@@ -28,47 +29,220 @@
     _strainsTriedNumber.text = [NSString stringWithFormat:@"%lu", (unsigned long)user.friendRequestsIncomingKeys.count];
     _storesVisitedNumber.text = [NSString stringWithFormat:@"%lu", (unsigned long)user.storesVisited.count];
     
-    [[firebaseRef.usersRef child:user.userKey] observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
-        
-        if (!([[snapshot.value valueForKey:@"badges"]  isEqual: @""])) {
-            NSDictionary *dictionary = [snapshot.value valueForKey:@"badges"];
-            [user.badges removeAllObjects];
-            
-            for (id key in dictionary) {
-                NSString *value = [dictionary valueForKey:key];
+    _badgesNumber.text = [NSString stringWithFormat:@"%lu", (unsigned long)user.badges.count];
+}
+
+- (void) loadUserFromFirebaseDatabase {
+    
+    [self getDateJoined];
+    [self getLastSignedIn];
+    [self getAccountType];
+    [self getUserImages];
+    [self getUserBadges];
+    [self getCheckIns];
+    [self getFriends];
+    [self getStoresVisited];
+    [self getStrainsTried];
+    [self getStoreBookMarks];
+    [self getStrainBookMarks];
+    [self getFriendRequestInbound];
+    [self getFriendRequestOutbound];
+    [self loadReviewsFromFirebase];
+    
+}
+
+- (void) getUsername{
+    [[[firebaseRef.ref child:@"usernames"] child:user.userKey] observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
+        if ([NSNull null] != snapshot.value){                                   //check snapshot is null
+            user.username = [snapshot.value valueForKey:@"username"];
+        }
+    }];
+}
+
+- (void) getDateJoined{
+    [[[firebaseRef.ref child:@"dateJoined"] child:user.userKey] observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
+        if ([NSNull null] != snapshot.value){                                   //check snapshot is null
+            user.dateJoined = [snapshot.value valueForKey:@"dateJoined"];
+        }
+    }];
+}
+
+- (void) getLastSignedIn{
+    [[[firebaseRef.ref child:@"dateLastSignedIn"] child:user.userKey] observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
+        if ([NSNull null] != snapshot.value){                                   //check snapshot is null
+            user.lastSignedIn = [snapshot.value valueForKey:@"dateLastSignedIn"];
+        }
+    }];
+}
+
+- (void) getAccountType{
+    [[[firebaseRef.ref child:@"accountType"] child:user.userKey] observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
+        if ([NSNull null] != snapshot.value){                                   //check snapshot is null
+            user.accountType = [snapshot.value valueForKey:@"accountType"];
+        }
+    }];
+}
+
+- (void) getUserImages{
+    [[[[firebaseRef.ref child:@"images"] child:@"users"] child:user.userKey] observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
+        if ([NSNull null] != snapshot.value){                                   //check snapshot is null
+            user.imageKeys  = [[NSMutableArray alloc] init];
+            user.imageLinks  = [[NSMutableArray alloc] init];
+            for (id key in snapshot.value) {
+                [user.imageKeys addObject:key];
+                [user.imageLinks addObject:[snapshot.value valueForKey:key]];
+            }
+            [self loadProfilePicture];
+        }
+    }];
+}
+
+- (void) getUserBadges{
+    [[[firebaseRef.ref child:@"badges"] child:user.userKey] observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
+        if ([NSNull null] != snapshot.value){                                   //check snapshot is null
+            user.badges = [[NSMutableArray alloc] init];
+            for (id key in snapshot.value) {
+                NSString *value = [snapshot.value valueForKey:key];
                 if ([value isEqualToString:@"true"]) {
                     [user.badges addObject:key];
                 }
             }
-            _badgesNumber.text = [NSString stringWithFormat:@"%lu", (unsigned long)user.badges.count];
         }
-        
-        if (!([[snapshot.value valueForKey:@"friends"]  isEqual: @""])) {
-            [user.friendsKeys removeAllObjects];
-            user.friendsKeys = [NSMutableArray arrayWithArray:[[snapshot.value valueForKey:@"friends"] allKeys]];
-        }
-
-        
-        if (!([[snapshot.value valueForKey:@"friendRequestsIncoming"]  isEqual: @""])) {
-            [user.friendRequestsIncomingKeys removeAllObjects];
-            user.friendRequestsIncomingKeys = [NSMutableArray arrayWithArray:[[snapshot.value valueForKey:@"friendRequestsIncoming"] allKeys]];
-        }
-
     }];
 }
 
-- (void) loadExtView{
-    extensionViewClass *extView = [[extensionViewClass alloc] init];
-    [extView setView:CGRectGetWidth(self.view.bounds)];
-    [extView addButtons:CGRectGetWidth(self.view.bounds)];
-    [extView.firstButton addTarget:self action:@selector(storeButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
-    [extView.secondButton addTarget:self action:@selector(strainButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
-    [extView.thirdButton addTarget:self action:@selector(newsFeedButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
-    [extView.fourthButton addTarget:self action:@selector(userProfileButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
-    extView.fourthButton.highlighted = YES;
-    [self.shyNavBarManager setExtensionView:extView];
-    [self.shyNavBarManager setStickyExtensionView:YES];
+- (void) getCheckIns{
+    [[[firebaseRef.ref child:@"checkIns"] child:user.userKey] observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
+        if ([NSNull null] != snapshot.value){                                   //check snapshot is null
+            user.checkIns = [[NSMutableArray alloc] init];
+            for (id key in snapshot.value) {
+                [user.checkIns addObject:key];
+            }
+        }
+    }];
 }
+
+- (void) getFriends{
+    [[[firebaseRef.ref child:@"friends"] child:user.userKey] observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
+        if ([NSNull null] != snapshot.value){                                   //check snapshot is null
+            user.friendsKeys = [[NSMutableArray alloc] init];
+            for (id key in snapshot.value) {
+                [user.friendsKeys addObject:key];
+            }
+        }
+        [self.view setNeedsDisplay];
+    }];
+}
+
+- (void) getStoresVisited{
+    [[[firebaseRef.ref child:@"storesVisited"] child:user.userKey] observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
+        if ([NSNull null] != snapshot.value){                                   //check snapshot is null
+            user.storesVisited = [[NSMutableArray alloc] init];
+            for (id key in snapshot.value) {
+                [user.storesVisited addObject:key];
+            }
+        }
+    }];
+}
+
+- (void) getStrainsTried{
+    [[[firebaseRef.ref child:@"strainsTried"] child:user.userKey] observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
+        if ([NSNull null] != snapshot.value){                                   //check snapshot is null
+            user.strainsTried = [[NSMutableArray alloc] init];
+            for (id key in snapshot.value) {
+                [user.strainsTried addObject:key];
+            }
+        }
+    }];
+}
+
+- (void) getStoreBookMarks{
+    [[[[firebaseRef.ref  child:@"bookmarks"] child:user.userKey] child:@"stores"] observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
+        if ([NSNull null] != snapshot.value){                                   //check snapshot is null
+            user.storeBookmarks = [[NSMutableArray alloc] init];
+            for (id key in snapshot.value) {
+                [user.storeBookmarks addObject:key];
+            }
+        }
+    }];
+}
+
+- (void) getStrainBookMarks{
+    [[[[firebaseRef.ref  child:@"bookmarks"] child:user.userKey] child:@"strains"] observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
+        if ([NSNull null] != snapshot.value){                                   //check snapshot is null
+            user.strainBookmarks = [[NSMutableArray alloc] init];
+            for (id key in snapshot.value) {
+                [user.strainBookmarks addObject:key];
+            }
+        }
+    }];
+}
+
+- (void) getFriendRequestInbound{
+    [[[firebaseRef.ref  child:@"friendRequestInbound"] child:user.userKey] observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
+        if ([NSNull null] != snapshot.value){                                   //check snapshot is null
+            user.friendRequestsIncomingKeys = [[NSMutableArray alloc] init];
+            for (id key in snapshot.value) {
+                [user.friendRequestsIncomingKeys addObject:key];
+            }
+        }
+    }];
+}
+
+- (void) getFriendRequestOutbound{
+    [[[firebaseRef.ref  child:@"friendRequestOutbound"] child:user.userKey] observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
+        if ([NSNull null] != snapshot.value){                                   //check snapshot is null
+            user.friendRequestsOutgoingKeys = [[NSMutableArray alloc] init];
+            for (id key in snapshot.value) {
+                [user.friendRequestsOutgoingKeys addObject:key];
+            }
+        }
+    }];
+}
+
+
+
+-(void)loadReviewsFromFirebase{
+    //    FIRDatabaseQuery *reviewQuery = [[ queryOrderedByChild:@"reviewData"] queryEqualToValue:user.userKey];
+    
+    [[[firebaseRef.ref child:@"reviewData"] child:user.userKey] observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
+        if ([NSNull null] != snapshot.value){                                   //check snapshot is null
+            user.reviews = [[NSMutableArray alloc] init];
+            for (id key in snapshot.value) {
+                reviewClass *tempReview = [[reviewClass alloc] init];
+                tempReview.reviewKey = key;
+                
+                NSDictionary *dictionary = [[NSDictionary alloc] init];
+                dictionary = [snapshot.value valueForKey:tempReview.reviewKey];
+                tempReview.message = [dictionary valueForKey:@"message"];
+                tempReview.objectImageURL = [dictionary valueForKey:@"objectImageKey"];
+                tempReview.objectKey = [dictionary valueForKey:@"objectKey"];
+                tempReview.objectName = [dictionary valueForKey:@"objectName"];
+                tempReview.objectType = [dictionary valueForKey:@"objectType"];
+                tempReview.userKey = [dictionary valueForKey:@"userKey"];
+                tempReview.rating = [dictionary valueForKey:@"rating"];
+                
+                [user.reviews addObject:tempReview];
+            }
+        }
+        [self.view setNeedsDisplay];
+    }];
+    
+}
+
+
+//- (void) loadExtView{
+//    extensionViewClass *extView = [[extensionViewClass alloc] init];
+//    [extView setView:CGRectGetWidth(self.view.bounds)];
+//    [extView addButtons:CGRectGetWidth(self.view.bounds)];
+//    [extView.firstButton addTarget:self action:@selector(storeButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
+//    [extView.secondButton addTarget:self action:@selector(strainButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
+//    [extView.thirdButton addTarget:self action:@selector(newsFeedButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
+//    [extView.fourthButton addTarget:self action:@selector(userProfileButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
+//    extView.fourthButton.highlighted = YES;
+//    [self.shyNavBarManager setExtensionView:extView];
+//    [self.shyNavBarManager setStickyExtensionView:YES];
+//}
 
 //-(IBAction)storeButtonPressed:(UIButton*)btn {
 //    objectsArray.strainOrStore = 1;
@@ -96,7 +270,28 @@
 
 
 -(void) loadProfilePicture{
-    self.imageView.image = [UIImage imageWithData:user.data];
+//    self.imageView.image = [UIImage imageWithData:user.data];
+    
+    FIRStorage *storage = [FIRStorage storage];
+    FIRStorageReference *storageRef = [storage reference];
+    
+    if ([user.imageLinks count] > 0){                                      //check images array is null
+        NSLog(@"image link is %@", [user.imageLinks objectAtIndex:0]);
+    
+        FIRStorageReference *spaceRef = [[[storageRef child:@"users"] child:user.userKey] child:[user.imageLinks objectAtIndex:0]];
+        NSLog(@"ref is %@", spaceRef);
+
+        UIImage *placeHolder = [[UIImage alloc] init];
+        [_imageView sd_setImageWithStorageReference:spaceRef placeholderImage:placeHolder];
+    }
+    
+//    [spaceRef dataWithMaxSize:1 * 1024 * 1024 completion:^(NSData *data, NSError *error){
+//        if (error != nil) {
+//            NSLog(@"Uh-oh, an error occurred! %@", error);
+//        }
+//        else {
+//            tempImage.data = data;
+
 }
 
 - (IBAction)signOutButtonTapped:(UIButton *)sender {
@@ -226,44 +421,27 @@
     
     UIButton *btn1 =  [UIButton buttonWithType:UIButtonTypeCustom];
     btn1.frame = CGRectMake(0,0,25,25);
-    if (user.mainNavigationSelected == 0) {
-        [btn1 setBackgroundImage:[UIImage imageNamed:@"newsFeedGreenIcon"] forState:UIControlStateNormal];
-    } else {
-        [btn1 setBackgroundImage:[UIImage imageNamed:@"newsFeedWhiteIcon"] forState:UIControlStateNormal];
-    }
+    [btn1 setBackgroundImage:[UIImage imageNamed:@"newsFeedWhiteIcon"] forState:UIControlStateNormal];
     [btn1 addTarget:self action:@selector(newsFeedButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
     UIBarButtonItem *buttonOne = [[UIBarButtonItem alloc] initWithCustomView:btn1];
     
     
     UIButton *btn2 =  [UIButton buttonWithType:UIButtonTypeCustom];
     btn2.frame = CGRectMake(0,0,25,25);
-    if (user.mainNavigationSelected == 1) {
-        [btn2 setBackgroundImage:[UIImage imageNamed:@"mapWhiteIcon"] forState:UIControlStateNormal];
-    } else {
-        [btn2 setBackgroundImage:[UIImage imageNamed:@"mapWhiteIcon"] forState:UIControlStateNormal];
-    }
-    [btn2 addTarget:self action:@selector(strainButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
+    [btn2 setBackgroundImage:[UIImage imageNamed:@"mapWhiteIcon"] forState:UIControlStateNormal];
     UIBarButtonItem *buttonTwo = [[UIBarButtonItem alloc] initWithCustomView:btn2];
     
     
     UIButton *btn3 =  [UIButton buttonWithType:UIButtonTypeCustom];
     btn3.frame = CGRectMake(0,0,25,25);
-    if (user.mainNavigationSelected == 2) {
-        [btn3 setBackgroundImage:[UIImage imageNamed:@"searchGreenIcon"] forState:UIControlStateNormal];
-    } else {
-        [btn3 setBackgroundImage:[UIImage imageNamed:@"searchWhiteIcon"] forState:UIControlStateNormal];
-    }
+    [btn3 setBackgroundImage:[UIImage imageNamed:@"searchWhiteIcon"] forState:UIControlStateNormal];
     [btn3 addTarget:self action:@selector(searchButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
     UIBarButtonItem *buttonThree = [[UIBarButtonItem alloc] initWithCustomView:btn3];
     
     
     UIButton *btn4 =  [UIButton buttonWithType:UIButtonTypeCustom];
     btn4.frame = CGRectMake(0,0,25,25);
-    if (user.mainNavigationSelected == 3) {
-        [btn4 setBackgroundImage:[UIImage imageNamed:@"storesGreenIcon"] forState:UIControlStateNormal];
-    } else {
-        [btn4 setBackgroundImage:[UIImage imageNamed:@"storesWhiteIcon"] forState:UIControlStateNormal];
-    }
+    [btn4 setBackgroundImage:[UIImage imageNamed:@"storesWhiteIcon"] forState:UIControlStateNormal];
     [btn4 addTarget:self action:@selector(storeButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
     UIBarButtonItem *buttonFour = [[UIBarButtonItem alloc] initWithCustomView:btn4];
     

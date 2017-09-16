@@ -28,8 +28,23 @@
 
 #pragma mark - Table view data source
 
+//- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
+//    return 1;
+//}
+
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-    return 1;
+    NSInteger sectionCount = 0;
+    
+    if ([user.reviews count] > 0)
+        sectionCount++;
+    else{
+        UIImageView *noDataImage         = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, self.tableView.bounds.size.width/2, self.tableView.bounds.size.height/2)];
+        noDataImage.contentMode = UIViewContentModeCenter;
+        noDataImage.image = [UIImage imageNamed:@"puppy"];
+        self.tableView.backgroundView = noDataImage;
+        self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
+    }
+    return sectionCount;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {

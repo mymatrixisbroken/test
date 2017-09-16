@@ -14,6 +14,7 @@
 #import "objectsArrayClass.h"
 @import Firebase;
 @import GooglePlaces;
+@import GoogleMaps;
 @import JVFloatLabeledTextField;
 
 @interface AddStoreViewController : UIViewController <UIImagePickerControllerDelegate, UINavigationControllerDelegate>{
@@ -22,14 +23,12 @@
     UIImage *image;
 }
 
-@property (weak, nonatomic) IBOutlet UIButton *back_button;
-@property (weak, nonatomic) IBOutlet JVFloatLabeledTextField *store_name_field;
-@property (weak, nonatomic) IBOutlet JVFloatLabeledTextField *address_field;
-@property (weak, nonatomic) IBOutlet JVFloatLabeledTextField *city_field;
-@property (weak, nonatomic) IBOutlet JVFloatLabeledTextField *state_field;
-@property (weak, nonatomic) IBOutlet JVFloatLabeledTextField *phone_number_field;
-@property (weak, nonatomic) IBOutlet UIButton *submit_store_button;
-@property (strong, nonatomic) IBOutlet UIImageView *imageView;
+@property (strong, nonatomic) IBOutlet UITextField *storeName;
+@property (strong, nonatomic) IBOutlet UITextField *address;
+@property (strong, nonatomic) IBOutlet UITextField *cityStateZip;
+@property (strong, nonatomic) IBOutlet UITextField *phoneNumber;
+@property (strong, nonatomic) IBOutlet UITextField *storeHours;
+@property (strong, nonatomic) IBOutlet UIView *mapView;
 @property BOOL imageSelected;
 
 @end

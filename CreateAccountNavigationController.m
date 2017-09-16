@@ -26,20 +26,32 @@
 //    [self.navigationController.navigationBar setTitleTextAttributes:@{NSForegroundColorAttributeName : [UIColor whiteColor]}];
 //    self.navigationBar.topItem.title = @"CREATING CHEEBA ACCOUNT";
     
-    UILabel *yourLabel = [[UILabel alloc] initWithFrame:CGRectMake(20,0, self.view.bounds.size.width,50)];
+    UILabel *yourLabel = [[UILabel alloc] initWithFrame:CGRectMake(20,0, self.view.bounds.size.width-100,50)];
     yourLabel.text = @"CREATING BLAZE ACCOUNT";
     yourLabel.font = [UIFont fontWithName:@"NEXA LIGHT" size:14.0];
     yourLabel.textColor = [UIColor colorWithRed:255.0/255.0 green:255.0/255.0 blue:255.0/255.0 alpha:1];
 
     [self.navigationBar addSubview:yourLabel];
     
-    UIImageView *imageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 25, 25)];
-    [imageView setImage:[UIImage imageNamed:@"HamburgerIcon"]];
     
-    UIBarButtonItem *rightButton = [[UIBarButtonItem alloc] initWithCustomView:imageView];
+    UIImage *myImage = [UIImage imageNamed:@"clearWhiteIcon"];
+    UIButton *myButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    [myButton setImage:myImage forState:UIControlStateNormal];
+    myButton.frame = CGRectMake(0.0, 0.0, 20, 20);
+    [myButton addTarget:self action:@selector(doClear:) forControlEvents:UIControlEventTouchUpInside];
+    
+    UIBarButtonItem *rightButton = [[UIBarButtonItem alloc] initWithCustomView:myButton];
+
+    self.navigationBar.topItem.rightBarButtonItem = rightButton;
+
+    
+//    UIImageView *imageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 25, 25)];
+//    [imageView setImage:[UIImage imageNamed:@"HamburgerIcon"]];
+//    
+//    UIBarButtonItem *rightButton = [[UIBarButtonItem alloc] initWithCustomView:imageView];
     
 //    UIBarButtonItem *rightButton = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"Asset 1"] style:UIBarButtonItemStylePlain target:self   action:@selector(leftButtonPressed:)];
-    self.navigationBar.topItem.rightBarButtonItem = rightButton;
+//    self.navigationBar.topItem.rightBarButtonItem = rightButton;
 
 
     
@@ -50,6 +62,10 @@
 //    [UINavigationBar appearance].tintColor = [UIColor whiteColor];
 //    UIBarButtonItem *rightButton = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"menu"] style:UIBarButtonItemStylePlain target:self   action:@selector(barButtonCustomPressed:)];
 //    self.navigationBar.topItem.rightBarButtonItem = rightButton;
+}
+
+- (void) doClear:(UIButton *) btn{
+    [self dismissViewControllerAnimated:YES completion:^{}];
 }
 
 -(IBAction) leftButtonPressed:(UIBarButtonItem *)btn{

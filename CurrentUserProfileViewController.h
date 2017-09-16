@@ -12,7 +12,8 @@
 #import <TLYShyNavBar/TLYShyNavBarManager.h>
 #import "extensionViewClass.h"
 #import "objectsArrayClass.h"
-
+#import <FirebaseStorageUI/FirebaseStorageUI.h>
+#import "reviewClass.h"
 @import Firebase;
 
 @interface CurrentUserProfileViewController : UIViewController <UIImagePickerControllerDelegate, UINavigationControllerDelegate>{

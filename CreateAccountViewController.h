@@ -22,6 +22,7 @@
 @property (strong, nonatomic) IBOutlet UIView *createAccountView;
 @property (strong, nonatomic) IBOutlet UIView *fieldsView;
 @property (strong, nonatomic) IBOutlet CAGradientLayer *gradientMask;
+@property (strong, nonatomic) IBOutlet UISwitch *termsSwitch;
 
 @end
 
