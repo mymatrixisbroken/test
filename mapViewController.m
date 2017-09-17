@@ -85,6 +85,8 @@
 //}
 
 -(UIView *) mapView:(GMSMapView *)mapView markerInfoWindow:(GMSMarker *)marker{
+//    marker.iconView.bounds =CGRectMake(0, 0, 70, 80);
+
     markerInfoView *infoWindow = [[[NSBundle mainBundle] loadNibNamed:@"markerInfoView" owner:self options:nil] objectAtIndex:0];
 
     NSInteger i = [marker.userData integerValue];

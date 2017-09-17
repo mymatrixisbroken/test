@@ -17,8 +17,11 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     _imageSelected = false;
+    _confirmButton.enabled = NO;
+    _phoneNumber.tag = 3;
+    _storeHours.tag = 3;
     
-    _storeHours.attributedPlaceholder = [[NSAttributedString alloc] initWithString:@"Store Hours" attributes:@{NSForegroundColorAttributeName: [UIColor colorWithRed:122.0/255.0 green:122.0/255.0 blue:122.0/255.0 alpha:1.0]}];
+    _storeHours.attributedPlaceholder = [[NSAttributedString alloc] initWithString:@"Store Hours (optional)" attributes:@{NSForegroundColorAttributeName: [UIColor colorWithRed:122.0/255.0 green:122.0/255.0 blue:122.0/255.0 alpha:1.0]}];
     _storeName.attributedPlaceholder = [[NSAttributedString alloc] initWithString:@"Store Name" attributes:@{NSForegroundColorAttributeName: [UIColor colorWithRed:122.0/255.0 green:122.0/255.0 blue:122.0/255.0 alpha:1.0]}];
     _address.attributedPlaceholder = [[NSAttributedString alloc] initWithString:@"Address" attributes:@{NSForegroundColorAttributeName: [UIColor colorWithRed:122.0/255.0 green:122.0/255.0 blue:122.0/255.0 alpha:1.0]}];
     _cityStateZip.attributedPlaceholder = [[NSAttributedString alloc] initWithString:@"City, State, Zip" attributes:@{NSForegroundColorAttributeName: [UIColor colorWithRed:122.0/255.0 green:122.0/255.0 blue:122.0/255.0 alpha:1.0]}];
@@ -90,51 +93,64 @@
 }
 
 -(void) storeHoursDidChange:(UITextField *) textField{
-    _storeHours.font = [UIFont fontWithName:@"NEXA BOLD" size:11.0];
+    _storeHours.font = [UIFont fontWithName:@"NEXA BOLD" size:15.0];
     _storeHours.attributedPlaceholder = [[NSAttributedString alloc] initWithString:@"e.g. M-F 10am-9pm" attributes:@{NSForegroundColorAttributeName: [UIColor colorWithRed:122.0/255.0 green:122.0/255.0 blue:122.0/255.0 alpha:1.0]}];
+    [self checkAllTextFieldLength];
 }
 
 -(void) storeNameDidChange:(UITextField *) textField{
     _storeName.font = [UIFont fontWithName:@"CERVO-THIN" size:33.0];
     _storeName.attributedPlaceholder = [[NSAttributedString alloc] initWithString:@"e.g. Apothekare" attributes:@{NSForegroundColorAttributeName: [UIColor colorWithRed:122.0/255.0 green:122.0/255.0 blue:122.0/255.0 alpha:1.0]}];
+    [self checkAllTextFieldLength];
 }
 
 -(void) addressDidChange:(UITextField *) textField{
     _address.font = [UIFont fontWithName:@"NEXA LIGHT" size:15.0];
     _address.attributedPlaceholder = [[NSAttributedString alloc] initWithString:@"e.g. 123 High Street #420" attributes:@{NSForegroundColorAttributeName: [UIColor colorWithRed:122.0/255.0 green:122.0/255.0 blue:122.0/255.0 alpha:1.0]}];
+    [self checkAllTextFieldLength];
 }
 
 -(void) cityStateZipDidChange:(UITextField *) textField{
     _cityStateZip.font = [UIFont fontWithName:@"NEXA LIGHT" size:15.0];
     _cityStateZip.attributedPlaceholder = [[NSAttributedString alloc] initWithString:@"e.g. Arlington, TX, 76018" attributes:@{NSForegroundColorAttributeName: [UIColor colorWithRed:122.0/255.0 green:122.0/255.0 blue:122.0/255.0 alpha:1.0]}];
+    [self checkAllTextFieldLength];
 }
 
 -(void) phoneNumberDidChange:(UITextField *) textField{
     _phoneNumber.font = [UIFont fontWithName:@"NEXA BOLD" size:15.0];
     _phoneNumber.attributedPlaceholder = [[NSAttributedString alloc] initWithString:@"e.g. 555-555-5555" attributes:@{NSForegroundColorAttributeName: [UIColor colorWithRed:122.0/255.0 green:122.0/255.0 blue:122.0/255.0 alpha:1.0]}];
+    [self checkAllTextFieldLength];
 }
 
 /**********************************************/
 
 -(void) storeHoursDidEndEditing:(UITextField *) textField{
-    _storeHours.attributedPlaceholder = [[NSAttributedString alloc] initWithString:@"Store Hours" attributes:@{NSForegroundColorAttributeName: [UIColor colorWithRed:122.0/255.0 green:122.0/255.0 blue:122.0/255.0 alpha:1.0]}];
+    _storeHours.attributedPlaceholder = [[NSAttributedString alloc] initWithString:@"Store Hours (optional)" attributes:@{NSForegroundColorAttributeName: [UIColor colorWithRed:122.0/255.0 green:122.0/255.0 blue:122.0/255.0 alpha:1.0]}];
+    [self checkAllTextFieldLength];
 }
 
 -(void) storeNameDidEndEditing:(UITextField *) textField{
     _storeName.attributedPlaceholder = [[NSAttributedString alloc] initWithString:@"Store Name" attributes:@{NSForegroundColorAttributeName: [UIColor colorWithRed:122.0/255.0 green:122.0/255.0 blue:122.0/255.0 alpha:1.0]}];
+    [self checkAllTextFieldLength];
 }
 
 -(void) addressDidEndEditing:(UITextField *) textField{
     _address.attributedPlaceholder = [[NSAttributedString alloc] initWithString:@"Address" attributes:@{NSForegroundColorAttributeName: [UIColor colorWithRed:122.0/255.0 green:122.0/255.0 blue:122.0/255.0 alpha:1.0]}];
+    [self checkAllTextFieldLength];
 }
 
 -(void) cityStateZipDidEndEditing:(UITextField *) textField{
     _cityStateZip.attributedPlaceholder = [[NSAttributedString alloc] initWithString:@"City, State, Zip" attributes:@{NSForegroundColorAttributeName: [UIColor colorWithRed:122.0/255.0 green:122.0/255.0 blue:122.0/255.0 alpha:1.0]}];
-    [self moveMapFromStoreAddress];
+    [self checkAllTextFieldLength];
+
+    if ((_address.text.length > 0) && (_cityStateZip.text.length > 0)) {
+        [self moveMapFromStoreAddress];
+    }
 }
 
 -(void) phoneNumberDidEndEditing:(UITextField *) textField{
     _phoneNumber.attributedPlaceholder = [[NSAttributedString alloc] initWithString:@"Phone Number (optional)" attributes:@{NSForegroundColorAttributeName: [UIColor colorWithRed:122.0/255.0 green:122.0/255.0 blue:122.0/255.0 alpha:1.0]}];
+    [self checkAllTextFieldLength];
 }
 
 -(void) moveMapFromStoreAddress{
@@ -154,17 +170,17 @@
     NSDictionary *result = [results objectAtIndex:0];
     NSDictionary *geometry = [result objectForKey:@"geometry"];
     NSDictionary *location = [geometry objectForKey:@"location"];
-    double storeLat = [[location valueForKey:@"lat"] doubleValue];
-    double storeLng = [[location valueForKey:@"lng"] doubleValue];
+    _storeLat = [[location valueForKey:@"lat"] doubleValue];
+    _storeLng = [[location valueForKey:@"lng"] doubleValue];
 
-    GMSCameraPosition *camera = [GMSCameraPosition cameraWithLatitude:storeLat
-                                                            longitude:storeLng
+    GMSCameraPosition *camera = [GMSCameraPosition cameraWithLatitude:_storeLat
+                                                            longitude:_storeLng
                                                                  zoom:16];
     GMSMapView *mapView = [GMSMapView mapWithFrame:_mapView.bounds camera:camera];
     [_mapView.subviews makeObjectsPerformSelector: @selector(removeFromSuperview)];
     [_mapView addSubview:mapView];
     
-    CLLocationCoordinate2D position = CLLocationCoordinate2DMake(storeLat, storeLng);
+    CLLocationCoordinate2D position = CLLocationCoordinate2DMake(_storeLat, _storeLng);
     GMSMarker *marker = [GMSMarker markerWithPosition:position];
     marker.icon = [UIImage imageNamed:@"markerSmartObject"];
     marker.infoWindowAnchor = CGPointMake(0.44f, 0.45f);
@@ -187,8 +203,8 @@
     NSDictionary *result = [results objectAtIndex:0];
     NSDictionary *geometry = [result objectForKey:@"geometry"];
     NSDictionary *location = [geometry objectForKey:@"location"];
-    double storeLat = [[location valueForKey:@"lat"] doubleValue];
-    double storeLng = [[location valueForKey:@"lng"] doubleValue];
+    _storeLat = [[location valueForKey:@"lat"] doubleValue];
+    _storeLng = [[location valueForKey:@"lng"] doubleValue];
 
     
 //    NSLog(@"results are %@", results);
@@ -198,37 +214,100 @@
     NSLog(@"formatted address is %@", formattedAddress);
 
     
-    NSArray *strings = [formattedAddress componentsSeparatedByString:@","];
+    NSArray *strings = [formattedAddress componentsSeparatedByString:@", "];
     for(id string in strings)
         NSLog(@"string is %@", string);
+    
+    NSArray *strings2 = [[strings objectAtIndex:2] componentsSeparatedByString:@" "];
+    for(id string2 in strings2)
+        NSLog(@"string2 is %@", string2);
+
 
     if (strings.count > 2){                                   //check snapshot is null
-        _address.text = [strings objectAtIndex:0];
-        _cityStateZip.text = [[strings objectAtIndex:1] stringByAppendingString:[strings objectAtIndex:2]];
+        _address.text = [strings objectAtIndex:0] ;
+        _cityStateZip.text = [[[[[strings objectAtIndex:1]
+                                stringByAppendingString:@", "]
+                              stringByAppendingString:[strings2 objectAtIndex:0]]
+                              stringByAppendingString:@", "]
+                            stringByAppendingString:[strings2 objectAtIndex:1]];
+        [self checkAllTextFieldLength];
+
         
-        GMSCameraPosition *camera = [GMSCameraPosition cameraWithLatitude:storeLat
-                                                                longitude:storeLng
+        
+        GMSCameraPosition *camera = [GMSCameraPosition cameraWithLatitude:_storeLat
+                                                                longitude:_storeLng
                                                                      zoom:16];
         GMSMapView *mapView = [GMSMapView mapWithFrame:_mapView.bounds camera:camera];
         [_mapView.subviews makeObjectsPerformSelector: @selector(removeFromSuperview)];
         [_mapView addSubview:mapView];
         
-        CLLocationCoordinate2D position = CLLocationCoordinate2DMake(storeLat, storeLng);
+        CLLocationCoordinate2D position = CLLocationCoordinate2DMake(_storeLat, _storeLng);
         GMSMarker *marker = [GMSMarker markerWithPosition:position];
         marker.icon = [UIImage imageNamed:@"markerSmartObject"];
         marker.infoWindowAnchor = CGPointMake(0.44f, 0.45f);
         //        marker.title = tempStore.storeName;
         marker.map = mapView;
-
-
     }
 }
 
-- (IBAction)tappedConfirmButton:(id)sender {
+-(void) checkAllTextFieldLength{
+    NSMutableArray* emptyTextFieldArray = [[NSMutableArray alloc] init];
+
+    for(UIView *view in _contentVIew.subviews){
+        if ([view isKindOfClass:[UITextField class]]) {
+            UITextField *textField = (UITextField *)view;
+            if (textField.text.length == 0) {
+                if (textField.tag != 3) {
+                    [emptyTextFieldArray addObject:textField];
+                }
+            }
+        }
+    }
+    if (emptyTextFieldArray.count == 0) {
+        _confirmButton.enabled = YES;
+    }
+    else
+        _confirmButton.enabled = NO;
 }
 
+- (IBAction)tappedConfirmButton:(id)sender {
+    NSString *lowerString = [_storeName.text lowercaseString];
+    NSString *stringLat = [NSString stringWithFormat:@"%lf", _storeLat];
+    NSString *stringLng = [NSString stringWithFormat:@"%lf", _storeLng];
+    
+    storeClass *store2 = [[storeClass alloc] init];
+    store2.storeKey = [[firebaseRef.ref child:@"toBeReviewedStoreKeys"]  childByAutoId].key;
+    [[[[firebaseRef.ref  child:@"toBeReviewedStoreNames"]  child:store2.storeKey] child:@"lowerName"] setValue:lowerString];
+    [[[[firebaseRef.ref  child:@"toBeReviewedStoreNames"]  child:store2.storeKey] child:@"name"] setValue:_storeName.text];
+    [[[[firebaseRef.ref  child:@"toBeReviewedStoreHours"]  child:store2.storeKey] child:@"storeHours"] setValue:_storeHours.text];
+    [[[[firebaseRef.ref  child:@"toBeReviewedPhoneNumbers"]  child:store2.storeKey] child:@"phoneNumber"] setValue:_phoneNumber.text];
+    [[[[firebaseRef.ref  child:@"toBeReviewedLocation"]  child:store2.storeKey] child:@"address"] setValue:_address.text];
+    [[[[firebaseRef.ref  child:@"toBeReviewedLocation"]  child:store2.storeKey] child:@"cityStateZip"] setValue:_cityStateZip.text];
+    [[[[firebaseRef.ref  child:@"toBeReviewedLocation"]  child:store2.storeKey] child:@"latitude"] setValue:stringLat];
+    [[[[firebaseRef.ref  child:@"toBeReviewedLocation"]  child:store2.storeKey] child:@"longitude"] setValue:stringLng];
+    
+    
+    UIAlertController * alert = [UIAlertController
+                                 alertControllerWithTitle:@"Store submitted"
+                                 message:@"Thank you for helping the Cheeba community grow. Your store will be reviewed by our moderators for duplicate or make available in search."
+                                 preferredStyle:UIAlertControllerStyleAlert];
+    
+    UIAlertAction* okButton = [UIAlertAction
+                                actionWithTitle:@"OK"
+                                style:UIAlertActionStyleDefault
+                                handler:^(UIAlertAction * action) {
+                                    [self dismissAddStoreViewController];
+                                }];
+    
+    
+    [alert addAction:okButton];
+    
+    [self presentViewController:alert animated:YES completion:nil];
+}
 
-
+-(void) dismissAddStoreViewController{
+    [self.navigationController popToRootViewControllerAnimated:YES];
+}
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];

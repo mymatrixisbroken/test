@@ -429,6 +429,7 @@
     UIButton *btn2 =  [UIButton buttonWithType:UIButtonTypeCustom];
     btn2.frame = CGRectMake(0,0,25,25);
     [btn2 setBackgroundImage:[UIImage imageNamed:@"mapWhiteIcon"] forState:UIControlStateNormal];
+    [btn2 addTarget:self action:@selector(mapButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
     UIBarButtonItem *buttonTwo = [[UIBarButtonItem alloc] initWithCustomView:btn2];
     
     
@@ -465,7 +466,7 @@
     [user goToNewsFeedViewController:self];
 }
 
--(IBAction)strainButtonPressed:(UIButton*)btn {
+-(IBAction)mapButtonPressed:(UIButton*)btn {
     [user gotoMapViewViewController:self];
     
     //    user.mainNavigationSelected = 1;

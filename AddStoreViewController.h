@@ -29,7 +29,11 @@
 @property (strong, nonatomic) IBOutlet UITextField *phoneNumber;
 @property (strong, nonatomic) IBOutlet UITextField *storeHours;
 @property (strong, nonatomic) IBOutlet UIView *mapView;
+@property (strong, nonatomic) IBOutlet UIButton *confirmButton;
+@property (strong, nonatomic) IBOutlet UIView *contentVIew;
 @property BOOL imageSelected;
+@property double storeLat;
+@property double storeLng;
 
 @end
 
