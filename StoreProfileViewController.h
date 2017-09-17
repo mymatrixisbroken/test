@@ -13,6 +13,8 @@
 #import "userClass.h"
 #import "reviewClass.h"
 #import "imageClass.h"
+#import <FirebaseStorageUI/FirebaseStorageUI.h>
+#import "popOverImageViewController.h"
 @import HCSStarRatingView;
 @import Firebase;
 @import GoogleMaps;
@@ -43,6 +45,8 @@
 @property (strong, nonatomic) IBOutlet UITabBarItem *favoriteBarItem;
 @property (strong, nonatomic) IBOutlet UIView *containerView;
 @property (strong, nonatomic) IBOutlet UITableViewController *tablevc;
+@property (strong, nonatomic) IBOutlet UIScrollView *scrollView;
+@property (copy, nonatomic) NSString *passedString;
 
 
 @end

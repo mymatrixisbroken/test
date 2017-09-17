@@ -29,12 +29,12 @@
 - (void)loadImageView {
     imageClass *image = [[imageClass alloc] init];
     
-    if ([strain.imagesArray objectAtIndex:0] != [NSNull null]) {
-        image = [strain.imagesArray objectAtIndex:0];
+//    if ([strain.imagesArray objectAtIndex:0] != [NSNull null]) {
+//        image = [strain.imagesArray objectAtIndex:0];
 
-    }
+//    }
 
-    _strainImage.image = [UIImage imageWithData: image.data];
+//    _strainImage.image = [UIImage imageWithData: image.data];
 
 }
 - (IBAction)tappedStrainImage:(UITapGestureRecognizer *)sender {
@@ -68,10 +68,10 @@
 
 - (void) setLabelValues {
     _strainNameLabel.text = strain.strainName;
-    _strainTHCLabel.text =  [@"THC: "stringByAppendingString: strain.thc];
-    _strainCBDLabel.text =  [@"CBD: " stringByAppendingString:strain.cbd];
+//    _strainTHCLabel.text =  [@"THC: "stringByAppendingString: strain.thc];
+//    _strainCBDLabel.text =  [@"CBD: " stringByAppendingString:strain.cbd];
     _strainSpeciesLabel.text = strain.species;
-    _strainGrowerLabel.text = [@"By: " stringByAppendingString:strain.grower];
+//    _strainGrowerLabel.text = [@"By: " stringByAppendingString:strain.grower];
     _strainFlavorLabel.text = strain.flavor;
     _strainAromaLabel.text = strain.aroma;
     if (!(strain.availableAt.count == 0)) {

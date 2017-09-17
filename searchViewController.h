@@ -13,6 +13,8 @@
 #import "userClass.h"
 #import "storeClass.h"
 #import "searchResultTableViewCell.h"
+#import "UserProfileViewController.h"
+#import "StoreProfileViewController.h"
 @import Firebase;
 
 

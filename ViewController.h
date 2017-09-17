@@ -18,6 +18,9 @@
 #import "KxMenu.h"
 #import "imageClass.h"
 #import "reviewClass.h"
+#import "storeProfileViewController.h"
+#import <FirebaseStorageUI/FirebaseStorageUI.h>
+
 
 @interface ViewController : UIViewController <UICollectionViewDataSource, CHTCollectionViewDelegateWaterfallLayout, UISearchBarDelegate, UISearchDisplayDelegate, CLLocationManagerDelegate, UIPopoverPresentationControllerDelegate>
 @property (nonatomic, strong) IBOutlet UICollectionView *collectionView;
@@ -28,6 +31,10 @@
 @property CLLocationManager *locationManager;
 @property (strong, nonatomic) IBOutlet UIRefreshControl *refresh;
 @property extensionViewClass *extView;
+@property NSArray *storeKeys;
+@property imageClass *image;
+@property NSMutableArray *imagesArray;
+@property storeClass *storeloop;
 
 
 @end

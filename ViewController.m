@@ -209,8 +209,6 @@
     coordinate.latitude=_locationManager.location.coordinate.latitude;
     coordinate.longitude=_locationManager.location.coordinate.longitude;
     
-    NSLog(@"latitude is %f", coordinate.latitude);
-    
     user.latitude = coordinate.latitude;
     user.longitude = coordinate.longitude;
     
@@ -239,7 +237,6 @@
             if ([types isEqual:@"administrative_area_level_2"]) {
                 NSString *county = [dict objectForKey:@"long_name"];
                 user.county = county;
-                NSLog(@"user county is %@",user.county);
             }
         }
     }
@@ -277,7 +274,7 @@
 -(IBAction)strainButtonPressed:(UIButton*)btn {
     objectsArray.filterSelected = 10;
     objectsArray.strainOrStore = strains;
-    [user goToStrainsStoresViewController:self];
+    [user goToStrainsViewController:self];
 }
 -(IBAction)newsFeedButtonPressed:(UIButton*)btn {
     [user goToNewsFeedViewController:self];
@@ -299,10 +296,12 @@
         case 10:
             //******************** Initialize *************************//
             _filteredObjectsArray = [[objectsArrayClass alloc] init];
+            objectsArray = [[objectsArrayClass alloc] init];
 
             //******************** Load objects *************************//
-            [self loadstrains];
-            [self loadStores];
+            [self newLoadStores];
+//            [self loadstrains];
+//            [self loadStores];
             
             break;
         case 1:
@@ -318,7 +317,6 @@
                 _filteredObjectsArray = [[objectsArrayClass alloc] init];
                 
                 //******************** Load distance from user to stores *************************//
-                [self loadDistancesFromUserToStores];
                 
                 //******************** Sort *************************//
                 [_filteredObjectsArray.storeObjectArray sortUsingDescriptors:@[[NSSortDescriptor sortDescriptorWithKey:@"distanceValue" ascending:YES selector:@selector(compare:)]]];
@@ -415,206 +413,373 @@
     [super viewDidAppear:animated];
     [self updateLayoutForOrientation:[UIApplication sharedApplication].statusBarOrientation];
     [self loadExtView];
-    if (objectsArray.filterSelected == 0) {
-        [user gotoMapViewViewController:self];
-    }
+//    if (objectsArray.filterSelected == 0) {
+//        [user gotoMapViewViewController:self];
+//    }
 }
 
-
-
-//******************** Load strain objects *************************//
--(void) loadstrains{
-    
-    //******************** Initialize *************************//
-    objectsArray.strainObjectArray = [[NSMutableArray alloc] init];
-    _filteredObjectsArray = [[objectsArrayClass alloc] init];
-    
-    
-    //******************** Firebase get all strain keys *************************//
-    [firebaseRef.strainsRef observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
-        _strainObjectDictionary = snapshot.value; //Creates a dictionary of of the JSON node strains
-        NSArray *keys = [_strainObjectDictionary allKeys]; //Creates an array with only the strain key uID
-        
-        for(int i=0; i<keys.count ; i++){
-            NSString *key = keys[i];
-            NSDictionary *strainDict = [_strainObjectDictionary valueForKey:key];
-            NSDictionary *highDict = [strainDict valueForKey:@"highType"];
-            NSMutableArray *imagesArray = [[NSMutableArray alloc] init];
-            
-            //******************** Create image array for all images to one strain *************************//
-            for (NSInteger j = 0; j < [[strainDict valueForKey:@"images"] count]; j++) {
-                imageClass *image = [[imageClass alloc] init];
-                image.imageURL = [[[strainDict valueForKey:@"images"] objectAtIndex:j] valueForKey:@"imageURL"];
-                
-                image.imageThumbsUp = [NSMutableArray arrayWithArray:[[[[strainDict valueForKey:@"images"] objectAtIndex:j] valueForKey:@"thumbsUp"] allKeys]];
-                image.imageThumbsDown = [NSMutableArray arrayWithArray:[[[[strainDict valueForKey:@"images"] objectAtIndex:j] valueForKey:@"thumbsDown"] allKeys]];
-                
-                image.voteScore = image.imageThumbsUp.count - image.imageThumbsDown.count;
-                image.firebaseIndex = j;
-            
-                [imagesArray addObject:image];
-            }
-            
-            //******************** Sort images based on votes *************************//
-            [imagesArray sortUsingDescriptors:@[[NSSortDescriptor sortDescriptorWithKey:@"voteScore" ascending:NO selector:@selector(compare:)]]];
-
-
-            
-            NSArray *availableAtArray = [[strainDict valueForKey:@"availableAt"] allKeys];
-            
-            NSArray *ratingsArray = [[strainDict valueForKey:@"ratingCount"] allValues];
-            float ratingScore = 0.0;
-            for (int i =0; i < ratingsArray.count; i++) {
-                ratingScore += [[ratingsArray objectAtIndex:i] floatValue];
-            }
-            ratingScore = ratingScore / (float)ratingsArray.count;
-
-            
-            //********* you have to delcare a new object instance to load table cells!!!!!!!!!!!!!!!! ***********//
-            strainClass *strainLoop = [[strainClass alloc] init];
-            [strainLoop setStrainObject:key
-                         fromDictionary:strainDict
-                               highType:highDict
-                                 images:imagesArray
-                            availableAt:availableAtArray
-                            ratingCount:ratingsArray.count
-                            ratingScore:ratingScore];
-            
-            dispatch_async(dispatch_get_global_queue(0,0), ^{
-                imageClass *tempImage = [[imageClass alloc] init];
-                tempImage = [strainLoop.imagesArray objectAtIndex:0];
-
-                NSInteger length = [tempImage.imageURL length];
-                NSString *smallImageURL = [tempImage.imageURL substringWithRange:NSMakeRange(0, length-4)];
-                smallImageURL = [smallImageURL stringByAppendingString:@"m.jpg"];
-
-                tempImage.data = [[NSData alloc] initWithContentsOfURL: [NSURL URLWithString:smallImageURL]];
-                if( tempImage.data == nil ){
-                    NSLog(@"image is nil");
-                    return;
-                }
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    [self.collectionView reloadData];
-                });
-            });
-            
-            [objectsArray.strainObjectArray addObject:strainLoop];
-            [_filteredObjectsArray.strainObjectArray addObject:strainLoop];
-        }
-    }];
-}
-
-
-
-//******************** Get distance from user to stores *************************//
--(void) loadDistancesFromUserToStores{
-    NSLog(@"2 count is %lu", objectsArray.storeObjectArray.count);
-    for (int i = 0; i < objectsArray.storeObjectArray.count; i++) {
-        storeClass *storeloop = [objectsArray.storeObjectArray objectAtIndex:i];
-    
-        NSString *geocodingBaseURL = @"https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins=";
-        NSString *url = [NSString stringWithFormat:@"%@%f,%f&destinations=%@,%@&key=AIzaSyAsZ171sgZHuTcapToLRQ5-W9dl_WRLOh4", geocodingBaseURL, user.latitude,user.longitude,storeloop.latitude,storeloop.longitude];
-        url = [url stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-        NSURL *queryURL = [NSURL URLWithString:url];
-        NSData *data = [NSData dataWithContentsOfURL:queryURL];
-        
-        NSError *error;
-        NSDictionary *json = [NSJSONSerialization
-                              JSONObjectWithData:data
-                              options:kNilOptions
-                              error:&error];
-        if (user.latitude != 0.00){
-            NSArray *rowsArray = [json objectForKey:@"rows"];
-            for (NSDictionary *alert in rowsArray ){
-                NSArray *elementsArray = [alert objectForKey:@"elements"];
-                for (NSDictionary *alert in elementsArray ){
-                    NSString* description = [[alert  valueForKey:@"distance"] valueForKey:@"text"];
-                    NSString* value = [[alert  valueForKey:@"distance"] valueForKey:@"value"];
-                    storeloop.distanceToMe = description;
-                    storeloop.distanceValue = value;
-                }
-            }
-        }
-    }
-
-    _filteredObjectsArray = [[objectsArrayClass alloc] init];
-    for (int i = 0; i <objectsArray.storeObjectArray.count; i++) {
-        [_filteredObjectsArray.storeObjectArray addObject:[objectsArray.storeObjectArray objectAtIndex:i]];
-    }
-    
-}
-
-
-//******************** Load store objects *************************//
-- (void) loadStores {
-    
-    //******************** Initialize *************************//
+//******************** NEW Load store objects *************************//
+//******************** NEW Load store objects *************************//
+//******************** NEW Load store objects *************************//
+//******************** NEW Load store objects *************************//
+- (void) newLoadStores {
+    objectsArray.strainOrStore = 1;
+    _storeKeys = [[NSArray alloc] init];
+    _imagesArray = [[NSMutableArray alloc] init];
     objectsArray.storeObjectArray = [[NSMutableArray alloc] init];
-    _filteredObjectsArray = [[objectsArrayClass alloc] init];
 
-    
+
+    [self getStoreKeys];
+}
+
+- (void) getStoreKeys{
     //******************** Firebase get all store keys *************************//
-    [firebaseRef.storesRef observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
-        _storeObjectDictionary = snapshot.value;
-        NSArray *keys = [_storeObjectDictionary allKeys];
+    [[firebaseRef.ref child:@"storeKeys"] observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
+        if ([NSNull null] != snapshot.value){                                   //check snapshot is null
+            _storeKeys = [snapshot.value allKeys];
+            [self getStoreInformation];
+        }
+    }];
+}
+
+- (void) getStoreInformation{
+    /* need to change from count to 20 items per page*/
+    for (int i = 0; i < _storeKeys.count; i++){
+
+        storeClass *myStore = [[storeClass alloc] init];
+        [objectsArray.storeObjectArray addObject:myStore];
+
+        myStore = [objectsArray.storeObjectArray objectAtIndex:i];
+        myStore.storeKey = [_storeKeys objectAtIndex:i];
+        [objectsArray.storeObjectArray replaceObjectAtIndex:i withObject:myStore];
+
+        [self sortStoresByDistances];
+        [self getStoreLocations: i];
+        [self getImagesForNearestTwentyStores: i];
+        [self getDownVotes:i];
+        [self getUpVotes:i];
+        [self sortStoreImagesByVotes: i];
+        [self getStoreName: i];
+        [self getStoreURL: i];
+        [self getPhoneNumber: i];
+        [self getGooglePlaceID: i];
+        [self getRatingScore: i];
+        [self getTotalCount: i];
+        [self getMontlyCount: i];
+        [self getDailyCount: i];
+    }
+}
+
+- (void) getStoreLocations:(NSInteger) i{
+    storeClass *myStore = [[storeClass alloc] init];
+    myStore = [objectsArray.storeObjectArray objectAtIndex:i];
+
+    [[[firebaseRef.ref child:@"location"] child:myStore.storeKey] observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
+        if ([NSNull null] != snapshot.value){                                   //check snapshot is null
+
+        myStore.latitude = [snapshot.value valueForKey:@"latitude"];
+        myStore.longitude = [snapshot.value valueForKey:@"longitude"];
+        myStore.address = [snapshot.value valueForKey:@"address"];
+        myStore.city = [snapshot.value valueForKey:@"city"];
+        myStore.county = [snapshot.value valueForKey:@"county"];
+        myStore.state = [snapshot.value valueForKey:@"state"];
+        myStore.zipcode = [snapshot.value valueForKey:@"zipcode"];
         
-        for(int i=0; i<keys.count ; i++){
-            NSString *key = keys[i];
-            NSDictionary *storeDict = [_storeObjectDictionary valueForKey:key];
-            NSMutableArray *imagesArray = [[NSMutableArray alloc] init];
-            
-            //******************** Create image array for all images to one strain *************************//
-            for (NSInteger j = 0; j < [[storeDict valueForKey:@"images"] count]; j++) {
-                imageClass *image = [[imageClass alloc] init];
-                image.imageURL = [[[storeDict valueForKey:@"images"] objectAtIndex:j] valueForKey:@"imageURL"];
+        NSLog(@"object location is %@,%@", myStore.latitude, myStore.longitude);
+        
+        [objectsArray.storeObjectArray replaceObjectAtIndex:i withObject:myStore];
+            [self currentDistanceToStores: i];
+        }
+    }];
+}
+
+-(void) currentDistanceToStores:(NSInteger) i{
+    storeClass *myStore = [[storeClass alloc] init];
+    myStore = [objectsArray.storeObjectArray objectAtIndex:i];
+    
+
+    NSString *geocodingBaseURL = @"https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins=";
+    NSString *url = [NSString stringWithFormat:@"%@%f,%f&destinations=%@,%@&key=AIzaSyAsZ171sgZHuTcapToLRQ5-W9dl_WRLOh4", geocodingBaseURL, user.latitude,user.longitude,myStore.latitude,myStore.longitude];
+
+    url = [url stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    NSURL *queryURL = [NSURL URLWithString:url];
+    NSData *data = [NSData dataWithContentsOfURL:queryURL];
+    
+    NSError *error;
+    NSDictionary *json = [NSJSONSerialization
+                          JSONObjectWithData:data
+                          options:kNilOptions
+                          error:&error];
+    if (user.latitude != 0.00){
+        NSArray *rowsArray = [json objectForKey:@"rows"];
+        for (NSDictionary *alert in rowsArray ){
+            NSArray *elementsArray = [alert objectForKey:@"elements"];
+            for (NSDictionary *alert in elementsArray ){
+                NSString* description = [[alert  valueForKey:@"distance"] valueForKey:@"text"];
+                NSString* value = [[alert  valueForKey:@"distance"] valueForKey:@"value"];
+                myStore.distanceToMe = description;
+                myStore.distanceValue = value;
                 
-                image.imageThumbsUp = [NSMutableArray arrayWithArray:[[[[storeDict valueForKey:@"images"] objectAtIndex:j] valueForKey:@"thumbsUp"] allKeys]];
-                image.imageThumbsDown = [NSMutableArray arrayWithArray:[[[[storeDict valueForKey:@"images"] objectAtIndex:j] valueForKey:@"thumbsDown"] allKeys]];
-                
-                image.voteScore = image.imageThumbsUp.count - image.imageThumbsDown.count;
-                image.firebaseIndex = j;
-                
-                [imagesArray addObject:image];
+                [objectsArray.storeObjectArray replaceObjectAtIndex:i withObject:myStore];
             }
-            
-            //******************** Sort images by votes *************************//
-            [imagesArray sortUsingDescriptors:@[[NSSortDescriptor sortDescriptorWithKey:@"voteScore" ascending:NO selector:@selector(compare:)]]];
-            
-            //********* you have to delcare a new object instance to load table cells!!!!!!!!!!!!!!!! ***********//
-            storeClass *storeloop = [[storeClass alloc] init];
-            [storeloop setStoreObject:key
-                       fromDictionary:storeDict
-                               images:imagesArray];
-            
-            dispatch_async(dispatch_get_global_queue(0,0), ^{
-                imageClass *tempImage = [[imageClass alloc] init];
-                tempImage = [storeloop.imagesArray objectAtIndex:0];
+        }
+    }
+}
 
-                //******************** Get medium image URL*************************//
-                NSInteger length = [tempImage.imageURL length];
-                NSString *smallImageURL = [tempImage.imageURL substringWithRange:NSMakeRange(0, length-4)];
-                smallImageURL = [smallImageURL stringByAppendingString:@"m.jpg"];
-                UIImage *image = [UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:smallImageURL]]];
-                tempImage.data = UIImagePNGRepresentation(image);
+- (void) sortStoresByDistances{
+    [objectsArray.storeObjectArray sortUsingDescriptors:@[[NSSortDescriptor sortDescriptorWithKey:@"distanceValue" ascending:YES selector:@selector(compare:)]]];
+}
 
+- (void) getImagesForNearestTwentyStores:(NSInteger) i {
+    storeClass *myStore = [[storeClass alloc] init];
+    myStore = [objectsArray.storeObjectArray objectAtIndex:i];
+    
+
+        [[[[firebaseRef.ref child:@"images"] child:@"stores"] child:myStore.storeKey] observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
+            NSArray *imageKeys = [[NSArray alloc] init];
+            if ([NSNull null] != snapshot.value){                                   //check snapshot is null
+                NSLog(@"snapshot is %@", snapshot.value);
+
+                imageKeys = [snapshot.value allKeys];
                 
-                if( tempImage.data == nil ){
-                    NSLog(@"image is nil");
-                    return;
+                for(id key in imageKeys){
+                    _image = [[imageClass alloc] init];
+                    _image.imageKey = key;
+                    _image.imageURL = [snapshot.value valueForKey:_image.imageKey];
+                    [myStore.imagesArray addObject:_image];
                 }
+                
+                NSLog(@"object image count is %lu", (unsigned long)[myStore.imagesArray count]);
+
+                [objectsArray.storeObjectArray replaceObjectAtIndex:i withObject:myStore];
+                
                 dispatch_async(dispatch_get_main_queue(), ^{
                     [self.collectionView reloadData];
                 });
-            });
-            [objectsArray.storeObjectArray addObject:storeloop];
-            [_filteredObjectsArray.storeObjectArray addObject:storeloop];
+
+//                [self loadImageCells: i];
+            }
+        }];
+}
+
+- (void) getDownVotes:(NSInteger) i {
+    storeClass *myStore = [[storeClass alloc] init];
+    myStore = [objectsArray.storeObjectArray objectAtIndex:i];
+
+        for (int j = 0; j < myStore.imagesArray.count; j++){
+            _image = [[imageClass alloc] init];
+            _image = [myStore.imagesArray objectAtIndex:j];
+
+            [[[firebaseRef.ref child:@"thumbsDown"] child:_image.imageKey] observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
+                if ([NSNull null] != snapshot.value){                                   //check snapshot is null
+
+//                _image.imageThumbsDown = [NSMutableArray arrayWithArray:[snapshot.value allKeys]];
+                
+                [myStore.imagesArray addObject:_image];
+                [objectsArray.storeObjectArray replaceObjectAtIndex:i withObject:myStore];
+                }
+            }];
         }
-        [_locationManager stopUpdatingLocation];
-    }];
+}
+
+- (void) getUpVotes:(NSInteger) i {
+    storeClass *myStore = [[storeClass alloc] init];
+    myStore = [objectsArray.storeObjectArray objectAtIndex:i];
+
+        for (int j = 0; j < myStore.imagesArray.count; j++){
+            _image = [[imageClass alloc] init];
+            _image = [myStore.imagesArray objectAtIndex:j];
+
+            [[[firebaseRef.ref child:@"thumbsUp"] child:_image.imageKey] observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
+                if ([NSNull null] != snapshot.value){                                   //check snapshot is null
+
+//                _image.imageThumbsUp = [NSMutableArray arrayWithArray:[snapshot.value allKeys]];
+                _image.voteScore = _image.imageThumbsUp.count - _image.imageThumbsDown.count;
+                
+                [myStore.imagesArray addObject:_image];
+                [objectsArray.storeObjectArray replaceObjectAtIndex:i withObject:myStore];
+                }
+            }];
+    }
+}
+
+- (void) sortStoreImagesByVotes:(NSInteger) i{
+    storeClass *myStore = [[storeClass alloc] init];
+    myStore = [objectsArray.storeObjectArray objectAtIndex:i];
+
+    [myStore.imagesArray sortUsingDescriptors:@[[NSSortDescriptor sortDescriptorWithKey:@"voteScore" ascending:NO selector:@selector(compare:)]]];
+}
+
+- (void) getStoreName:(NSInteger) i {
+    storeClass *myStore = [[storeClass alloc] init];
+    myStore = [objectsArray.storeObjectArray objectAtIndex:i];
+    
+        [[[firebaseRef.ref child:@"storeNames"] child:myStore.storeKey] observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
+            if ([NSNull null] != snapshot.value){                                   //check snapshot is null
+
+            myStore.storeName = [snapshot.value valueForKey:@"name"];
+            
+//            NSLog(@"object name is %@", myStore.storeName);
+
+            [objectsArray.storeObjectArray replaceObjectAtIndex:i withObject:myStore];
+            }
+        }];
+}
+- (void) getStoreURL:(NSInteger) i {
+    storeClass *myStore = [[storeClass alloc] init];
+    myStore = [objectsArray.storeObjectArray objectAtIndex:i];
+
+        [[[firebaseRef.ref child:@"storeURL"] child:myStore.storeKey] observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
+            if ([NSNull null] != snapshot.value){                                   //check snapshot is null
+
+            myStore.url = [snapshot.value valueForKey:@"url"];
+            
+            NSLog(@"object url is %@", myStore.url);
+
+            [objectsArray.storeObjectArray replaceObjectAtIndex:i withObject:myStore];
+            }
+        }];
+}
+
+- (void) getPhoneNumber:(NSInteger) i {
+    storeClass *myStore = [[storeClass alloc] init];
+    myStore = [objectsArray.storeObjectArray objectAtIndex:i];
+
+        [[[firebaseRef.ref child:@"phoneNumbers"] child:myStore.storeKey] observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
+            if ([NSNull null] != snapshot.value){                                   //check snapshot is null
+
+            myStore.phone_number = [snapshot.value valueForKey:@"phoneNumber"];
+
+            NSLog(@"object phone number is %@", myStore.phone_number);
+
+            [objectsArray.storeObjectArray replaceObjectAtIndex:i withObject:myStore];
+            }
+        }];
+}
+
+- (void) getGooglePlaceID:(NSInteger) i {
+    storeClass *myStore = [[storeClass alloc] init];
+    myStore = [objectsArray.storeObjectArray objectAtIndex:i];
+    
+        [[[firebaseRef.ref child:@"googlePlaceID"] child:myStore.storeKey] observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
+            if ([NSNull null] != snapshot.value){                                   //check snapshot is null
+
+            myStore.googlePlaceID = [snapshot.value valueForKey:@"googlePlaceID"];
+
+            NSLog(@"object google place ID is %@", myStore.googlePlaceID);
+            
+            [objectsArray.storeObjectArray replaceObjectAtIndex:i withObject:myStore];
+            }
+        }];
+}
+
+- (void) getRatingScore:(NSInteger) i {
+    storeClass *myStore = [[storeClass alloc] init];
+    myStore = [objectsArray.storeObjectArray objectAtIndex:i];
+    
+        [[[[firebaseRef.ref child:@"starRating"] child:@"stores"] child:myStore.storeKey] observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
+            if ([NSNull null] != snapshot.value){                                   //check snapshot is null
+                myStore.ratingCount = [snapshot.value allKeys].count;
+                NSArray *scores = [[NSArray alloc] init];
+                scores = [snapshot.value allValues];
+                
+                for (int j = 0; j< scores.count; j++){
+                    myStore.ratingScore = myStore.ratingScore + [[scores objectAtIndex:j] floatValue];
+                }
+                
+                NSLog(@"object rating score is %f", myStore.ratingScore);
+
+                [objectsArray.storeObjectArray replaceObjectAtIndex:i withObject:myStore];
+            }
+        }];
+}
+
+- (void) getTotalCount:(NSInteger) i {
+    storeClass *myStore = [[storeClass alloc] init];
+    myStore = [objectsArray.storeObjectArray objectAtIndex:i];
+
+        [[[[firebaseRef.ref child:@"metrics"] child:@"stores"] child:myStore.storeKey] observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
+            if ([NSNull null] != snapshot.value){                                   //check snapshot is null
+
+                myStore.totalViews = [[snapshot.value valueForKey:@"totalViews"] integerValue];
+                
+                NSLog(@"object total views is %ld", (long)myStore.totalViews);
+
+                [objectsArray.storeObjectArray replaceObjectAtIndex:i withObject:myStore];
+            }
+        }];
+}
+- (void) getMontlyCount:(NSInteger) i {
+    storeClass *myStore = [[storeClass alloc] init];
+    myStore = [objectsArray.storeObjectArray objectAtIndex:i];
+
+        [[[[[firebaseRef.ref child:@"metrics"] child:@"stores"] child:myStore.storeKey] child:@"monthlyViews"] observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
+            if ([NSNull null] != snapshot.value){                                   //check snapshot is null
+
+            myStore.monthlyViews = [[snapshot.value valueForKey:@"February 2017"]integerValue];
+            
+            NSLog(@"object montly views is %ld", (long)myStore.monthlyViews);
+
+            [objectsArray.storeObjectArray replaceObjectAtIndex:i withObject:myStore];
+            }
+        }];
+}
+- (void) getDailyCount:(NSInteger) i {
+    storeClass *myStore = [[storeClass alloc] init];
+    myStore = [objectsArray.storeObjectArray objectAtIndex:i];
+
+        [[[[[firebaseRef.ref child:@"metrics"] child:@"stores"] child:myStore.storeKey] child:@"dailyViews"] observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
+            if ([NSNull null] != snapshot.value){                                   //check snapshot is null
+
+            myStore.dailyViews = [[snapshot.value valueForKey:@"01-Jan-2017"]integerValue];
+            
+            NSLog(@"object daily views is %ld", (long)myStore.dailyViews);
+
+            [objectsArray.storeObjectArray replaceObjectAtIndex:i withObject:myStore];
+            }
+        }];
 }
 
 
 
+- (void) loadImageCells:(NSInteger) i {
+//    dispatch_async(dispatch_get_global_queue(0,0), ^{
+//        storeClass *myStore = [[storeClass alloc] init];
+//        myStore = [objectsArray.storeObjectArray objectAtIndex:i];
+//
+//        FIRStorage *storage = [FIRStorage storage];
+//        FIRStorageReference *storageRef = [storage reference];
+//
+//        __block imageClass *tempImage = [[imageClass alloc] init];
+//
+//        if (myStore.imagesArray.count > 0) {
+//            tempImage = [myStore.imagesArray objectAtIndex:0];
+//        }
+//
+//        FIRStorageReference *spaceRef = [storageRef child:tempImage.imageURL];
+//
+//        [spaceRef dataWithMaxSize:1 * 1024 * 1024 completion:^(NSData *data, NSError *error){
+//            if (error != nil) {
+//                NSLog(@"Uh-oh, an error occurred! %@", error);
+//            }
+//            else {
+//                tempImage.data = data;
+//                [myStore.imagesArray replaceObjectAtIndex:0 withObject:tempImage];
+//                
+//                [objectsArray.storeObjectArray replaceObjectAtIndex:i withObject:myStore];
+//            }
+//        }];
+//
+//        if( tempImage.data == nil ){
+//            NSLog(@"image is nil");
+//            return;
+//        }
+//        
+//        dispatch_async(dispatch_get_main_queue(), ^{
+//            [self.collectionView reloadData];
+//        });
+//    });
+}
 
 - (void)willAnimateRotationToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration {
   [super willAnimateRotationToInterfaceOrientation:toInterfaceOrientation duration:duration];
@@ -629,10 +794,7 @@
 #pragma mark - UICollectionViewDataSource
 
 - (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
-    if (objectsArray.strainOrStore == 1)
-        return [_filteredObjectsArray.storeObjectArray count];
-    else
-        return [_filteredObjectsArray.strainObjectArray count];
+        return objectsArray.storeObjectArray.count;
 }
 
 - (NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView {
@@ -644,27 +806,34 @@
   (CHTCollectionViewWaterfallCell *)[collectionView dequeueReusableCellWithReuseIdentifier:CELL_IDENTIFIER forIndexPath:indexPath];
     
     if (objectsArray.strainOrStore == stores){
-        if ([_filteredObjectsArray.storeObjectArray count] > 0) {
-            for(int i=0; i<[_filteredObjectsArray.storeObjectArray count]; i++){
-//                CAGradientLayer *gradientMask = [CAGradientLayer layer];
-//                gradientMask.frame = cell.imageView.bounds;
-//                gradientMask.colors = @[(id)[UIColor clearColor].CGColor,
-//                                        (id)[UIColor colorWithRed:18.0/255.0 green:24.0/255.0 blue:23.0/255.0 alpha:1.0].CGColor];
-//                gradientMask.startPoint = CGPointMake(0.0, 0.5);   // start at left middle
-//                gradientMask.endPoint = CGPointMake(1.0, 0.5);     // end at right middle
-
-                
-                
-                
+        if ([objectsArray.storeObjectArray count] > 0) {
                 storeClass *tempStore = [[storeClass alloc] init];
-                tempStore = [_filteredObjectsArray.storeObjectArray objectAtIndex:indexPath.row];
                 
-                imageClass *image = [[imageClass alloc] init];
-                image = [tempStore.imagesArray objectAtIndex:0];
+                tempStore = [objectsArray.storeObjectArray objectAtIndex:indexPath.row];
+                
+                if ([tempStore.imagesArray count] > 0) {
+                    
+                    FIRStorage *storage = [FIRStorage storage];
+                    FIRStorageReference *storageRef = [storage reference];
+                    
+                    imageClass *image = [[imageClass alloc] init];
+                    image = [tempStore.imagesArray objectAtIndex:0];
 
-                cell.imageView.image = [UIImage imageWithData:image.data];
+                    
+                    NSLog(@"store key is %@", tempStore.storeKey);
+                    NSLog(@"image link is %@", image.imageURL);
+                    FIRStorageReference *spaceRef = [[[storageRef child:@"stores"] child:tempStore.storeKey] child:image.imageURL];
+                    NSLog(@"ref is %@", spaceRef);
+                    
+                    UIImage *placeHolder = [[UIImage alloc] init];
+                    [cell.imageView sd_setImageWithStorageReference:spaceRef placeholderImage:placeHolder];
+                    
+                    
+//                    cell.imageView.image = [UIImage imageWithData:image.data];
+                }
+                
                 cell.imageView.backgroundColor = [UIColor colorWithRed:18.0/255.0 green:24.0/255.0 blue:23.0/255.0 alpha:1.0];
-//                [cell.imageView.layer.mask addSublayer:gradientMask];
+                //                [cell.imageView.layer.mask addSublayer:gradientMask];
                 cell.label.text = tempStore.storeName;
                 NSString *cityState = [NSString stringWithFormat:@"%@, %@", tempStore.city, tempStore.state];
                 cell.locationLabel.text = cityState;
@@ -684,28 +853,7 @@
                                          (id)[UIColor whiteColor].CGColor];
                 gradientMask2.locations = @[@0.0, @0.95, @0.95, @0.97];
                 [cell.layer addSublayer:gradientMask2];
-            }
-        }
-    }
-    else if (objectsArray.strainOrStore == strains){
-        if ([_filteredObjectsArray.strainObjectArray count] > 0) {
-            for(int i=0; i<[_filteredObjectsArray.strainObjectArray count]; i++){
-                strainClass *tempStrain = [[strainClass alloc] init];
-                tempStrain = [_filteredObjectsArray.strainObjectArray objectAtIndex:indexPath.row];
-                
-                imageClass *image = [[imageClass alloc] init];
-                image = [tempStrain.imagesArray objectAtIndex:0];
-
-                cell.imageView.image = [UIImage imageWithData:image.data];
-                cell.label.text = tempStrain.strainName;
-                
-                if ([tempStrain.species isEqual:@"stevia"]) {
-                    cell.steviaImageView.image = [UIImage imageNamed:@"stevia"];
-                }
-                else if ([tempStrain.species isEqual:@"indica"]){
-                    cell.indicaImageView.image = [UIImage imageNamed:@"indica"];
-                }
-            }
+            
         }
     }
     return cell;
@@ -713,14 +861,15 @@
 
 - (void) collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath{
     if (objectsArray.strainOrStore == stores){
-        store = [_filteredObjectsArray.storeObjectArray objectAtIndex:indexPath.row];
+        store = [objectsArray.storeObjectArray objectAtIndex:indexPath.row];
         objectsArray.filterSelected = 10;
-        [user goToStoreProfileViewController:self];
-    }
-    else if (objectsArray.strainOrStore == strains){
-        strain = [_filteredObjectsArray.strainObjectArray objectAtIndex:indexPath.row];
-        objectsArray.filterSelected = 10;
-        [user goToStrainProfileViewController:self];
+        
+        UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+        StoreProfileViewController *vc = [sb instantiateViewControllerWithIdentifier:@"Store Profile VC SB ID"];
+        vc.passedString = store.storeName;
+        [self.navigationController pushViewController:vc animated:false];
+
+//        [user goToStoreProfileViewController:self];
     }
 }
 

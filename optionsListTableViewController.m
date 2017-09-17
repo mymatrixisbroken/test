@@ -97,6 +97,9 @@
 //            [user goToStrainsViewController:self];
             break;
         case 3:
+            [self.navigationController pushViewController:vc2 animated:false];
+            break;
+        case 4:
             [user goToSearchUsersViewController:self];
             break;
         default:

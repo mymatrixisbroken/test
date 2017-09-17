@@ -22,6 +22,7 @@ storeClass *store;
 @synthesize longitude;
 @synthesize distanceToMe;
 @synthesize distanceValue;
+@synthesize storeHours;
 @synthesize url;
 @synthesize phone_number;
 @synthesize googlePlaceID;

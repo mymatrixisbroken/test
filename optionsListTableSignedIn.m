@@ -66,7 +66,7 @@
 
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
-    cell.selectionStyle = UITableViewCellSelectionStyleGray;
+    cell.selectionStyle = UITableViewCellSelectionStyleNone;
     //    CAGradientLayer *gradientLayer = [CAGradientLayer layer];
     //    gradientLayer.frame = cell.frame;
     //    gradientLayer.colors = @[(id)[UIColor clearColor].CGColor,
@@ -88,7 +88,9 @@
     UIViewController *vc2 = [sb instantiateViewControllerWithIdentifier:@"Current User Profile VC SB ID"];
     vc2.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
 
-    
+    UIViewController *vc3 = [sb instantiateViewControllerWithIdentifier:@"Add Store VC SB ID"];
+    vc.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
+
     switch (indexPath.row) {
         case 0:
             [self.navigationController pushViewController:vc2 animated:false];
@@ -104,6 +106,9 @@
 //            [user goToStrainsViewController:self];
 //            [user gotoMapViewViewController:self];
         case 3:
+            [self.navigationController pushViewController:vc3 animated:false];
+            break;
+        case 4:
             [user goToSearchUsersViewController:self];
             break;
         default:

@@ -17,6 +17,8 @@
     [super viewDidLoad];
     [self loadImageIntoView];
     
+    [self.navigationController setNavigationBarHidden:YES animated:YES];
+        
     UISwipeGestureRecognizer *swipeLeft = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(screenSwipedLeft)];
     swipeLeft.numberOfTouchesRequired = 1;
     swipeLeft.direction=UISwipeGestureRecognizerDirectionLeft;
@@ -26,31 +28,56 @@
     swipeRight.numberOfTouchesRequired = 1;
     swipeRight.direction=UISwipeGestureRecognizerDirectionRight;
     [self.view addGestureRecognizer:swipeRight];
-    
+
+    UISwipeGestureRecognizer *swipeUp = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(screenSwipedUp)];
+    swipeUp.numberOfTouchesRequired = 1;
+    swipeUp.direction=UISwipeGestureRecognizerDirectionUp;
+    [self.view addGestureRecognizer:swipeUp];
+
+    UISwipeGestureRecognizer *swipeDown = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(screenSwipedDown)];
+    swipeDown.numberOfTouchesRequired = 1;
+    swipeDown.direction=UISwipeGestureRecognizerDirectionDown;
+    [self.view addGestureRecognizer:swipeDown];
+
     
 
 }
 
 -(void) loadImageIntoView{
-    if (objectsArray.strainOrStore == 1){
+    if ([_passedString rangeOfString:@"StoreProfile"].location != NSNotFound) {
         imageClass *image = [[imageClass alloc] init];
-        image = [store.imagesArray objectAtIndex:store.imageArrayIndex];
+        NSLog(@"store images array count %lu", store.imagesArray.count);
+        image = [store.imagesArray objectAtIndex:0];
+        //    _store_image_view.image = [UIImage imageWithData: image.data];
         
-        NSInteger thumbsDownScore = image.imageThumbsDown.count;
-        NSString *errorTag2 = [NSString stringWithFormat: @"%ld",thumbsDownScore];
-        self.voteCountLabel.text = errorTag2;
-      
-        NSInteger thumbsUpScore = image.imageThumbsUp.count;
-        NSString *errorTag1 = [NSString stringWithFormat: @"%ld",thumbsUpScore];
-        self.voteThumbsUpLabel.text = errorTag1;
+        if ([store.imagesArray count] > 0) {
+            FIRStorage *storage = [FIRStorage storage];
+            FIRStorageReference *storageRef = [storage reference];
+            
+            imageClass *image = [[imageClass alloc] init];
+            image = [store.imagesArray objectAtIndex:0];
+            
+            NSLog(@"image link is %@", image.imageURL);
+            FIRStorageReference *spaceRef = [[[storageRef child:@"stores"] child:store.storeKey] child:image.imageURL];
+            NSLog(@"ref is %@", spaceRef);
+            
+            UIImage *placeHolder = [[UIImage alloc] init];
+            [_imageView sd_setImageWithStorageReference:spaceRef placeholderImage:placeHolder];
+        }
         
-        _imageView.image = [UIImage imageWithData: image.data];
-
-        NSString *errorTag = [NSString stringWithFormat: @"%ld / ",store.imageArrayIndex+1];
-        NSString *errorString = [NSString stringWithFormat: @"%ld",store.imagesArray.count];
-        NSString *errorMessage = [errorTag stringByAppendingString:errorString];
-        
-        self.indexLabel.text = errorMessage;
+//        NSInteger thumbsDownScore = image.imageThumbsDown.count;
+//        NSString *errorTag2 = [NSString stringWithFormat: @"%ld",thumbsDownScore];
+//        self.voteCountLabel.text = errorTag2;
+//      
+//        NSInteger thumbsUpScore = image.imageThumbsUp.count;
+//        NSString *errorTag1 = [NSString stringWithFormat: @"%ld",thumbsUpScore];
+//        self.voteThumbsUpLabel.text = errorTag1;
+//        
+//        NSString *errorTag = [NSString stringWithFormat: @"%ld / ",store.imageArrayIndex+1];
+//        NSString *errorString = [NSString stringWithFormat: @"%ld",store.imagesArray.count];
+//        NSString *errorMessage = [errorTag stringByAppendingString:errorString];
+//        
+//        self.indexLabel.text = errorMessage;
         
     }
     else{
@@ -75,8 +102,15 @@
     }
 }
 
+-(void) screenSwipedUp{
+    [self.navigationController popToRootViewControllerAnimated:YES];
+}
+-(void) screenSwipedDown{
+    [self.navigationController popToRootViewControllerAnimated:YES];
+}
+
 -(void) screenSwipedLeft{
-    if (objectsArray.strainOrStore == 1){
+    if ([_passedString rangeOfString:@"StoreProfile"].location != NSNotFound) {
         if(store.imageArrayIndex < (store.imagesArray.count -1)){
         store.imageArrayIndex+= 1;
         [self loadImageIntoView];
@@ -91,7 +125,7 @@
 }
 
 -(void) screenSwipedRight{
-    if (objectsArray.strainOrStore == 1){
+    if ([_passedString rangeOfString:@"StoreProfile"].location != NSNotFound) {
         if(store.imageArrayIndex > 0){
             store.imageArrayIndex-= 1;
             [self loadImageIntoView];
@@ -110,7 +144,7 @@
     if (youser.email == nil) {
         [user goToUserNotSignedInViewController:self];
     } else {
-        if (objectsArray.strainOrStore == 1){
+        if ([_passedString rangeOfString:@"StoreProfile"].location != NSNotFound) {
             imageClass *image = [[imageClass alloc] init];
             image = [store.imagesArray objectAtIndex:store.imageArrayIndex];
 
@@ -160,7 +194,7 @@
     if (youser.email == nil) {
         [user goToUserNotSignedInViewController:self];
     } else {
-        if (objectsArray.strainOrStore == 1){
+        if ([_passedString rangeOfString:@"StoreProfile"].location != NSNotFound) {
             imageClass *image = [[imageClass alloc] init];
             image = [store.imagesArray objectAtIndex:store.imageArrayIndex];
             
@@ -208,7 +242,12 @@
 }
 
 - (IBAction)touchedPopOverStrainImage:(UITapGestureRecognizer *)sender {
-    [self dismissViewControllerAnimated:YES completion:^{}];
+//    [self.navigationController popToRootViewControllerAnimated:NO];
+
+//    UIViewController *vc = [self parentViewController];
+//         UIViewController *vc = [self presentingViewController]; //ios 5 or later
+//    [self dismissViewControllerAnimated:NO completion:^{}];
+//    [vc dismissViewControllerAnimated:YES completion:^{}];
 }
 
 - (void)didReceiveMemoryWarning {

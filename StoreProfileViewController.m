@@ -16,45 +16,126 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    [self loadLabels];
-    [self loadImageView];
-    [self loadRatingScore];
-    [self loadReviewsFromFirebase];
-    [self loadStoresAllImages];
     _tabBar.delegate = self;
-    
-    
+    [self loadNavController];
+    [self addGradientLayers];
+    [self loadTabBar];
+    [self getStoreKey];
+}
+
+-(void) addGradientLayers{
+    _store_image_view.userInteractionEnabled = NO;
     CAGradientLayer *gradientMask = [CAGradientLayer layer];
     gradientMask.frame = _store_image_view.frame;
     gradientMask.colors = @[(id)[UIColor clearColor].CGColor, (id)[UIColor colorWithRed:1.0/255.0 green:1.0/255.0 blue:1.0/255.0 alpha:1.0].CGColor];
     gradientMask.startPoint = CGPointMake(0.5, 0.5);   // start at left middle
     gradientMask.endPoint = CGPointMake(0.5, 1.0);     // end at right middle
-
+    
     [_store_image_view.layer addSublayer:gradientMask];
     
-//    _distanceLabel.textColor = [UIColor colorWithRed:255.0/255.0 green:255.0/255.0 blue:255.0/255.0 alpha:1.0];
-//    _distanceLabel.font = [UIFont fontWithName:@"NEXA BOLD" size:7.0];
-//    _distanceLabel.userInteractionEnabled=NO;
-//    _distanceLabel.text = store.distanceToMe;
-//    _distanceLabel.textAlignment = NSTextAlignmentRight;
-//    
-//    _hoursLabel.textColor = [UIColor colorWithRed:254.0/255.0 green:255.0/255.0 blue:255.0/255.0 alpha:1.0];
-//    _hoursLabel.font = [UIFont fontWithName:@"NEXA BOLD" size:9.0];
-//    _hoursLabel.userInteractionEnabled=NO;
-//    _hoursLabel.text = @"10:30AM - 11:30PM";
-//    _hoursLabel.textAlignment = NSTextAlignmentRight;
-//
-//
-//    _openNowLabel.textColor = [UIColor colorWithRed:8.0/255.0 green:197.0/255.0 blue:103.0/255.0 alpha:1.0];
-//    _openNowLabel.font = [UIFont fontWithName:@"NEXA BOLD" size:7.0];
-//    _openNowLabel.userInteractionEnabled=NO;
-//    _openNowLabel.text = @"Open Now";
-//    _openNowLabel.textAlignment = NSTextAlignmentRight;
+    CAGradientLayer *gradientMask2 = [CAGradientLayer layer];
+    gradientMask2.frame = _store_image_view.frame;
+    gradientMask2.colors = @[(id)[UIColor clearColor].CGColor, (id)[UIColor colorWithRed:1.0/255.0 green:1.0/255.0 blue:1.0/255.0 alpha:1.0].CGColor];
+    gradientMask2.startPoint = CGPointMake(0.5, 0.5);   // start at left middle
+    gradientMask2.endPoint = CGPointMake(1.0, 0.5);     // end at right middle
+    
+    [_store_image_view.layer addSublayer:gradientMask2];
+}
+
+-(void) loadTabBar{
+    
+    _tabBar.barTintColor = [UIColor colorWithRed:18.0/255.0 green:24.0/255.0 blue:23.0/255.0 alpha:1.0];
+    
+    _aboutBarItem.image = [[UIImage imageNamed:@"notSelectedAboutIcon"] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal ];
+    _aboutBarItem.selectedImage = [[UIImage imageNamed:@"selectedAboutIcon"]imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
+    
+    _strainsBarItem.image = [[UIImage imageNamed:@"notSelectedStrainIcon"] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal ];
+    _strainsBarItem.selectedImage = [[UIImage imageNamed:@"selectedStrainIcon"]imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
+    
+    _reviewsBarItem.image = [[UIImage imageNamed:@"notSelectedReviewsIcon"] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
+    _reviewsBarItem.selectedImage = [[UIImage imageNamed:@"selectedReviewsIcon"]imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
+    _tabBar.selectedItem = _reviewsBarItem;
+    
+    _photosBarItem.enabled = YES;
+    _photosBarItem.image = [[UIImage imageNamed:@"notSelectedPhotosIcon"] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal ];
+    _photosBarItem.selectedImage = [[UIImage imageNamed:@"selectedPhotosIcon"]imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
+    
+    _favoriteBarItem.image = [[UIImage imageNamed:@"notSelectedFavoriteIcon"] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal ];
+    _favoriteBarItem.selectedImage = [[UIImage imageNamed:@"selectedFavoriteIcon"]imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
+}
 
 
+- (void) getStoreKey{
+    [store init];
+
+    NSLog(@"other user name is %@",_passedString);
+    store.storeName = _passedString;
+    
+    NSString *lowerString = [store.storeName lowercaseString];
+    
+    FIRDatabaseQuery *queryLowerUserName = [[[firebaseRef.ref child:@"storeNames"] queryOrderedByChild:@"lowerName"] queryEqualToValue:lowerString];
+    
+    [queryLowerUserName observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
+        if ([NSNull null] != snapshot.value){                                   //check snapshot is null
+            NSLog(@"store snapshot is %@", snapshot.value);
+            if ([[snapshot.value allKeys] count]== 1) {                         //check one email found
+                store.storeKey = [[snapshot.value allKeys] objectAtIndex:0];
+                NSLog(@"store key is %@", store.storeKey);
+                [self getStoreInformation];
+            }
+        }
+    }];
+    
+}
+
+- (void) getStoreInformation{
+    [self getStoreLocations];
+    [self getImagesStore];
+    [self getStoreName];
+    [self getStoreHours];
+    [self getStoreURL];
+    [self getPhoneNumber];
+    [self getGooglePlaceID];
+    [self getRatingScore];
+    [self getTotalCount];
+    [self getMontlyCount];
+    [self getDailyCount];
+    [self loadReviewsFromFirebase];
+//    [self loadStoresAllImages];
+}
+
+- (void) getStoreLocations{
+    NSLog(@"2 store key  is %@", store.storeKey);
+
+    [[[firebaseRef.ref child:@"location"] child:store.storeKey] observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
+        if ([NSNull null] != snapshot.value){                                   //check snapshot is null
+
+            store.latitude = [snapshot.value valueForKey:@"latitude"];
+            store.longitude = [snapshot.value valueForKey:@"longitude"];
+            store.address = [snapshot.value valueForKey:@"address"];
+            store.city = [snapshot.value valueForKey:@"city"];
+            store.county = [snapshot.value valueForKey:@"county"];
+            store.state = [snapshot.value valueForKey:@"state"];
+            store.zipcode = [snapshot.value valueForKey:@"zipcode"];
+            
+            NSLog(@"object location is %@,%@", store.latitude, store.longitude);
+            _store_address_label.text = store.address;
+            NSString *string = [[[[store.city stringByAppendingString:@", "]
+                                  stringByAppendingString:store.state]
+                                 stringByAppendingString:@" "]
+                                stringByAppendingString:store.zipcode ];
+            _store_city_label.text = string ;
+
+            [self loadMap];
+            [self currentDistanceToStores];
+        }
+    }];
+}
+
+-(void) loadMap{
     double lat = [store.latitude doubleValue];
     double lon = [store.longitude doubleValue];
-
+    
     
     GMSCameraPosition *camera = [GMSCameraPosition cameraWithLatitude:lat
                                                             longitude:lon
@@ -66,7 +147,7 @@
     mapView.layer.shadowOffset = CGSizeMake(0, 3);
     mapView.layer.shadowRadius = 3;
     mapView.layer.shadowOpacity = 0.5;
-
+    
     [_mapView addSubview: mapView];
     
     NSLog(@"store lat is %f",lat);
@@ -75,219 +156,276 @@
     
     CLLocationCoordinate2D position = CLLocationCoordinate2DMake(lat, lon);
     GMSMarker *marker = [GMSMarker markerWithPosition:position];
-//    marker.iconView.frame = CGRectMake(0, 0, 5, 5);
     marker.icon = [UIImage imageNamed:@"markerSmartObject"];
-    marker.icon = [self image:marker.icon scaledToSize:CGSizeMake(31.5f, 40.0f)];
-//    marker.infoWindowAnchor = CGPointMake(0.44f, 0.45f);
-    //        marker.title = tempStore.storeName;
     marker.map = mapView;
-    
-//    NSString *str = [NSString stringWithFormat: @"%ld", (long)i];
-//    marker.userData = str;
-    
-    
-    
-    
-    _tabBar.barTintColor = [UIColor colorWithRed:18.0/255.0 green:24.0/255.0 blue:23.0/255.0 alpha:1.0];
-//    _tabBar.translucent = NO;
-//    _aboutBarItem.title = nil;
-
-    _aboutBarItem.image = [[UIImage imageNamed:@"notSelectedAboutIcon"] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal ];
-    _aboutBarItem.selectedImage = [[UIImage imageNamed:@"selectedAboutIcon"]imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
-
-    _strainsBarItem.image = [[UIImage imageNamed:@"notSelectedStrainIcon"] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal ];
-    _strainsBarItem.selectedImage = [[UIImage imageNamed:@"selectedStrainIcon"]imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
-
-    _reviewsBarItem.image = [[UIImage imageNamed:@"notSelectedReviewsIcon"] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
-    _reviewsBarItem.selectedImage = [[UIImage imageNamed:@"selectedReviewsIcon"]imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
-    _tabBar.selectedItem = _reviewsBarItem;
-
-//    [_photosBarItem performSelectorOnMainThread:@selector(didTapPhotosBarItem) withObject:nil waitUntilDone:NO];
-    _photosBarItem.enabled = YES;
-    _photosBarItem.image = [[UIImage imageNamed:@"notSelectedPhotosIcon"] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal ];
-    _photosBarItem.selectedImage = [[UIImage imageNamed:@"selectedPhotosIcon"]imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
-
-    _favoriteBarItem.image = [[UIImage imageNamed:@"notSelectedFavoriteIcon"] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal ];
-    _favoriteBarItem.selectedImage = [[UIImage imageNamed:@"selectedFavoriteIcon"]imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
-//    _aboutBarItem.imageInsets = UIEdgeInsetsMake(6, 0, -6, 0);
-
-
-//    [_aboutBarItem setFinishedSelectedImage:[UIImage imageNamed:@"aboutSmartObject"] withFinishedUnselectedImage:[UIImage imageNamed:@"aboutSmartObject"]];
-
-//    UIColor * unselectedColor = [UIColor clearColor];
-//    // set color of unselected text
-//    [[UITabBarItem appearance] setTitleTextAttributes:[NSDictionary dictionaryWithObjectsAndKeys:unselectedColor, NSForegroundColorAttributeName, nil]
-//                                             forState:UIControlStateNormal];
-
-//    _strainsBarItem.title = nil;
-//    _reviewsBarItem.title = nil;
-//    _photosBarItem.title = nil;
-//    _favoriteBarItem.title = nil;
-    
-//    _aboutBarItem.imageInsets = UIEdgeInsetsMake(6, 0, -6, 0);
-//    _strainsBarItem.imageInsets = UIEdgeInsetsMake(6, 0, -6, 0);
-//    _reviewsBarItem.imageInsets = UIEdgeInsetsMake(6, 0, -6, 0);
-//    _photosBarItem.imageInsets = UIEdgeInsetsMake(6, 0, -6, 0);
-//    _favoriteBarItem.imageInsets = UIEdgeInsetsMake(6, 0, -6, 0);
-    
-
-    
-
-
-    
-    
-    
-//    vc.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
-    //    [viewController presentViewController:vc animated:YES completion:NULL];
-//    [_containerView :vc.view];
-
-//    UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-//    UIViewController *vc = [sb instantiateViewControllerWithIdentifier:@"reviewsSBID"];
-//   
-//    // lets add it to container view
-//    [vc willMoveToParentViewController:self];
-//    [self.view addSubview:vc.view];
-//    [self addChildViewController:vc];
-//    [vc didMoveToParentViewController:self];
-//    // keep reference of viewController which may be useful when you need to remove it from container view, lets consider you have a property name as containerViewController
-//    _containerView = viewController;
-
-    
-
-    
-    
-    
-    // Do any additional setup after loading the view, typically from a nib.
 }
 
-- (void) loadStoresAllImages {
-    dispatch_async(dispatch_get_global_queue(0,0), ^{
+-(void) currentDistanceToStores{
+    
+    NSString *geocodingBaseURL = @"https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins=";
+    NSString *url = [NSString stringWithFormat:@"%@%f,%f&destinations=%@,%@&key=AIzaSyAsZ171sgZHuTcapToLRQ5-W9dl_WRLOh4", geocodingBaseURL, user.latitude,user.longitude,store.latitude,store.longitude];
+    
+    url = [url stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    NSURL *queryURL = [NSURL URLWithString:url];
+    NSData *data = [NSData dataWithContentsOfURL:queryURL];
+    
+    NSError *error;
+    NSDictionary *json = [NSJSONSerialization
+                          JSONObjectWithData:data
+                          options:kNilOptions
+                          error:&error];
+    if (user.latitude != 0.00){
+        NSArray *rowsArray = [json objectForKey:@"rows"];
+        for (NSDictionary *alert in rowsArray ){
+            NSArray *elementsArray = [alert objectForKey:@"elements"];
+            for (NSDictionary *alert in elementsArray ){
+                NSString* description = [[alert  valueForKey:@"distance"] valueForKey:@"text"];
+                NSString* value = [[alert  valueForKey:@"distance"] valueForKey:@"value"];
+                store.distanceToMe = description;
+                store.distanceValue = value;
+                _distanceLabel.text = store.distanceToMe;
+            }
+        }
+    }
+}
+
+- (void) getImagesStore {
+    [[[[firebaseRef.ref child:@"images"] child:@"stores"] child:store.storeKey] observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
+        if ([NSNull null] != snapshot.value){                                   //check snapshot is null
+
+            NSArray *imageKeys = [[NSArray alloc] init];
+            imageKeys = [snapshot.value allKeys];
+            
+            for(int j=0; j<imageKeys.count ; j++){
+                NSLog(@"image snapshot  is %@", snapshot.value);
+
+                
+                imageClass *image = [[imageClass alloc] init];
+                image.imageKey = [imageKeys objectAtIndex:j];
+                image.imageURL = [snapshot.value valueForKey:image.imageKey];
+                [store.imagesArray addObject:image];
+            }
+            
+            NSLog(@"object image count is %lu", (unsigned long)[store.imagesArray count]);
+            
+            [self loadImageView];
+            [self getDownVotes];
+            [self getUpVotes];
+            [self sortStoreImagesByVotes];
+
+        }
+    }];
+}
+
+- (void) getStoreName {
+    [[[firebaseRef.ref child:@"storeNames"] child:store.storeKey] observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
+        if ([NSNull null] != snapshot.value){                                   //check snapshot is null
+            store.storeName = [snapshot.value valueForKey:@"name"];
+            NSLog(@"object name is %@", store.storeName);
+            _store_name_label.text = store.storeName;
+        }
+    }];
+}
+
+- (void) getDownVotes {
+    NSLog(@"image key  is %lu", store.imagesArray.count);
+
+    for (int j = 0; j < store.imagesArray.count; j++){
+        imageClass *image = [[imageClass alloc] init];
+        image = [store.imagesArray objectAtIndex:j];
+        NSLog(@"image key  is %@", image.imageKey);
+
+        
+        [[[firebaseRef.ref child:@"thumbsDown"] child:image.imageKey] observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
+            if ([NSNull null] != snapshot.value){                                   //check snapshot is null
+
+            image.imageThumbsDown = [NSMutableArray arrayWithArray:[snapshot.value allKeys]];
+            
+            [store.imagesArray addObject:image];
+            }
+        }];
+    }
+}
+
+- (void) getUpVotes {
+    for (int j = 0; j < store.imagesArray.count; j++){
+        imageClass *image = [[imageClass alloc] init];
+        image = [store.imagesArray objectAtIndex:j];
+        NSLog(@"image key  is %@", image.imageKey);
+
+        
+        [[[firebaseRef.ref child:@"thumbsUp"] child:image.imageKey] observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
+            if ([NSNull null] != snapshot.value){                                   //check snapshot is null
+
+                image.imageThumbsUp = [NSMutableArray arrayWithArray:[snapshot.value allKeys]];
+                image.voteScore = image.imageThumbsUp.count - image.imageThumbsDown.count;
+                
+                [store.imagesArray addObject:image];
+            }
+            
+        }];
+    }
+}
+
+- (void) sortStoreImagesByVotes{
+    [store.imagesArray sortUsingDescriptors:@[[NSSortDescriptor sortDescriptorWithKey:@"voteScore" ascending:NO selector:@selector(compare:)]]];
+}
+
+- (void) getStoreHours {
+    [[[firebaseRef.ref child:@"storeHours"] child:store.storeKey] observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
+        NSLog(@"store horus snapshot is %@", snapshot.value);
+
+        if ([NSNull null] != snapshot.value){                                   //check snapshot is null
+            store.storeHours = [snapshot.value valueForKey:@"hours"];
+            NSLog(@"store horus is %@", store.storeHours);
+            _hoursLabel.text = store.storeHours;
+        }
+    }];
+}
+
+- (void) getStoreURL {
+    [[[firebaseRef.ref child:@"storeURL"] child:store.storeKey] observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
+        if ([NSNull null] != snapshot.value){                                   //check snapshot is null
+            store.url = [snapshot.value valueForKey:@"url"];
+            NSLog(@"object url is %@", store.url);
+        }
+    }];
+}
+
+- (void) getPhoneNumber {
+    
+    [[[firebaseRef.ref child:@"phoneNumbers"] child:store.storeKey] observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
+        if ([NSNull null] != snapshot.value){                                   //check snapshot is null
+            store.phone_number = [snapshot.value valueForKey:@"phoneNumber"];
+        
+            NSLog(@"object phone number is %@", store.phone_number);
+            _store_phone_number_label.text = store.phone_number;
+        }
+    }];
+}
+
+- (void) getGooglePlaceID {
+    
+    [[[firebaseRef.ref child:@"googlePlaceID"] child:store.storeKey] observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
+        if ([NSNull null] != snapshot.value){                                   //check snapshot is null
+            store.googlePlaceID = [snapshot.value valueForKey:@"googlePlaceID"];
+        
+            NSLog(@"object google place ID is %@", store.googlePlaceID);
+        }
+    }];
+}
+
+- (void) getRatingScore {
+    [[[[firebaseRef.ref child:@"starRating"] child:@"stores"] child:store.storeKey] observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
+        if ([NSNull null] != snapshot.value){                                   //check snapshot is null
+            NSArray *scores = [[NSArray alloc] init];
+            scores = [snapshot.value allValues];
+            store.ratingCount = [scores count];
+            
+            if ([scores count] > 0) {
+                for (id i in scores){
+                    store.ratingScore = store.ratingScore + [i floatValue];
+                }
+                _store_rating_score.value = store.ratingScore;
+                _store_rating_count.text = [[NSString stringWithFormat:@"%lu", store.ratingCount] stringByAppendingString:@" Reviews"];
+            }
+        }
+    }];
+}
+
+- (void) getTotalCount {
+    
+    [[[[firebaseRef.ref child:@"metrics"] child:@"stores"] child:store.storeKey] observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
+        if ([NSNull null] != snapshot.value){                                   //check snapshot is null
+            store.totalViews = [[snapshot.value valueForKey:@"totalViews"] integerValue];
+            
+            NSLog(@"object total views is %ld", (long)store.totalViews);
+        }
+    }];
+}
+- (void) getMontlyCount {
+    
+    [[[[[firebaseRef.ref child:@"metrics"] child:@"stores"] child:store.storeKey] child:@"monthlyViews"] observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
+        if ([NSNull null] != snapshot.value){                                   //check snapshot is null
+            store.monthlyViews = [[snapshot.value valueForKey:@"February 2017"]integerValue];
+        
+        NSLog(@"object montly views is %ld", (long)store.monthlyViews);
+        }
+    }];
+}
+- (void) getDailyCount {
+    
+    [[[[[firebaseRef.ref child:@"metrics"] child:@"stores"] child:store.storeKey] child:@"dailyViews"] observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
+        if ([NSNull null] != snapshot.value){                                   //check snapshot is null
+            store.dailyViews = [[snapshot.value valueForKey:@"01-Jan-2017"]integerValue];
+        
+        NSLog(@"object daily views is %ld", (long)store.dailyViews);
+        }
+    }];
+}
+
+- (void)loadImageView {
+    NSLog(@"store images array count %lu", store.imagesArray.count);
+    
+    if ([store.imagesArray count] > 0) {
         FIRStorage *storage = [FIRStorage storage];
         FIRStorageReference *storageRef = [storage reference];
         
+        imageClass *image = [[imageClass alloc] init];
+        image = [store.imagesArray objectAtIndex:0];
         
-        for (int i = 0; i<store.imagesArray.count;i++) {
-            imageClass *tempImage = [[imageClass alloc] init];
-            tempImage = [store.imagesArray objectAtIndex:i];
-
-            FIRStorageReference *spaceRef = [storageRef child:tempImage.imageURL];
-            
-            [spaceRef dataWithMaxSize:1 * 1024 * 1024 completion:^(NSData *data, NSError *error){
-                if (error != nil) {
-                    NSLog(@"Uh-oh, an error occurred! %@", error);
-                }
-                else {
-                    tempImage.data = data;
-                    [store.imagesArray replaceObjectAtIndex:i withObject:tempImage];
-                }
-            }];
-            
-            if( tempImage.data == nil ){
-                NSLog(@"image is nil");
-                return;
-            }
-        }
-    });
-
-}
-
--(void)tabBar:(UITabBar *)tabBar didSelectItem:(UITabBarItem *)item {
-    [_tablevc.tableView removeFromSuperview];
-
-    
-    if(item.tag == 1) {
-        UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-        UITableViewController *vc = [sb instantiateViewControllerWithIdentifier:@"promosSBID"];
-        [self addChildViewController:vc];
-        vc.tableView.frame = CGRectMake(0, 0, _containerView.frame.size.width, _containerView.frame.size.height);
-        [_containerView addSubview:vc.tableView];
-        [vc didMoveToParentViewController:self];
-    }
-    else if(item.tag == 2) {
-        UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-        UITableViewController *vc = [sb instantiateViewControllerWithIdentifier:@"strainsSBID"];
-        [self addChildViewController:vc];
-        vc.tableView.frame = CGRectMake(0, 0, _containerView.frame.size.width, _containerView.frame.size.height);
-        [_containerView addSubview:vc.tableView];
-        [vc didMoveToParentViewController:self];
-    }
-    else if(item.tag == 3) {
-        UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-        UITableViewController *vc = [sb instantiateViewControllerWithIdentifier:@"reviewsSBID"];
-        [self addChildViewController:vc];
-        vc.tableView.frame = CGRectMake(0, 0, _containerView.frame.size.width, _containerView.frame.size.height);
-        [_containerView addSubview:vc.tableView];
-        [vc didMoveToParentViewController:self];
+        NSLog(@"image link is %@", image.imageURL);
+        FIRStorageReference *spaceRef = [[[storageRef child:@"stores"] child:store.storeKey] child:image.imageURL];
+        NSLog(@"ref is %@", spaceRef);
         
-    }
-    else if(item.tag == 4) {
-        UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-        UITableViewController *vc = [sb instantiateViewControllerWithIdentifier:@"photosSBID"];
-        [self addChildViewController:vc];
-        vc.tableView.frame = CGRectMake(0, 0, _containerView.frame.size.width, _containerView.frame.size.height);
-        [_containerView addSubview:vc.tableView];
-        [vc didMoveToParentViewController:self];
-        
+        UIImage *placeHolder = [[UIImage alloc] init];
+        [_store_image_view sd_setImageWithStorageReference:spaceRef placeholderImage:placeHolder];
     }
 }
 
-- (UIImage *)image:(UIImage*)originalImage scaledToSize:(CGSize)size
-{
-    //avoid redundant drawing
-    if (CGSizeEqualToSize(originalImage.size, size))
-    {
-        return originalImage;
-    }
-    
-    //create drawing context
-    UIGraphicsBeginImageContextWithOptions(size, NO, 0.0f);
-    
-    //draw
-    [originalImage drawInRect:CGRectMake(0.0f, 0.0f, size.width, size.height)];
-    
-    //capture resultant image
-    UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
-    UIGraphicsEndImageContext();
-    
-    //return image
-    return image;
-}
-
+//- (void) loadStoresAllImages {
+//    dispatch_async(dispatch_get_global_queue(0,0), ^{
+//        FIRStorage *storage = [FIRStorage storage];
+//        FIRStorageReference *storageRef = [storage reference];
+//        
+//        
+//        for (int i = 0; i<store.imagesArray.count;i++) {
+//            imageClass *tempImage = [[imageClass alloc] init];
+//            tempImage = [store.imagesArray objectAtIndex:i];
+//
+//            FIRStorageReference *spaceRef = [storageRef child:tempImage.imageURL];
+//            
+//            [spaceRef dataWithMaxSize:1 * 1024 * 1024 completion:^(NSData *data, NSError *error){
+//                if (error != nil) {
+//                    NSLog(@"Uh-oh, an error occurred! %@", error);
+//                }
+//                else {
+//                    tempImage.data = data;
+//                    [store.imagesArray replaceObjectAtIndex:i withObject:tempImage];
+//                }
+//            }];
+//            
+//            if( tempImage.data == nil ){
+//                NSLog(@"image is nil");
+//                return;
+//            }
+//        }
+//    });
+//}
 
 -(void)loadReviewsFromFirebase{
     FIRDatabaseQuery *reviewQuery = [[firebaseRef.reviewsRef queryOrderedByChild:@"objectKey"] queryEqualToValue:store.storeKey];
     
-//    UITableViewController *tv = [[UITableViewController alloc] init];
-//    tv = self.childViewControllers[0];
-    
-
-
     UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
     UITableViewController *vc = [sb instantiateViewControllerWithIdentifier:@"reviewsSBID"];
     [self addChildViewController:vc];
     vc.tableView.frame = CGRectMake(0, 0, _containerView.frame.size.width, _containerView.frame.size.height);
     [_containerView addSubview:vc.tableView];
     [vc didMoveToParentViewController:self];
-
-//    [vc willMoveToParentViewController:self];
-//    vc.tableView.frame = CGRectMake(0, 0, _containerView.frame.size.width, _containerView.frame.size.height);
-//    [_containerView addSubview:vc.view];
-//    [self addChildViewController:vc];
-//    [vc didMoveToParentViewController:self];
-    // keep reference of viewController which may be useful when you need to remove it from container view, lets consider you have a property name as containerViewController
-//
-//    [vc willMoveToParentViewController:self];
-//    vc.tableView.frame = CGRectMake(0, 0, _containerView.frame.size.width, _containerView.frame.size.height);
-//    [self addChildViewController:vc];
-//    [vc didMoveToParentViewController:self];
-//    [_containerView addSubview:vc.tableView];
-
     
     
-
     [reviewQuery observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
-        if (snapshot.value == [NSNull null]) {}
-        else{
+        if ([NSNull null] != snapshot.value){                                   //check snapshot is null
             for (NSInteger i = 0; i < [snapshot.value allKeys].count; i++) {
                 reviewClass *tempReview = [[reviewClass alloc] init];
                 tempReview.reviewKey = [[snapshot.value allKeys] objectAtIndex:i];
@@ -309,15 +447,91 @@
                 [store.reviews addObject:tempReview];
             }
     }
-//        [tv.tableView reloadData];
         [vc.tableView reloadData];
         _tablevc = vc;
+        
     }];
 }
 
-- (IBAction)tappedImage:(UITapGestureRecognizer *)sender {
-    [user goToPopoverImageViewController:self];
+-(void)tabBar:(UITabBar *)tabBar didSelectItem:(UITabBarItem *)item {
+    [_tablevc.tableView removeFromSuperview];
+    
+    if(item.tag == 1) {
+        UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+        UITableViewController *vc = [sb instantiateViewControllerWithIdentifier:@"promosSBID"];
+        [self addChildViewController:vc];
+        vc.tableView.frame = CGRectMake(0, 0, _containerView.frame.size.width, _containerView.frame.size.height);
+        [_containerView addSubview:vc.tableView];
+        [vc didMoveToParentViewController:self];
+        [_scrollView setContentOffset:CGPointMake(0, 570) animated:YES];
+        
+    }
+    else if(item.tag == 2) {
+        UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+        UITableViewController *vc = [sb instantiateViewControllerWithIdentifier:@"strainsSBID"];
+        [self addChildViewController:vc];
+        vc.tableView.frame = CGRectMake(0, 0, _containerView.frame.size.width, _containerView.frame.size.height);
+        [_containerView addSubview:vc.tableView];
+        [vc didMoveToParentViewController:self];
+        [_scrollView setContentOffset:CGPointMake(0, 570) animated:YES];
+    }
+    else if(item.tag == 3) {
+        UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+        UITableViewController *vc = [sb instantiateViewControllerWithIdentifier:@"reviewsSBID"];
+        [self addChildViewController:vc];
+        vc.tableView.frame = CGRectMake(0, 0, _containerView.frame.size.width, _containerView.frame.size.height);
+        [_containerView addSubview:vc.tableView];
+        [vc didMoveToParentViewController:self];
+        [_scrollView setContentOffset:CGPointMake(0, 570) animated:YES];
+    }
+    else if(item.tag == 4) {
+        UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+        UITableViewController *vc = [sb instantiateViewControllerWithIdentifier:@"photosSBID"];
+        [self addChildViewController:vc];
+        vc.tableView.frame = CGRectMake(0, 0, _containerView.frame.size.width, _containerView.frame.size.height);
+        [_containerView addSubview:vc.tableView];
+        [vc didMoveToParentViewController:self];
+        [_scrollView setContentOffset:CGPointMake(0, 570) animated:YES];
+    }
+    else if(item.tag == 5) {
+        //Bookmark store
+    }
 }
+
+
+//- (UIImage *)image:(UIImage*)originalImage scaledToSize:(CGSize)size
+//{
+//    //avoid redundant drawing
+//    if (CGSizeEqualToSize(originalImage.size, size))
+//    {
+//        return originalImage;
+//    }
+//    
+//    //create drawing context
+//    UIGraphicsBeginImageContextWithOptions(size, NO, 0.0f);
+//    
+//    //draw
+//    [originalImage drawInRect:CGRectMake(0.0f, 0.0f, size.width, size.height)];
+//    
+//    //capture resultant image
+//    UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
+//    UIGraphicsEndImageContext();
+//    
+//    //return image
+//    return image;
+//}
+
+
+//- (IBAction)tappedImage:(UITapGestureRecognizer *)sender {
+//    NSLog(@"%@",[self.navigationController.viewControllers objectAtIndex:0]);
+//    UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+//    popOverImageViewController *vc = [sb instantiateViewControllerWithIdentifier:@"Popover Image VC SB ID"];
+//    NSString *otherStrainName = [NSString stringWithFormat: @"%@",[self.navigationController.viewControllers objectAtIndex:0]];
+//    vc.passedString = otherStrainName;
+//    [self.navigationController pushViewController:vc animated:false];
+//
+////    [user goToPopoverImageViewController:self];
+//}
 
 - (IBAction)tappedCheckInButton:(UIButton *)sender {
     FIRUser *youser = [FIRAuth auth].currentUser;
@@ -367,77 +581,101 @@
     }
 }
 
-- (void)loadImageView {
-    imageClass *image = [[imageClass alloc] init];
-    NSLog(@"store images array count %lu", store.imagesArray.count);
-    image = [store.imagesArray objectAtIndex:0];
-    _store_image_view.image = [UIImage imageWithData: image.data];
 
-}
+//- (IBAction)tappedEditButton:(UIBarButtonItem *)sender {
+//    [self performSegueWithIdentifier:@"EditStoreSegue" sender:self];
+//}
 
-- (void)loadLabels {
-//    _store_name_label.adjustsFontSizeToFitWidth = YES;
-//    _store_address_label.adjustsFontSizeToFitWidth = YES;
-//    _store_city_label.adjustsFontSizeToFitWidth = YES;
-    [self setLabelValues];
-}
-
-- (void) setLabelValues {
-    _store_name_label.text = store.storeName;
-//    _store_name_label.textColor = [UIColor colorWithRed:18.0/255.0 green:24.0/255.0 blue:23.0/255.0 alpha:1.0];
-//    _store_name_label.font = [UIFont fontWithName:@"CERVO-THIN" size:24.0];
-    _store_name_label.userInteractionEnabled=NO;
-
-    _store_address_label.text = store.address;
-//    _store_address_label.textColor = [UIColor colorWithRed:122.0/255.0 green:122.0/255.0 blue:122.0/255.0 alpha:1.0];
-//    _store_address_label.font = [UIFont fontWithName:@"NEXA LIGHT" size:16.0];
-    _store_address_label.userInteractionEnabled=NO;
-
-    NSString *string = [[[[store.city stringByAppendingString:@", "]
-                        stringByAppendingString:store.state]
-                         stringByAppendingString:@" "]
-                        stringByAppendingString:store.zipcode ];
-    _store_city_label.text = string ;
-//    _store_city_label.textColor = [UIColor colorWithRed:122.0/255.0 green:122.0/255.0 blue:122.0/255.0 alpha:1.0];
-//    _store_city_label.font = [UIFont fontWithName:@"NEXA LIGHT" size:16.0];
-    _store_city_label.userInteractionEnabled=NO;
-
-    _store_state_label.text = store.state;
-//    _store_state_label.textColor = [UIColor colorWithRed:122.0/255.0 green:122.0/255.0 blue:122.0/255.0 alpha:1.0];
-//    _store_state_label.font = [UIFont fontWithName:@"NEXA LIGHT" size:16.0];
-    _store_state_label.userInteractionEnabled=NO;
-
-    _store_phone_number_label.text = store.phone_number;
-//    _store_phone_number_label.textColor = [UIColor colorWithRed:122.0/255.0 green:122.0/255.0 blue:122.0/255.0 alpha:1.0];
-//    _store_phone_number_label.font = [UIFont fontWithName:@"NEXA BOLD" size:16.0];
-    _store_phone_number_label.userInteractionEnabled=YES;
+- (void) loadNavController{
     
-    NSLog(@"phone is %@",store.phone_number);
+    UIButton *btn1 =  [UIButton buttonWithType:UIButtonTypeCustom];
+    btn1.frame = CGRectMake(0,0,25,25);
+    [btn1 setBackgroundImage:[UIImage imageNamed:@"newsFeedWhiteIcon"] forState:UIControlStateNormal];
+    [btn1 addTarget:self action:@selector(newsFeedButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
+    UIBarButtonItem *buttonOne = [[UIBarButtonItem alloc] initWithCustomView:btn1];
     
-//    _store_rating_count.textColor = [UIColor colorWithRed:255.0/255.0 green:255.0/255.0 blue:255.0/255.0 alpha:1.0];
-//    _store_rating_count.font = [UIFont fontWithName:@"NEXA BOLD" size:12.0];
-    _store_rating_count.text = [[NSString stringWithFormat:@"%lu", (unsigned long)store .ratingCount] stringByAppendingString:@" Reviews"];
-
     
-//    _store_address_label.text =  [@"Address: "stringByAppendingString: store .address];
-//    _store_city_label.text =  [@"City: " stringByAppendingString:store .city];
-//    _store_state_label.text = [@"State: " stringByAppendingString:store .state];
-//    _store_url_label.text = [@"Webstie: " stringByAppendingString:store .url];
-//    _store_phone_number_label.text = store .phone_number;
-//    [self loadRatingCount];
+    UIButton *btn2 =  [UIButton buttonWithType:UIButtonTypeCustom];
+    btn2.frame = CGRectMake(0,0,25,25);
+    [btn2 setBackgroundImage:[UIImage imageNamed:@"mapWhiteIcon"] forState:UIControlStateNormal];
+    UIBarButtonItem *buttonTwo = [[UIBarButtonItem alloc] initWithCustomView:btn2];
+    
+    
+    UIButton *btn3 =  [UIButton buttonWithType:UIButtonTypeCustom];
+    btn3.frame = CGRectMake(0,0,25,25);
+    [btn3 setBackgroundImage:[UIImage imageNamed:@"searchWhiteIcon"] forState:UIControlStateNormal];
+    [btn3 addTarget:self action:@selector(searchButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
+    UIBarButtonItem *buttonThree = [[UIBarButtonItem alloc] initWithCustomView:btn3];
+    
+    
+    UIButton *btn4 =  [UIButton buttonWithType:UIButtonTypeCustom];
+    btn4.frame = CGRectMake(0,0,25,25);
+    [btn4 setBackgroundImage:[UIImage imageNamed:@"storesWhiteIcon"] forState:UIControlStateNormal];
+    [btn4 addTarget:self action:@selector(storeButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
+    UIBarButtonItem *buttonFour = [[UIBarButtonItem alloc] initWithCustomView:btn4];
+    
+    
+    UIButton *btn5 =  [UIButton buttonWithType:UIButtonTypeCustom];
+    btn5.frame = CGRectMake(0,0,25,25);
+    [btn5 setBackgroundImage:[UIImage imageNamed:@"hamburgerWhiteIcon"] forState:UIControlStateNormal];
+    [btn5 addTarget:self action:@selector(barButtonCustomPressed:) forControlEvents:UIControlEventTouchUpInside];
+    UIBarButtonItem *buttonFive = [[UIBarButtonItem alloc] initWithCustomView:btn5];
+    
+    
+    UIBarButtonItem *space = [[UIBarButtonItem alloc]initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:self action:nil];
+    
+    NSArray *buttons = @[buttonOne, space, buttonTwo, space, buttonThree, space, buttonFour, space, buttonFive];
+    
+    self.navigationController.navigationBar.topItem.title = nil;
+    self.navigationController.navigationBar.topItem.leftBarButtonItems = buttons;
 }
 
-- (void)loadRatingScore {
-    _store_rating_score.value = store.ratingScore;
+-(IBAction)newsFeedButtonPressed:(UIButton*)btn {
+    user.mainNavigationSelected = 0;
+    [user goToNewsFeedViewController:self];
 }
 
-- (void)loadRatingCount{
-    _store_rating_count.text = [[NSString stringWithFormat:@"%lu", (unsigned long)store .ratingCount] stringByAppendingString:@" reviews"];
+-(IBAction)strainButtonPressed:(UIButton*)btn {
+    user.mainNavigationSelected = 1;
+    [user gotoMapViewViewController:self];
 }
 
-- (IBAction)tappedEditButton:(UIBarButtonItem *)sender {
-    [self performSegueWithIdentifier:@"EditStoreSegue" sender:self];
+-(IBAction)searchButtonPressed:(UIButton*)btn {
+    user.mainNavigationSelected = 2;
+    [user goToSearchViewController:self];
 }
+
+
+-(IBAction)userProfileButtonPressed:(UIButton*)btn {
+    user.mainNavigationSelected = 2;
+    FIRUser *youser = [FIRAuth auth].currentUser;
+    if(youser.anonymous){
+        [user goToUserNotSignedInViewController:self];
+    }
+    else{
+        [user goToCurrentUserProfileViewController:self];
+    }
+}
+
+-(IBAction)storeButtonPressed:(UIButton*)btn {
+    user.mainNavigationSelected = 3;
+    objectsArray.filterSelected = 10;
+    objectsArray.strainOrStore = 1;
+    [user goToStrainsStoresViewController:self];
+}
+
+
+-(IBAction)barButtonCustomPressed:(UIBarButtonItem*)btn
+{
+    FIRUser *currentUser = [FIRAuth auth].currentUser;
+    if(currentUser.anonymous){
+        [user gotoOptionListViewController:self];
+        
+    } else {
+        [user gotoOptionListSignedInViewController:self];
+    }
+}
+
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];

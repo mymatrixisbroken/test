@@ -34,5 +34,7 @@
 @property (strong, nonatomic) IBOutlet YLProgressBar *relaxedView;
 @property (strong, nonatomic) IBOutlet UILabel *ratingCount;
 @property (strong, nonatomic) IBOutlet UIButton *smokedButton;
+@property (copy, nonatomic) NSString *passedString;
+
 @end
 

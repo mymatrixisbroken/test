@@ -159,6 +159,41 @@
     }
 }
 
+- (void) tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
+    if(indexPath.section == 0){
+        UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+        StoreProfileViewController *vc = [sb instantiateViewControllerWithIdentifier:@"Store Profile VC SB ID"];
+        NSLog(@"other store name is %@",[_storeNamesArray objectAtIndex:indexPath.row]);
+        NSString *otherStoreName = [_storeNamesArray objectAtIndex:indexPath.row];
+        vc.passedString = otherStoreName;
+        [self.navigationController pushViewController:vc animated:false];
+    }
+    else if(indexPath.section == 1){
+        UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+        //        UserProfileViewController *vc = [[UserProfileViewController alloc] initWithNibName:@"UserProfileViewController" bundle:nil];
+        UserProfileViewController *vc = [sb instantiateViewControllerWithIdentifier:@"User Profile VC SB ID"];
+        //        UIViewController *vc3 = [sb instantiateViewControllerWithIdentifier:@"User Profile VC SB ID"];
+//        UIViewController *vc2 = [sb instantiateViewControllerWithIdentifier:@"UserProfile Navigation SB ID"];
+        NSLog(@"other user name is %@",[_usernamesArray objectAtIndex:indexPath.row]);
+        NSString *otherUserName = [_usernamesArray objectAtIndex:indexPath.row];
+        vc.passedString = otherUserName;
+        //        [self.navigationController pushViewController:vc2 animated:YES];
+        //    vc.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
+        //    [viewController presentViewController:vc animated:YES completion:NULL];
+        [self.navigationController pushViewController:vc animated:false];
+        
+    }
+    else if(indexPath.section == 2){
+        UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+        UserProfileViewController *vc = [sb instantiateViewControllerWithIdentifier:@"Strain Profile VC SB ID"];
+        NSLog(@"other strain name is %@",[_strainNamesArray objectAtIndex:indexPath.row]);
+        NSString *otherStrainName = [_strainNamesArray objectAtIndex:indexPath.row];
+        vc.passedString = otherStrainName;
+        [self.navigationController pushViewController:vc animated:false];
+    }
+}
+
+
 -(void) searchFirebaseForText{
     NSString *lowerString = [_textField.text lowercaseString];
     NSInteger length = [_textField.text length] - 1;

@@ -39,10 +39,15 @@ extern userClass *user;
 @property NSMutableArray *reviews;
 @property NSInteger reviewsCount;
 
+@property NSMutableArray *imageKeys;
+@property NSMutableArray *imageLinks;
+
 @property NSMutableArray *storesVisited;
+@property NSMutableArray *storeBookmarks;
 @property NSInteger storesVisitedCount;
 
 @property NSMutableArray *strainsTried;
+@property NSMutableArray *strainBookmarks;
 @property NSInteger strainsTriedCount;
 
 @property NSMutableArray *wishList;
@@ -70,6 +75,7 @@ enum mainNavigationSelected
 
 
 + (userClass *)sharedInstance;
+
 -(id)createUser:(NSString *)createAccountEmail
        SignedUp:(NSString *)createAccountUsername;
 
@@ -91,6 +97,7 @@ enum mainNavigationSelected
           wishList:(NSMutableArray *)array7
 friendRequestsKeys:(NSMutableArray *)array8;
 
+-(void)goToAddStoreController:(UIViewController *)viewController;
 -(void)goToNewsFeedViewController:(UIViewController *)viewController;
 -(void)goToStrainsStoresViewController:(UIViewController *)viewController;
 -(void)goToStrainsViewController:(UIViewController *)viewController;
@@ -113,6 +120,7 @@ friendRequestsKeys:(NSMutableArray *)array8;
 -(void)presentUsernameInvalidAlert:(UIViewController *)viewController;
 -(void)presentUsernameTakenAlert:(UIViewController *)viewController;
 -(void)presentPasswordInvalidAlert:(UIViewController *)viewController;
+-(void)presentTermsNotAgreedAlert:(UIViewController *)viewController;
 -(void)presentEmailInvalidAlert:(UIViewController *)viewController;
 -(void)presentStrainEditAlert:(UIViewController *)viewController;
 @end

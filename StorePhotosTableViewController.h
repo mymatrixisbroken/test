@@ -12,6 +12,8 @@
 #import "reviewClass.h"
 #import "userClass.h"
 #import "imageClass.h"
+#import <FirebaseStorageUI/FirebaseStorageUI.h>
+#import "popOverImageViewController.h"
 @import Firebase;
 
 

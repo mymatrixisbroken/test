@@ -35,10 +35,15 @@ userClass *user;
 @synthesize reviews;
 @synthesize reviewsCount;
 
+@synthesize imageKeys;
+@synthesize imageLinks;
+
 @synthesize storesVisited;
+@synthesize storeBookmarks;
 @synthesize storesVisitedCount;
 
 @synthesize strainsTried;
+@synthesize strainBookmarks;
 @synthesize strainsTriedCount;
 
 @synthesize wishList;
@@ -95,10 +100,15 @@ userClass *user;
         self.reviews = [[NSMutableArray alloc] init];
         self.reviewsCount = 0;
         
+        self.imageKeys = [[NSMutableArray alloc] init];
+        self.imageLinks = [[NSMutableArray alloc] init];
+
         self.storesVisited = [[NSMutableArray alloc] init];
+        self.storeBookmarks = [[NSMutableArray alloc] init];
         self.storesVisitedCount = 0;
         
         self.strainsTried = [[NSMutableArray alloc] init];
+        self.strainBookmarks = [[NSMutableArray alloc] init];
         self.strainsTriedCount = 0;
         
         self.wishList = [[NSMutableArray alloc] init];
@@ -201,6 +211,13 @@ friendRequestsKeys:(NSMutableArray *)array8{
     return self;
 }
 
+-(void)goToAddStoreController:(UIViewController *)viewController{
+    UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+    UIViewController *vc = [sb instantiateViewControllerWithIdentifier:@"Add Store SB ID"];
+    vc.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
+    [viewController showDetailViewController:vc sender:viewController];
+}
+
 -(void)goToNewsFeedViewController:(UIViewController *)viewController{
     UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
     UIViewController *vc = [sb instantiateViewControllerWithIdentifier:@"News Feed Navigation SB ID"];
@@ -254,7 +271,7 @@ friendRequestsKeys:(NSMutableArray *)array8{
     UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
     UIViewController *vc = [sb instantiateViewControllerWithIdentifier:@"User Profile Navigation SB ID"];
     vc.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
-//    [viewController presentViewController:vc animated:YES completion:NULL];
+    //    [viewController presentViewController:vc animated:YES completion:NULL];
     [viewController showDetailViewController:vc sender:viewController];
 }
 
@@ -286,9 +303,14 @@ friendRequestsKeys:(NSMutableArray *)array8{
 -(void)gotoOptionListSignedInViewController:(UIViewController *)viewController{
     UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
     UIViewController *vc = [sb instantiateViewControllerWithIdentifier:@"Option list signed in SB ID"];
+    UIViewController *vc2 = [sb instantiateViewControllerWithIdentifier:@"Option list moderator SB ID"];
     //    vc.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
     //    [viewController presentViewController:vc animated:YES completion:NULL];
-    [viewController showViewController:vc sender:viewController];
+    if ([user.accountType  isEqual: @"moderator"]) {
+        [viewController showViewController:vc2 sender:viewController];
+    }
+    else
+        [viewController showViewController:vc sender:viewController];
 //    [viewController presentViewController:vc animated:YES completion:nil];
 }
 
@@ -385,10 +407,11 @@ friendRequestsKeys:(NSMutableArray *)array8{
     [viewController presentViewController:alertController animated:YES completion:nil];
 }
 
--(void)presentUsernameTakenAlert:(UIViewController *)viewController{    UIAlertController *alertController = [UIAlertController
-                                                                                                              alertControllerWithTitle:@"Username taken"
-                                                                                                              message:nil
-                                                                                                              preferredStyle:UIAlertControllerStyleAlert];
+-(void)presentUsernameTakenAlert:(UIViewController *)viewController{
+    UIAlertController *alertController = [UIAlertController
+                                      alertControllerWithTitle:@"Username taken"
+                                      message:nil
+                                      preferredStyle:UIAlertControllerStyleAlert];
     UIAlertAction *okAction = [UIAlertAction
                                actionWithTitle:NSLocalizedString(@"OK", @"OK action")
                                style:UIAlertActionStyleDefault
@@ -399,10 +422,11 @@ friendRequestsKeys:(NSMutableArray *)array8{
     [viewController presentViewController:alertController animated:YES completion:nil];
 }
 
--(void)presentPasswordInvalidAlert:(UIViewController *)viewController{    UIAlertController *alertController = [UIAlertController
-                                                                                                                alertControllerWithTitle:@"Invalid password"
-                                                                                                                message:@"Please use minimum 5 characters"
-                                                                                                                preferredStyle:UIAlertControllerStyleAlert];
+-(void)presentPasswordInvalidAlert:(UIViewController *)viewController{
+    UIAlertController *alertController = [UIAlertController
+                                        alertControllerWithTitle:@"Invalid password"
+                                        message:@"Please use minimum 5 characters"
+                                        preferredStyle:UIAlertControllerStyleAlert];
     UIAlertAction *okAction = [UIAlertAction
                                actionWithTitle:NSLocalizedString(@"OK", @"OK action")
                                style:UIAlertActionStyleDefault
@@ -413,10 +437,26 @@ friendRequestsKeys:(NSMutableArray *)array8{
     [viewController presentViewController:alertController animated:YES completion:nil];
 }
 
--(void)presentEmailInvalidAlert:(UIViewController *)viewController{    UIAlertController *alertController = [UIAlertController
-                                                                                                             alertControllerWithTitle:@"Invalid email"
-                                                                                                             message:@"Please use format email@domain.com"
-                                                                                                             preferredStyle:UIAlertControllerStyleAlert];
+-(void)presentTermsNotAgreedAlert:(UIViewController *)viewController{
+    UIAlertController *alertController = [UIAlertController
+                                        alertControllerWithTitle:@"Terms not accepted"
+                                        message:@"Please accept terms and agreement"
+                                        preferredStyle:UIAlertControllerStyleAlert];
+    UIAlertAction *okAction = [UIAlertAction
+                               actionWithTitle:NSLocalizedString(@"OK", @"OK action")
+                               style:UIAlertActionStyleDefault
+                               handler:^(UIAlertAction *action)
+                               {}];
+    
+    [alertController addAction:okAction];
+    [viewController presentViewController:alertController animated:YES completion:nil];
+}
+
+-(void)presentEmailInvalidAlert:(UIViewController *)viewController{
+    UIAlertController *alertController = [UIAlertController
+                                         alertControllerWithTitle:@"Invalid email"
+                                         message:@"Please use format email@domain.com"
+                                         preferredStyle:UIAlertControllerStyleAlert];
     UIAlertAction *okAction = [UIAlertAction
                                actionWithTitle:NSLocalizedString(@"OK", @"OK action")
                                style:UIAlertActionStyleDefault
