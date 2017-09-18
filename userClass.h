@@ -97,6 +97,8 @@ enum mainNavigationSelected
           wishList:(NSMutableArray *)array7
 friendRequestsKeys:(NSMutableArray *)array8;
 
+
+-(void)goToSelectPhotosViewController:(UIViewController *)viewController;
 -(void)goToAddStoreController:(UIViewController *)viewController;
 -(void)goToNewsFeedViewController:(UIViewController *)viewController;
 -(void)goToStrainsStoresViewController:(UIViewController *)viewController;

@@ -338,6 +338,14 @@ friendRequestsKeys:(NSMutableArray *)array8{
     [viewController showDetailViewController:vc sender:viewController];
 }
 
+-(void)goToSelectPhotosViewController:(UIViewController *)viewController{
+    UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+    UIViewController *vc = [sb instantiateViewControllerWithIdentifier:@"Select Photos SB ID"];
+    vc.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
+    //    [viewController presentViewController:vc animated:YES completion:NULL];
+    [viewController showDetailViewController:vc sender:viewController];
+}
+
 -(void)goToPopoverImageViewController:(UIViewController *)viewController{
     UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
     UIViewController *vc = [sb instantiateViewControllerWithIdentifier:@"Popover Image SB ID"];

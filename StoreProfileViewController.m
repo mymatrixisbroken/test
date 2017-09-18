@@ -101,7 +101,6 @@
     [self getMontlyCount];
     [self getDailyCount];
     [self loadReviewsFromFirebase];
-//    [self loadStoresAllImages];
 }
 
 - (void) getStoreLocations{
@@ -382,36 +381,6 @@
         [_store_image_view sd_setImageWithStorageReference:spaceRef placeholderImage:placeHolder];
     }
 }
-
-//- (void) loadStoresAllImages {
-//    dispatch_async(dispatch_get_global_queue(0,0), ^{
-//        FIRStorage *storage = [FIRStorage storage];
-//        FIRStorageReference *storageRef = [storage reference];
-//        
-//        
-//        for (int i = 0; i<store.imagesArray.count;i++) {
-//            imageClass *tempImage = [[imageClass alloc] init];
-//            tempImage = [store.imagesArray objectAtIndex:i];
-//
-//            FIRStorageReference *spaceRef = [storageRef child:tempImage.imageURL];
-//            
-//            [spaceRef dataWithMaxSize:1 * 1024 * 1024 completion:^(NSData *data, NSError *error){
-//                if (error != nil) {
-//                    NSLog(@"Uh-oh, an error occurred! %@", error);
-//                }
-//                else {
-//                    tempImage.data = data;
-//                    [store.imagesArray replaceObjectAtIndex:i withObject:tempImage];
-//                }
-//            }];
-//            
-//            if( tempImage.data == nil ){
-//                NSLog(@"image is nil");
-//                return;
-//            }
-//        }
-//    });
-//}
 
 -(void)loadReviewsFromFirebase{
     FIRDatabaseQuery *reviewQuery = [[firebaseRef.reviewsRef queryOrderedByChild:@"objectKey"] queryEqualToValue:store.storeKey];

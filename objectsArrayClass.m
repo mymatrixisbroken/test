@@ -17,6 +17,7 @@ objectsArrayClass *objectsArray;
 @synthesize eventObjectArray;
 @synthesize userSearchObjectArray;
 @synthesize moderateStoresObjectArray;
+@synthesize addPhotosObjectArray;
 @synthesize strainOrStore;
 @synthesize filterSelected;
 @synthesize flag;
@@ -38,6 +39,7 @@ objectsArrayClass *objectsArray;
         self.storeObjectArray = [[NSMutableArray alloc] init];
         self.eventObjectArray = [[NSMutableArray alloc] init];
         self.moderateStoresObjectArray = [[NSMutableArray alloc] init];
+        self.addPhotosObjectArray = [[NSMutableArray alloc] init];
         self.userSearchObjectArray = [[NSMutableArray alloc] init];
         self.flag = NO;
 

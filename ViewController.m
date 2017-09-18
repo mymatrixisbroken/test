@@ -413,9 +413,6 @@
     [super viewDidAppear:animated];
     [self updateLayoutForOrientation:[UIApplication sharedApplication].statusBarOrientation];
     [self loadExtView];
-//    if (objectsArray.filterSelected == 0) {
-//        [user gotoMapViewViewController:self];
-//    }
 }
 
 //******************** NEW Load store objects *************************//
@@ -456,17 +453,9 @@
         [self sortStoresByDistances];
         [self getStoreLocations: i];
         [self getImagesForNearestTwentyStores: i];
-        [self getDownVotes:i];
-        [self getUpVotes:i];
-        [self sortStoreImagesByVotes: i];
         [self getStoreName: i];
-        [self getStoreURL: i];
-        [self getPhoneNumber: i];
-        [self getGooglePlaceID: i];
         [self getRatingScore: i];
-        [self getTotalCount: i];
-        [self getMontlyCount: i];
-        [self getDailyCount: i];
+        [self loadReviewsFromFirebase: i];
     }
 }
 
@@ -552,63 +541,16 @@
                 NSLog(@"object image count is %lu", (unsigned long)[myStore.imagesArray count]);
 
                 [objectsArray.storeObjectArray replaceObjectAtIndex:i withObject:myStore];
-                
+
+                [myStore.imagesArray sortUsingDescriptors:@[[NSSortDescriptor sortDescriptorWithKey:@"voteScore" ascending:NO selector:@selector(compare:)]]];
+
                 dispatch_async(dispatch_get_main_queue(), ^{
                     [self.collectionView reloadData];
                 });
-
-//                [self loadImageCells: i];
             }
         }];
 }
 
-- (void) getDownVotes:(NSInteger) i {
-    storeClass *myStore = [[storeClass alloc] init];
-    myStore = [objectsArray.storeObjectArray objectAtIndex:i];
-
-        for (int j = 0; j < myStore.imagesArray.count; j++){
-            _image = [[imageClass alloc] init];
-            _image = [myStore.imagesArray objectAtIndex:j];
-
-            [[[firebaseRef.ref child:@"thumbsDown"] child:_image.imageKey] observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
-                if ([NSNull null] != snapshot.value){                                   //check snapshot is null
-
-//                _image.imageThumbsDown = [NSMutableArray arrayWithArray:[snapshot.value allKeys]];
-                
-                [myStore.imagesArray addObject:_image];
-                [objectsArray.storeObjectArray replaceObjectAtIndex:i withObject:myStore];
-                }
-            }];
-        }
-}
-
-- (void) getUpVotes:(NSInteger) i {
-    storeClass *myStore = [[storeClass alloc] init];
-    myStore = [objectsArray.storeObjectArray objectAtIndex:i];
-
-        for (int j = 0; j < myStore.imagesArray.count; j++){
-            _image = [[imageClass alloc] init];
-            _image = [myStore.imagesArray objectAtIndex:j];
-
-            [[[firebaseRef.ref child:@"thumbsUp"] child:_image.imageKey] observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
-                if ([NSNull null] != snapshot.value){                                   //check snapshot is null
-
-//                _image.imageThumbsUp = [NSMutableArray arrayWithArray:[snapshot.value allKeys]];
-                _image.voteScore = _image.imageThumbsUp.count - _image.imageThumbsDown.count;
-                
-                [myStore.imagesArray addObject:_image];
-                [objectsArray.storeObjectArray replaceObjectAtIndex:i withObject:myStore];
-                }
-            }];
-    }
-}
-
-- (void) sortStoreImagesByVotes:(NSInteger) i{
-    storeClass *myStore = [[storeClass alloc] init];
-    myStore = [objectsArray.storeObjectArray objectAtIndex:i];
-
-    [myStore.imagesArray sortUsingDescriptors:@[[NSSortDescriptor sortDescriptorWithKey:@"voteScore" ascending:NO selector:@selector(compare:)]]];
-}
 
 - (void) getStoreName:(NSInteger) i {
     storeClass *myStore = [[storeClass alloc] init];
@@ -621,53 +563,6 @@
             
 //            NSLog(@"object name is %@", myStore.storeName);
 
-            [objectsArray.storeObjectArray replaceObjectAtIndex:i withObject:myStore];
-            }
-        }];
-}
-- (void) getStoreURL:(NSInteger) i {
-    storeClass *myStore = [[storeClass alloc] init];
-    myStore = [objectsArray.storeObjectArray objectAtIndex:i];
-
-        [[[firebaseRef.ref child:@"storeURL"] child:myStore.storeKey] observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
-            if ([NSNull null] != snapshot.value){                                   //check snapshot is null
-
-            myStore.url = [snapshot.value valueForKey:@"url"];
-            
-            NSLog(@"object url is %@", myStore.url);
-
-            [objectsArray.storeObjectArray replaceObjectAtIndex:i withObject:myStore];
-            }
-        }];
-}
-
-- (void) getPhoneNumber:(NSInteger) i {
-    storeClass *myStore = [[storeClass alloc] init];
-    myStore = [objectsArray.storeObjectArray objectAtIndex:i];
-
-        [[[firebaseRef.ref child:@"phoneNumbers"] child:myStore.storeKey] observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
-            if ([NSNull null] != snapshot.value){                                   //check snapshot is null
-
-            myStore.phone_number = [snapshot.value valueForKey:@"phoneNumber"];
-
-            NSLog(@"object phone number is %@", myStore.phone_number);
-
-            [objectsArray.storeObjectArray replaceObjectAtIndex:i withObject:myStore];
-            }
-        }];
-}
-
-- (void) getGooglePlaceID:(NSInteger) i {
-    storeClass *myStore = [[storeClass alloc] init];
-    myStore = [objectsArray.storeObjectArray objectAtIndex:i];
-    
-        [[[firebaseRef.ref child:@"googlePlaceID"] child:myStore.storeKey] observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
-            if ([NSNull null] != snapshot.value){                                   //check snapshot is null
-
-            myStore.googlePlaceID = [snapshot.value valueForKey:@"googlePlaceID"];
-
-            NSLog(@"object google place ID is %@", myStore.googlePlaceID);
-            
             [objectsArray.storeObjectArray replaceObjectAtIndex:i withObject:myStore];
             }
         }];
@@ -694,92 +589,38 @@
         }];
 }
 
-- (void) getTotalCount:(NSInteger) i {
+-(void)loadReviewsFromFirebase:(NSInteger) i{
     storeClass *myStore = [[storeClass alloc] init];
     myStore = [objectsArray.storeObjectArray objectAtIndex:i];
 
-        [[[[firebaseRef.ref child:@"metrics"] child:@"stores"] child:myStore.storeKey] observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
-            if ([NSNull null] != snapshot.value){                                   //check snapshot is null
-
-                myStore.totalViews = [[snapshot.value valueForKey:@"totalViews"] integerValue];
+    FIRDatabaseQuery *reviewQuery = [[firebaseRef.reviewsRef queryOrderedByChild:@"objectKey"] queryEqualToValue:myStore.storeKey];
+    
+    [reviewQuery observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
+        if ([NSNull null] != snapshot.value){                                   //check snapshot is null
+            for (NSInteger i = 0; i < [snapshot.value allKeys].count; i++) {
+                reviewClass *tempReview = [[reviewClass alloc] init];
+                tempReview.reviewKey = [[snapshot.value allKeys] objectAtIndex:i];
+                NSLog(@"key is %@", tempReview.reviewKey);
                 
-                NSLog(@"object total views is %ld", (long)myStore.totalViews);
-
-                [objectsArray.storeObjectArray replaceObjectAtIndex:i withObject:myStore];
+                NSDictionary *dictionary = [[NSDictionary alloc] init];
+                dictionary = [snapshot.value valueForKey:tempReview.reviewKey];
+                tempReview.message = [dictionary valueForKey:@"message"];
+                tempReview.objectImageURL = [dictionary valueForKey:@"objectImage"];
+                tempReview.objectKey = [dictionary valueForKey:@"objectKey"];
+                tempReview.objectName = [dictionary valueForKey:@"objectName"];
+                tempReview.objectType = [dictionary valueForKey:@"objectType"];
+                tempReview.userKey = [dictionary valueForKey:@"userKey"];
+                tempReview.username = [dictionary valueForKey:@"username"];
+                tempReview.rating = [dictionary valueForKey:@"rating"];
+                tempReview.objectDataString = [dictionary valueForKey:@"objectData"];
+                tempReview.objectData = [[NSData alloc] initWithBase64EncodedString:tempReview.objectDataString options:0];
+                
+                [myStore.reviews addObject:tempReview];
             }
-        }];
-}
-- (void) getMontlyCount:(NSInteger) i {
-    storeClass *myStore = [[storeClass alloc] init];
-    myStore = [objectsArray.storeObjectArray objectAtIndex:i];
-
-        [[[[[firebaseRef.ref child:@"metrics"] child:@"stores"] child:myStore.storeKey] child:@"monthlyViews"] observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
-            if ([NSNull null] != snapshot.value){                                   //check snapshot is null
-
-            myStore.monthlyViews = [[snapshot.value valueForKey:@"February 2017"]integerValue];
-            
-            NSLog(@"object montly views is %ld", (long)myStore.monthlyViews);
-
-            [objectsArray.storeObjectArray replaceObjectAtIndex:i withObject:myStore];
-            }
-        }];
-}
-- (void) getDailyCount:(NSInteger) i {
-    storeClass *myStore = [[storeClass alloc] init];
-    myStore = [objectsArray.storeObjectArray objectAtIndex:i];
-
-        [[[[[firebaseRef.ref child:@"metrics"] child:@"stores"] child:myStore.storeKey] child:@"dailyViews"] observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
-            if ([NSNull null] != snapshot.value){                                   //check snapshot is null
-
-            myStore.dailyViews = [[snapshot.value valueForKey:@"01-Jan-2017"]integerValue];
-            
-            NSLog(@"object daily views is %ld", (long)myStore.dailyViews);
-
-            [objectsArray.storeObjectArray replaceObjectAtIndex:i withObject:myStore];
-            }
-        }];
+        }
+    }];
 }
 
-
-
-- (void) loadImageCells:(NSInteger) i {
-//    dispatch_async(dispatch_get_global_queue(0,0), ^{
-//        storeClass *myStore = [[storeClass alloc] init];
-//        myStore = [objectsArray.storeObjectArray objectAtIndex:i];
-//
-//        FIRStorage *storage = [FIRStorage storage];
-//        FIRStorageReference *storageRef = [storage reference];
-//
-//        __block imageClass *tempImage = [[imageClass alloc] init];
-//
-//        if (myStore.imagesArray.count > 0) {
-//            tempImage = [myStore.imagesArray objectAtIndex:0];
-//        }
-//
-//        FIRStorageReference *spaceRef = [storageRef child:tempImage.imageURL];
-//
-//        [spaceRef dataWithMaxSize:1 * 1024 * 1024 completion:^(NSData *data, NSError *error){
-//            if (error != nil) {
-//                NSLog(@"Uh-oh, an error occurred! %@", error);
-//            }
-//            else {
-//                tempImage.data = data;
-//                [myStore.imagesArray replaceObjectAtIndex:0 withObject:tempImage];
-//                
-//                [objectsArray.storeObjectArray replaceObjectAtIndex:i withObject:myStore];
-//            }
-//        }];
-//
-//        if( tempImage.data == nil ){
-//            NSLog(@"image is nil");
-//            return;
-//        }
-//        
-//        dispatch_async(dispatch_get_main_queue(), ^{
-//            [self.collectionView reloadData];
-//        });
-//    });
-}
 
 - (void)willAnimateRotationToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration {
   [super willAnimateRotationToInterfaceOrientation:toInterfaceOrientation duration:duration];
@@ -805,31 +646,31 @@
   CHTCollectionViewWaterfallCell *cell =
   (CHTCollectionViewWaterfallCell *)[collectionView dequeueReusableCellWithReuseIdentifier:CELL_IDENTIFIER forIndexPath:indexPath];
     
+    cell.imageView.contentMode = UIViewContentModeScaleToFill;
+    CAGradientLayer *gradientMask = [CAGradientLayer layer];
+    gradientMask.frame = cell.imageView.frame;
+    gradientMask.colors = @[(id)[UIColor clearColor].CGColor, (id)[UIColor colorWithRed:1.0/255.0 green:1.0/255.0 blue:1.0/255.0 alpha:1.0].CGColor];
+    gradientMask.startPoint = CGPointMake(0.75, 0.5);   // start at left middle
+    gradientMask.endPoint = CGPointMake(1.0, 0.5);     // end at right middle
+
+    [cell.imageView.layer addSublayer:gradientMask];
+
+    
     if (objectsArray.strainOrStore == stores){
         if ([objectsArray.storeObjectArray count] > 0) {
                 storeClass *tempStore = [[storeClass alloc] init];
-                
                 tempStore = [objectsArray.storeObjectArray objectAtIndex:indexPath.row];
                 
                 if ([tempStore.imagesArray count] > 0) {
-                    
                     FIRStorage *storage = [FIRStorage storage];
                     FIRStorageReference *storageRef = [storage reference];
                     
                     imageClass *image = [[imageClass alloc] init];
                     image = [tempStore.imagesArray objectAtIndex:0];
-
-                    
-                    NSLog(@"store key is %@", tempStore.storeKey);
-                    NSLog(@"image link is %@", image.imageURL);
                     FIRStorageReference *spaceRef = [[[storageRef child:@"stores"] child:tempStore.storeKey] child:image.imageURL];
-                    NSLog(@"ref is %@", spaceRef);
                     
                     UIImage *placeHolder = [[UIImage alloc] init];
                     [cell.imageView sd_setImageWithStorageReference:spaceRef placeholderImage:placeHolder];
-                    
-                    
-//                    cell.imageView.image = [UIImage imageWithData:image.data];
                 }
                 
                 cell.imageView.backgroundColor = [UIColor colorWithRed:18.0/255.0 green:24.0/255.0 blue:23.0/255.0 alpha:1.0];
@@ -841,10 +682,8 @@
                 cell.reviewCountLabel.text = reviewCount;
                 cell.steviaImageView.image = [UIImage imageNamed:@"DistanceSmartObject"];
                 cell.steviaImageView.contentMode = UIViewContentModeScaleAspectFit;
-                if(tempStore.distanceToMe != nil){
-                    cell.distanceToMeLabel.text = tempStore.distanceToMe;
-                }
-                
+                cell.distanceToMeLabel.text = tempStore.distanceToMe;
+            
                 CAGradientLayer *gradientMask2 = [CAGradientLayer layer];
                 gradientMask2.frame = cell.bounds;
                 gradientMask2.colors = @[(id)[UIColor clearColor].CGColor,
@@ -893,145 +732,6 @@
 - (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath {
   return [self.cellSizes[indexPath.item % 4] CGSizeValue];
 }
-
-
-                        //******************** Search Button Configurations *************************//
-                        //- (void)searchButtonTapped:(id)sender {
-                        //
-                        //    [UIView animateWithDuration:0.5 animations:^{
-                        //        _rightButton.alpha = 0.0f;
-                        //
-                        //    } completion:^(BOOL finished) {
-                        //
-                        //        self.navigationController.navigationBar.topItem.rightBarButtonItems = nil;
-                        //        self.navigationController.navigationBar.topItem.titleView = _searchBar;
-                        //        _searchBar.alpha = 0.0;
-                        //
-                        //        [UIView animateWithDuration:0.5
-                        //                         animations:^{
-                        //                             _searchBar.alpha = 1.0;
-                        //                         } completion:^(BOOL finished) {
-                        //                             [_searchBar becomeFirstResponder];
-                        //                         }];
-                        //
-                        //    }];
-                        //}
-
-                        //- (void)searchBarCancelButtonClicked:(UISearchBar *)searchBar {
-                        //    [UIView animateWithDuration:0.5f animations:^{
-                        //        _searchBar.alpha = 0.0;
-                        //    } completion:^(BOOL finished) {
-                        //        self.navigationController.navigationBar.topItem.titleView = nil;
-                        //        [UIView animateWithDuration:0.5f animations:^ {
-                        //            _rightButton.alpha = 1.0;
-                        //        }];
-                        //
-                        //
-                        //        UIBarButtonItem *leftButton1 = [[UIBarButtonItem alloc] initWithTitle:@"Stores" style:UIBarButtonItemStylePlain target:self action:nil];
-                        //        UIBarButtonItem *rightButton1 = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"settings"] style:UIBarButtonItemStylePlain target:self   action:@selector(barButtonMenuPressed:)];
-                        //        rightButton1.width = 40.f;
-                        //        UIBarButtonItem *rightButton = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"mapview"] style:UIBarButtonItemStylePlain target:self   action:@selector(barButtonCustomPressed:)];
-                        //        rightButton.width = 40.f;
-                        //
-                        //
-                        //        [self.navigationController.navigationBar setTitleTextAttributes:[NSDictionary dictionaryWithObject:[UIColor whiteColor] forKey:NSForegroundColorAttributeName]];
-                        //        self.navigationController.navigationBar.topItem.leftBarButtonItem = leftButton1;
-                        //        self.navigationController.navigationBar.topItem.rightBarButtonItem = rightButton1;
-                        //        self.navigationController.navigationBar.topItem.rightBarButtonItems = [NSArray arrayWithObjects:rightButton1, rightButton, nil];
-                        //
-                        //
-                        //        if (objectsArray.strainOrStore == strains){
-                        //            _filteredObjectsArray.strainObjectArray = [[NSMutableArray alloc] init];
-                        //
-                        //            for (int i = 0; i <objectsArray.strainObjectArray.count; i++)
-                        //                [_filteredObjectsArray.strainObjectArray addObject:[objectsArray.strainObjectArray objectAtIndex:i]];
-                        //
-                        //            [_filteredObjectsArray.strainObjectArray sortUsingDescriptors:@[[NSSortDescriptor sortDescriptorWithKey:@"strainName" ascending:YES selector:@selector(caseInsensitiveCompare:)]]];
-                        //            [self.collectionView reloadData];}
-                        //
-                        //        else if (objectsArray.strainOrStore == stores){
-                        //            _filteredObjectsArray.storeObjectArray = [[NSMutableArray alloc] init];
-                        //
-                        //            for (int i = 0; i <objectsArray.storeObjectArray.count; i++)
-                        //                [_filteredObjectsArray.storeObjectArray addObject:[objectsArray.storeObjectArray objectAtIndex:i]];
-                        //
-                        //            [_filteredObjectsArray.storeObjectArray sortUsingDescriptors:@[[NSSortDescriptor sortDescriptorWithKey:@"storeName" ascending:YES selector:@selector(caseInsensitiveCompare:)]]];
-                        //            [self.collectionView reloadData];}
-                        //    }];
-                        //}
-                        //******************** Search Button Configurations *************************//
-
-
-                        //******************** Refresh pull down configurations *************************//
-                        //- (void)refreshTableau:(UIRefreshControl *)refresh {
-                        //    refresh.attributedTitle = [[NSAttributedString alloc] initWithString:@"Refreshing data..."];
-                        //    objectsArray.filterSelected = 0;
-                        //
-                        //    if (objectsArray.strainOrStore == 0){
-                        //            [self loadstrains];
-                        //    }
-                        //    else{
-                        //            [self loadStores];
-                        //    }
-                        //    [refresh endRefreshing];
-                        //}
-                        //******************** Refresh pull down configurations *************************//
-
-
-                        //******************** Search bar configurations *************************//
-                        //-(void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText{
-                        //    if(searchBar.text.length == 0){
-                        //        if (objectsArray.strainOrStore == 0){
-                        //            _filteredObjectsArray.strainObjectArray = [[NSMutableArray alloc] init];
-                        //
-                        //            for (int i = 0; i <objectsArray.strainObjectArray.count; i++)
-                        //                [_filteredObjectsArray.strainObjectArray addObject:[objectsArray.strainObjectArray objectAtIndex:i]];
-                        //
-                        //            [_filteredObjectsArray.strainObjectArray sortUsingDescriptors:@[[NSSortDescriptor sortDescriptorWithKey:@"strainName" ascending:YES selector:@selector(caseInsensitiveCompare:)]]];
-                        //            [self.collectionView reloadData];}
-                        //
-                        //        else if (objectsArray.strainOrStore == 1){
-                        //            _filteredObjectsArray.storeObjectArray = [[NSMutableArray alloc] init];
-                        //
-                        //            for (int i = 0; i <objectsArray.storeObjectArray.count; i++)
-                        //                [_filteredObjectsArray.storeObjectArray addObject:[objectsArray.storeObjectArray objectAtIndex:i]];
-                        //
-                        //            [_filteredObjectsArray.storeObjectArray sortUsingDescriptors:@[[NSSortDescriptor sortDescriptorWithKey:@"storeName" ascending:YES selector:@selector(caseInsensitiveCompare:)]]];
-                        //            [self.collectionView reloadData];}
-                        //    }
-                        //    else
-                        //        [self searchForSearchBarText];
-                        //}
-                        //
-                        //-(void) searchForSearchBarText{
-                        //    if (objectsArray.strainOrStore == 0){
-                        //        _filteredObjectsArray.strainObjectArray = [[NSMutableArray alloc] init];
-                        //
-                        //        for (int i = 0; i < objectsArray.strainObjectArray.count; i++) {
-                        //            strainClass *tempStrain = [objectsArray.strainObjectArray objectAtIndex:i];
-                        //            if ([tempStrain.strainName.lowercaseString hasPrefix:_searchBar.text.lowercaseString]) {
-                        //                NSLog(@"strain found %@", tempStrain.strainName);
-                        //                [_filteredObjectsArray.strainObjectArray addObject:tempStrain];
-                        //            }
-                        //        }
-                        //
-                        //        [self.collectionView reloadData];}
-                        //
-                        //    else if (objectsArray.strainOrStore == 1){
-                        //        _filteredObjectsArray.storeObjectArray = [[NSMutableArray alloc] init];
-                        //
-                        //        for (int i = 0; i < objectsArray.storeObjectArray.count; i++) {
-                        //             storeClass *tempStore = [objectsArray.storeObjectArray objectAtIndex:i];
-                        //             if ([tempStore.storeName.lowercaseString hasPrefix:_searchBar.text.lowercaseString]) {
-                        //                 NSLog(@"store found %@", tempStore.storeName);
-                        //                 [_filteredObjectsArray.storeObjectArray addObject:tempStore];
-                        //             }
-                        //        }
-                        //
-                        //        [self.collectionView reloadData];}
-                        //}
-                        //******************** Search bar configurations *************************//
-
 
 @end
 

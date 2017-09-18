@@ -54,7 +54,13 @@
 }
 
 - (IBAction)selectedAddPhoto:(UIButton *)sender {
-    //Go to select photos to add
+    FIRUser *youser = [FIRAuth auth].currentUser;
+    if(youser.anonymous){
+        [user goToLoginViewController:self];
+    }
+    else{
+        [user goToSelectPhotosViewController:self];
+    }
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
@@ -73,12 +79,12 @@
     image = [store.imagesArray objectAtIndex:0];
     //    _store_image_view.image = [UIImage imageWithData: image.data];
     
-    if ([store.imagesArray count] > 0) {
+    for (int i = 0; i < [store.imagesArray count]; i++) {
         FIRStorage *storage = [FIRStorage storage];
         FIRStorageReference *storageRef = [storage reference];
         
         imageClass *image = [[imageClass alloc] init];
-        image = [store.imagesArray objectAtIndex:0];
+        image = [store.imagesArray objectAtIndex:i];
         
         NSLog(@"image link is %@", image.imageURL);
         FIRStorageReference *spaceRef = [[[storageRef child:@"stores"] child:store.storeKey] child:image.imageURL];

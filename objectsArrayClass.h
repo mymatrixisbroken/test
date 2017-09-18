@@ -35,6 +35,7 @@ enum filterSelected
 @property NSMutableArray *storeObjectArray;
 @property NSMutableArray *eventObjectArray;
 @property NSMutableArray *moderateStoresObjectArray;
+@property NSMutableArray *addPhotosObjectArray;
 @property NSMutableArray *userSearchObjectArray;
 @property (assign, nonatomic) enum strainOrStore strainOrStore;
 @property (assign, nonatomic) enum filterSelected filterSelected;
