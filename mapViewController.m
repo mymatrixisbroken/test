@@ -93,10 +93,12 @@
     
     storeClass *tempStore = [objectsArray.storeObjectArray objectAtIndex:i];
 
-    imageClass *tempImage = [[imageClass alloc] init];
-    tempImage = [tempStore.imagesArray objectAtIndex:0];
+    if ([tempStore.imagesArray count] > 0) {
+        imageClass *tempImage = [[imageClass alloc] init];
+        tempImage = [tempStore.imagesArray objectAtIndex:0];
+        infoWindow.storeImageView.image = [UIImage imageWithData:tempImage.data];
+    }
 
-    infoWindow.storeImageView.image = [UIImage imageWithData:tempImage.data];
     [infoWindow bringSubviewToFront:infoWindow.storeImageView];
     infoWindow.storeNameLabel.text = tempStore.storeName;
     infoWindow.starRatingView.value = tempStore.ratingScore;
