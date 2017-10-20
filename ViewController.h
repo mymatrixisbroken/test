@@ -18,7 +18,7 @@
 #import "KxMenu.h"
 #import "imageClass.h"
 #import "reviewClass.h"
-#import "storeProfileViewController.h"
+#import "StoreProfileViewController.h"
 #import <FirebaseStorageUI/FirebaseStorageUI.h>
 
 
@@ -35,6 +35,6 @@
 @property imageClass *image;
 @property NSMutableArray *imagesArray;
 @property storeClass *storeloop;
-
+@property UIActivityIndicatorView *spinner;
 
 @end

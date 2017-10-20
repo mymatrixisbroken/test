@@ -75,6 +75,20 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
+    _spinner = [[UIActivityIndicatorView alloc]
+                                        initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
+    _spinner.hidesWhenStopped = YES;
+    _spinner.center = self.collectionView.center;
+    [self.collectionView addSubview:_spinner];
+    [_spinner startAnimating];
+
+    
+    UISwipeGestureRecognizer *swipeLeft = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(screenSwipedLeft)];
+    swipeLeft.numberOfTouchesRequired = 1;
+    swipeLeft.direction=UISwipeGestureRecognizerDirectionLeft;
+    [self.view addGestureRecognizer:swipeLeft];
+
     if (objectsArray.filterSelected == nearMeRecommended) {
         [self getUserCurrentLocation];
     }
@@ -139,6 +153,15 @@
 
 }
 
+-(void) screenSwipedLeft{
+    FIRUser *currentUser = [FIRAuth auth].currentUser;
+    if(currentUser.anonymous){
+        [user gotoOptionListViewController:self];
+    } else {
+        [user gotoOptionListSignedInViewController:self];
+    }
+}
+
 //******************** Required for filter menu popover *************************//
 - (UIModalPresentationStyle) adaptivePresentationStyleForPresentationController: (UIPresentationController * ) controller {
     return UIModalPresentationNone;
@@ -148,30 +171,30 @@
 -(IBAction) filterButtonTapped:(UIButton*)btn
 {
     //******************** Pop over filter menu for strains *************************//
-    if (objectsArray.strainOrStore == strains) {
-        UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-        UIViewController *vc = [sb instantiateViewControllerWithIdentifier:@"listStrainsFilterSBID"];
-        vc.modalPresentationStyle = UIModalPresentationPopover;
-        vc.preferredContentSize = CGSizeMake(175, 132);
-        
-        UIPopoverPresentationController *popOver = vc.popoverPresentationController;
-        
-        popOver.delegate = self;
-        popOver.sourceView = _extView;
-        popOver.sourceRect = btn.frame;
-        popOver.permittedArrowDirections = UIPopoverArrowDirectionUp;
-        popOver.backgroundColor = [UIColor colorWithRed:7.0/255.0 green:18.0/255.0 blue:17.0/255.0 alpha:1.0];
-        
-        [self presentViewController:vc animated:YES completion:NULL];
-    }
+//    if (objectsArray.strainOrStore == strains) {
+//        UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+//        UIViewController *vc = [sb instantiateViewControllerWithIdentifier:@"listStrainsFilterSBID"];
+//        vc.modalPresentationStyle = UIModalPresentationPopover;
+//        vc.preferredContentSize = CGSizeMake(175, 132);
+//        
+//        UIPopoverPresentationController *popOver = vc.popoverPresentationController;
+//        
+//        popOver.delegate = self;
+//        popOver.sourceView = _extView;
+//        popOver.sourceRect = btn.frame;
+//        popOver.permittedArrowDirections = UIPopoverArrowDirectionUp;
+//        popOver.backgroundColor = [UIColor colorWithRed:7.0/255.0 green:18.0/255.0 blue:17.0/255.0 alpha:1.0];
+//        
+//        [self presentViewController:vc animated:YES completion:NULL];
+//    }
     
     
     //******************** Pop over filter menu for stores *************************//
-    else if (objectsArray.strainOrStore == stores){
+    if (objectsArray.strainOrStore == stores){
         UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-        UIViewController *vc = [sb instantiateViewControllerWithIdentifier:@"listStoresFilterSBID"];
+        UIViewController *vc = [sb instantiateViewControllerWithIdentifier:@"Sort Stores SB ID"];
         vc.modalPresentationStyle = UIModalPresentationPopover;
-        vc.preferredContentSize = CGSizeMake(175, 220);
+        vc.preferredContentSize = CGSizeMake(280, 176);
         
         UIPopoverPresentationController *popOver = vc.popoverPresentationController;
 
@@ -304,105 +327,105 @@
 //            [self loadStores];
             
             break;
-        case 1:
-            if (objectsArray.strainOrStore == strains){
-                //******************** Load your recommended strains *************************//
-                
-                //******************** Initialize *************************//
-                _filteredObjectsArray = [[objectsArrayClass alloc] init];
-            }
-            else if (objectsArray.strainOrStore == stores){
-                
-                //******************** Initialize *************************//
-                _filteredObjectsArray = [[objectsArrayClass alloc] init];
-                
-                //******************** Load distance from user to stores *************************//
-                
-                //******************** Sort *************************//
-                [_filteredObjectsArray.storeObjectArray sortUsingDescriptors:@[[NSSortDescriptor sortDescriptorWithKey:@"distanceValue" ascending:YES selector:@selector(compare:)]]];
-                
-                //******************** Reload *************************//
-                [self.collectionView reloadData];}
-            break;
-        case 2:
-            if (objectsArray.strainOrStore == strains){
-                
-                //******************** Initialize *************************//
-                _filteredObjectsArray.strainObjectArray = [[NSMutableArray alloc] init];
-                
-                //******************** Copy from array data store to filtered array *************************//
-                for (int i = 0; i <objectsArray.strainObjectArray.count; i++)
-                    [_filteredObjectsArray.strainObjectArray addObject:[objectsArray.strainObjectArray objectAtIndex:i]];
-                
-                //******************** Sort *************************//
-                [_filteredObjectsArray.strainObjectArray sortUsingDescriptors:@[[NSSortDescriptor sortDescriptorWithKey:@"strainName" ascending:YES selector:@selector(caseInsensitiveCompare:)]]];
-                
-                //******************** Reload *************************//
-                [self.collectionView reloadData];}
-            
-            else if (objectsArray.strainOrStore == stores){
-                
-                //******************** Initialize *************************//
-                _filteredObjectsArray = [[objectsArrayClass alloc] init];
-
-                //******************** Copy from array data store to filtered array *************************//
-                for (int i = 0; i <objectsArray.storeObjectArray.count; i++)
-                    [_filteredObjectsArray.storeObjectArray addObject:[objectsArray.storeObjectArray objectAtIndex:i]];
-                
-                //******************** Sort *************************//
-                [_filteredObjectsArray.storeObjectArray sortUsingDescriptors:@[[NSSortDescriptor sortDescriptorWithKey:@"storeName" ascending:YES selector:@selector(caseInsensitiveCompare:)]]];
-                
-                //******************** Reload *************************//
-                [self.collectionView reloadData];}
-            break;
-            
-        case 3:
-            if (objectsArray.strainOrStore == strains){
-                
-                //******************** Initialize *************************//
-                _filteredObjectsArray = [[objectsArrayClass alloc] init];
-
-                //******************** Match strain tried key with objects strain key *************************//
-                for (int i = 0; i < user.strainsTried.count; i++) {
-                    NSString *strainsTriedKey = [user.strainsTried objectAtIndex:i];
-                    for(int j = 0; j < objectsArray.strainObjectArray.count; j++){
-                        strainClass *tempStrain = [objectsArray.strainObjectArray objectAtIndex:j];
-                        if ([strainsTriedKey isEqual:tempStrain.strainKey]) {
-                            [_filteredObjectsArray.strainObjectArray addObject:tempStrain];}}}
-                
-                //******************** Reload *************************//
-                [self.collectionView reloadData];}
-            
-            else if (objectsArray.strainOrStore == stores){
-                //******************** Initialize *************************//
-                _filteredObjectsArray = [[objectsArrayClass alloc] init];
-
-                //******************** Match store visited key with objects store key *************************//
-                for (int i = 0; i < user.storesVisited.count; i++) {
-                    NSString *storeVisitedKey = [user.storesVisited objectAtIndex:i];
-                    for(int j = 0; j < objectsArray.storeObjectArray.count; j++){
-                        storeClass *tempStore = [objectsArray.storeObjectArray objectAtIndex:j];
-                        if ([storeVisitedKey isEqual:tempStore.storeKey]) {
-                            [_filteredObjectsArray.storeObjectArray addObject:tempStore];}}}
-                
-                //******************** Reload *************************//
-                [self.collectionView reloadData];}
-            break;
-            
-        case 4:
-            //******************** Initialize *************************//
-            _filteredObjectsArray = [[objectsArrayClass alloc] init];
-
-            //******************** Match store wishlist key with objects store key *************************//
-            for (int i = 0; i < user.wishList.count; i++) {
-                NSString *wishListKey = [user.wishList objectAtIndex:i];
-                for(int j = 0; j < objectsArray.strainObjectArray.count; j++){
-                    strainClass *tempStrain = [objectsArray.strainObjectArray objectAtIndex:j];
-                    if ([wishListKey isEqual:tempStrain.strainKey]) {
-                        [_filteredObjectsArray.strainObjectArray addObject:tempStrain];}}}
-            
-            //******************** Reload *************************//
-            [self.collectionView reloadData];
+//        case 1:
+//            if (objectsArray.strainOrStore == strains){
+//                //******************** Load your recommended strains *************************//
+//                
+//                //******************** Initialize *************************//
+//                _filteredObjectsArray = [[objectsArrayClass alloc] init];
+//            }
+//            else if (objectsArray.strainOrStore == stores){
+//                
+//                //******************** Initialize *************************//
+//                _filteredObjectsArray = [[objectsArrayClass alloc] init];
+//                
+//                //******************** Load distance from user to stores *************************//
+//                
+//                //******************** Sort *************************//
+//                [_filteredObjectsArray.storeObjectArray sortUsingDescriptors:@[[NSSortDescriptor sortDescriptorWithKey:@"distanceValue" ascending:YES selector:@selector(compare:)]]];
+//                
+//                //******************** Reload *************************//
+//                [self.collectionView reloadData];}
+//            break;
+//        case 2:
+//            if (objectsArray.strainOrStore == strains){
+//                
+//                //******************** Initialize *************************//
+//                _filteredObjectsArray.strainObjectArray = [[NSMutableArray alloc] init];
+//                
+//                //******************** Copy from array data store to filtered array *************************//
+//                for (int i = 0; i <objectsArray.strainObjectArray.count; i++)
+//                    [_filteredObjectsArray.strainObjectArray addObject:[objectsArray.strainObjectArray objectAtIndex:i]];
+//                
+//                //******************** Sort *************************//
+//                [_filteredObjectsArray.strainObjectArray sortUsingDescriptors:@[[NSSortDescriptor sortDescriptorWithKey:@"strainName" ascending:YES selector:@selector(caseInsensitiveCompare:)]]];
+//                
+//                //******************** Reload *************************//
+//                [self.collectionView reloadData];}
+//            
+//            else if (objectsArray.strainOrStore == stores){
+//                
+//                //******************** Initialize *************************//
+//                _filteredObjectsArray = [[objectsArrayClass alloc] init];
+//
+//                //******************** Copy from array data store to filtered array *************************//
+//                for (int i = 0; i <objectsArray.storeObjectArray.count; i++)
+//                    [_filteredObjectsArray.storeObjectArray addObject:[objectsArray.storeObjectArray objectAtIndex:i]];
+//                
+//                //******************** Sort *************************//
+//                [_filteredObjectsArray.storeObjectArray sortUsingDescriptors:@[[NSSortDescriptor sortDescriptorWithKey:@"storeName" ascending:YES selector:@selector(caseInsensitiveCompare:)]]];
+//                
+//                //******************** Reload *************************//
+//                [self.collectionView reloadData];}
+//            break;
+//            
+//        case 3:
+//            if (objectsArray.strainOrStore == strains){
+//                
+//                //******************** Initialize *************************//
+//                _filteredObjectsArray = [[objectsArrayClass alloc] init];
+//
+//                //******************** Match strain tried key with objects strain key *************************//
+//                for (int i = 0; i < user.strainsTried.count; i++) {
+//                    NSString *strainsTriedKey = [user.strainsTried objectAtIndex:i];
+//                    for(int j = 0; j < objectsArray.strainObjectArray.count; j++){
+//                        strainClass *tempStrain = [objectsArray.strainObjectArray objectAtIndex:j];
+//                        if ([strainsTriedKey isEqual:tempStrain.strainKey]) {
+//                            [_filteredObjectsArray.strainObjectArray addObject:tempStrain];}}}
+//                
+//                //******************** Reload *************************//
+//                [self.collectionView reloadData];}
+//            
+//            else if (objectsArray.strainOrStore == stores){
+//                //******************** Initialize *************************//
+//                _filteredObjectsArray = [[objectsArrayClass alloc] init];
+//
+//                //******************** Match store visited key with objects store key *************************//
+//                for (int i = 0; i < user.storesVisited.count; i++) {
+//                    NSString *storeVisitedKey = [user.storesVisited objectAtIndex:i];
+//                    for(int j = 0; j < objectsArray.storeObjectArray.count; j++){
+//                        storeClass *tempStore = [objectsArray.storeObjectArray objectAtIndex:j];
+//                        if ([storeVisitedKey isEqual:tempStore.storeKey]) {
+//                            [_filteredObjectsArray.storeObjectArray addObject:tempStore];}}}
+//                
+//                //******************** Reload *************************//
+//                [self.collectionView reloadData];}
+//            break;
+//            
+//        case 4:
+//            //******************** Initialize *************************//
+//            _filteredObjectsArray = [[objectsArrayClass alloc] init];
+//
+//            //******************** Match store wishlist key with objects store key *************************//
+//            for (int i = 0; i < user.wishList.count; i++) {
+//                NSString *wishListKey = [user.wishList objectAtIndex:i];
+//                for(int j = 0; j < objectsArray.strainObjectArray.count; j++){
+//                    strainClass *tempStrain = [objectsArray.strainObjectArray objectAtIndex:j];
+//                    if ([wishListKey isEqual:tempStrain.strainKey]) {
+//                        [_filteredObjectsArray.strainObjectArray addObject:tempStrain];}}}
+//            
+//            //******************** Reload *************************//
+//            [self.collectionView reloadData];
         default:
             break;
     }
@@ -444,13 +467,10 @@
     for (int i = 0; i < _storeKeys.count; i++){
 
         storeClass *myStore = [[storeClass alloc] init];
-        [objectsArray.storeObjectArray addObject:myStore];
-
-        myStore = [objectsArray.storeObjectArray objectAtIndex:i];
         myStore.storeKey = [_storeKeys objectAtIndex:i];
-        [objectsArray.storeObjectArray replaceObjectAtIndex:i withObject:myStore];
+        [objectsArray.storeObjectArray insertObject:myStore atIndex:i];
+//        [objectsArray.storeObjectArray replaceObjectAtIndex:i withObject:myStore];
 
-        [self sortStoresByDistances];
         [self getStoreLocations: i];
         [self getImagesForNearestTwentyStores: i];
         [self getStoreName: i];
@@ -488,7 +508,8 @@
     
 
     NSString *geocodingBaseURL = @"https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins=";
-    NSString *url = [NSString stringWithFormat:@"%@%f,%f&destinations=%@,%@&key=AIzaSyAsZ171sgZHuTcapToLRQ5-W9dl_WRLOh4", geocodingBaseURL, user.latitude,user.longitude,myStore.latitude,myStore.longitude];
+    NSString *url = [NSString stringWithFormat:@"%@%f,%f&destinations=%@,%@", geocodingBaseURL, user.latitude,user.longitude,myStore.latitude,myStore.longitude];
+//    NSString *url = [NSString stringWithFormat:@"%@%f,%f&destinations=%@,%@&key=AIzaSyAsZ171sgZHuTcapToLRQ5-W9dl_WRLOh4", geocodingBaseURL, user.latitude,user.longitude,myStore.latitude,myStore.longitude];
 
     url = [url stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
     NSURL *queryURL = [NSURL URLWithString:url];
@@ -499,6 +520,7 @@
                           JSONObjectWithData:data
                           options:kNilOptions
                           error:&error];
+    
     if (user.latitude != 0.00){
         NSArray *rowsArray = [json objectForKey:@"rows"];
         for (NSDictionary *alert in rowsArray ){
@@ -510,13 +532,20 @@
                 myStore.distanceValue = value;
                 
                 [objectsArray.storeObjectArray replaceObjectAtIndex:i withObject:myStore];
+                
+                if ((i+1) == _storeKeys.count) {
+                    NSLog(@"store keys count %lu", _storeKeys.count);
+                    NSLog(@"i is %lu", i);
+//                    [self sortStoresByDistances];
+                }
             }
         }
     }
 }
 
 - (void) sortStoresByDistances{
-    [objectsArray.storeObjectArray sortUsingDescriptors:@[[NSSortDescriptor sortDescriptorWithKey:@"distanceValue" ascending:YES selector:@selector(compare:)]]];
+    NSSortDescriptor *descriptor = [NSSortDescriptor sortDescriptorWithKey:@"distanceValue" ascending:YES selector:@selector(compare:)];
+    [objectsArray.storeObjectArray sortUsingDescriptors:@[descriptor]];
 }
 
 - (void) getImagesForNearestTwentyStores:(NSInteger) i {
@@ -544,7 +573,9 @@
 
                 [myStore.imagesArray sortUsingDescriptors:@[[NSSortDescriptor sortDescriptorWithKey:@"voteScore" ascending:NO selector:@selector(compare:)]]];
 
+                
                 dispatch_async(dispatch_get_main_queue(), ^{
+                    [_spinner stopAnimating];
                     [self.collectionView reloadData];
                 });
             }
@@ -617,6 +648,7 @@
                 
                 [myStore.reviews addObject:tempReview];
             }
+            [objectsArray.storeObjectArray replaceObjectAtIndex:i withObject:myStore];
         }
     }];
 }
@@ -646,11 +678,24 @@
   CHTCollectionViewWaterfallCell *cell =
   (CHTCollectionViewWaterfallCell *)[collectionView dequeueReusableCellWithReuseIdentifier:CELL_IDENTIFIER forIndexPath:indexPath];
     
+    if ([user.sortStoreType  isEqual: @"nearMe"]) {
+            [self sortStoresByDistances];
+    }
+    else if([user.sortStoreType  isEqual: @"rating"]){
+        NSSortDescriptor *descriptor = [NSSortDescriptor sortDescriptorWithKey:@"ratingScore" ascending:NO selector:@selector(compare:)];
+        [objectsArray.storeObjectArray sortUsingDescriptors:@[descriptor]];
+    }
+    else if([user.sortStoreType  isEqual: @"mostReviewed"]){
+        NSSortDescriptor *descriptor = [NSSortDescriptor sortDescriptorWithKey:@"ratingCount" ascending:NO selector:@selector(compare:)];
+        [objectsArray.storeObjectArray sortUsingDescriptors:@[descriptor]];
+    }
+    else
+
     cell.imageView.contentMode = UIViewContentModeScaleToFill;
     CAGradientLayer *gradientMask = [CAGradientLayer layer];
     gradientMask.frame = cell.imageView.frame;
     gradientMask.colors = @[(id)[UIColor clearColor].CGColor, (id)[UIColor colorWithRed:1.0/255.0 green:1.0/255.0 blue:1.0/255.0 alpha:1.0].CGColor];
-    gradientMask.startPoint = CGPointMake(0.75, 0.5);   // start at left middle
+    gradientMask.startPoint = CGPointMake(0.5, 0.5);   // start at left middle
     gradientMask.endPoint = CGPointMake(1.0, 0.5);     // end at right middle
 
     [cell.imageView.layer addSublayer:gradientMask];
@@ -658,40 +703,46 @@
     
     if (objectsArray.strainOrStore == stores){
         if ([objectsArray.storeObjectArray count] > 0) {
-                storeClass *tempStore = [[storeClass alloc] init];
-                tempStore = [objectsArray.storeObjectArray objectAtIndex:indexPath.row];
-                
-                if ([tempStore.imagesArray count] > 0) {
-                    FIRStorage *storage = [FIRStorage storage];
-                    FIRStorageReference *storageRef = [storage reference];
-                    
-                    imageClass *image = [[imageClass alloc] init];
-                    image = [tempStore.imagesArray objectAtIndex:0];
-                    FIRStorageReference *spaceRef = [[[storageRef child:@"stores"] child:tempStore.storeKey] child:image.imageURL];
-                    
-                    UIImage *placeHolder = [[UIImage alloc] init];
-                    [cell.imageView sd_setImageWithStorageReference:spaceRef placeholderImage:placeHolder];
-                }
-                
-                cell.imageView.backgroundColor = [UIColor colorWithRed:18.0/255.0 green:24.0/255.0 blue:23.0/255.0 alpha:1.0];
-                //                [cell.imageView.layer.mask addSublayer:gradientMask];
-                cell.label.text = tempStore.storeName;
-                NSString *cityState = [NSString stringWithFormat:@"%@, %@", tempStore.city, tempStore.state];
-                cell.locationLabel.text = cityState;
-                NSString *reviewCount = [NSString stringWithFormat:@"%lu Reviews", (unsigned long)tempStore.reviews.count];
-                cell.reviewCountLabel.text = reviewCount;
-                cell.steviaImageView.image = [UIImage imageNamed:@"DistanceSmartObject"];
-                cell.steviaImageView.contentMode = UIViewContentModeScaleAspectFit;
-                cell.distanceToMeLabel.text = tempStore.distanceToMe;
+            storeClass *tempStore = [[storeClass alloc] init];
+            tempStore = [objectsArray.storeObjectArray objectAtIndex:indexPath.row];
             
-                CAGradientLayer *gradientMask2 = [CAGradientLayer layer];
-                gradientMask2.frame = cell.bounds;
-                gradientMask2.colors = @[(id)[UIColor clearColor].CGColor,
-                                         (id)[UIColor clearColor].CGColor,
-                                         (id)[UIColor colorWithRed:208.0/255.0 green:210.0/255.0 blue:210.0/255.0 alpha:1.0].CGColor,
-                                         (id)[UIColor whiteColor].CGColor];
-                gradientMask2.locations = @[@0.0, @0.95, @0.95, @0.97];
-                [cell.layer addSublayer:gradientMask2];
+            if ([tempStore.imagesArray count] > 0) {
+                FIRStorage *storage = [FIRStorage storage];
+                FIRStorageReference *storageRef = [storage reference];
+                
+                imageClass *image = [[imageClass alloc] init];
+                image = [tempStore.imagesArray objectAtIndex:0];
+                FIRStorageReference *spaceRef = [[[storageRef child:@"stores"] child:tempStore.storeKey] child:image.imageURL];
+                
+                UIImage *placeHolder = [[UIImage alloc] init];
+                [cell.imageView sd_setImageWithStorageReference:spaceRef placeholderImage:placeHolder];
+            }
+            
+            if (tempStore.ratingCount >0) {
+                cell.starRatingView.value = tempStore.ratingScore;
+            }
+            else
+                cell.starRatingView.value = 0;
+        
+            cell.imageView.backgroundColor = [UIColor colorWithRed:18.0/255.0 green:24.0/255.0 blue:23.0/255.0 alpha:1.0];
+            cell.label.text = tempStore.storeName;
+            NSString *cityState = [NSString stringWithFormat:@"%@, %@", tempStore.city, tempStore.state];
+            cell.locationLabel.text = cityState;
+            
+            NSString *reviewCount = [NSString stringWithFormat:@"%lu Reviews", (unsigned long)tempStore.ratingCount];
+            cell.reviewCountLabel.text = reviewCount;
+            cell.steviaImageView.image = [UIImage imageNamed:@"DistanceSmartObject"];
+            cell.steviaImageView.contentMode = UIViewContentModeScaleAspectFit;
+            cell.distanceToMeLabel.text = tempStore.distanceToMe;
+        
+            CAGradientLayer *gradientMask2 = [CAGradientLayer layer];
+            gradientMask2.frame = cell.bounds;
+            gradientMask2.colors = @[(id)[UIColor clearColor].CGColor,
+                                     (id)[UIColor clearColor].CGColor,
+                                     (id)[UIColor colorWithRed:208.0/255.0 green:210.0/255.0 blue:210.0/255.0 alpha:1.0].CGColor,
+                                     (id)[UIColor whiteColor].CGColor];
+            gradientMask2.locations = @[@0.0, @0.95, @0.95, @0.97];
+            [cell.layer addSublayer:gradientMask2];
             
         }
     }

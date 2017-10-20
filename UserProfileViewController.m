@@ -16,11 +16,27 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
+    UISwipeGestureRecognizer *swipeLeft = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(screenSwipedLeft)];
+    swipeLeft.numberOfTouchesRequired = 1;
+    swipeLeft.direction=UISwipeGestureRecognizerDirectionLeft;
+    [self.view addGestureRecognizer:swipeLeft];
+
+    
     [self loadNavController];
     [self loadUserFromFirebaseDatabase];
     self.scrollView.contentSize = self.view.bounds.size;
     self.shyNavBarManager.scrollView = self.scrollView;
     //    [self loadExtView];
+}
+
+-(void) screenSwipedLeft{
+    FIRUser *currentUser = [FIRAuth auth].currentUser;
+    if(currentUser.anonymous){
+        [user gotoOptionListViewController:self];
+    } else {
+        [user gotoOptionListSignedInViewController:self];
+    }
 }
 
 - (void) loadUserFromFirebaseDatabase {
@@ -520,6 +536,7 @@
     
     
     UIBarButtonItem *space = [[UIBarButtonItem alloc]initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:self action:nil];
+    space.width = 55;
     
     NSArray *buttons = @[buttonOne, space, buttonTwo, space, buttonThree, space, buttonFour, space, buttonFive];
     

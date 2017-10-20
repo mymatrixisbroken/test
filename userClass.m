@@ -17,6 +17,8 @@ userClass *user;
 @synthesize dateJoined;
 @synthesize lastSignedIn;
 @synthesize accountType;
+@synthesize sortStoreType;
+@synthesize storeOwnerKey;
 @synthesize data;
 @synthesize avatarDataString;
 @synthesize badges;
@@ -26,6 +28,7 @@ userClass *user;
 @synthesize checkInCount;
 
 @synthesize friendsEvents;
+@synthesize activityArray;
 @synthesize friendsEventsCount;
 
 @synthesize friendsKeys;
@@ -91,6 +94,7 @@ userClass *user;
         self.checkInCount = 0;
         
         self.friendsEvents = [[NSMutableArray alloc] init];
+        self.activityArray = [[NSMutableArray alloc] init];
         self.friendsEventsCount = 0;
         
         self.friendsKeys = [[NSMutableArray alloc] init];
@@ -245,7 +249,8 @@ friendRequestsKeys:(NSMutableArray *)array8{
 -(void)goToStrainsViewController:(UIViewController *)viewController{
     UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
     UIViewController *vc = [sb instantiateViewControllerWithIdentifier:@"List Strains View Controller  SB ID"];
-    vc.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
+//    vc.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
+    vc.modalPresentationStyle = UIModalPresentationFullScreen;
     //    [viewController presentViewController:vc animated:YES completion:NULL];
 //    [viewController showDetailViewController:vc sender:viewController];
     [viewController showViewController:vc sender:viewController];
@@ -403,6 +408,20 @@ friendRequestsKeys:(NSMutableArray *)array8{
 -(void)presentUsernameInvalidAlert:(UIViewController *)viewController{
     UIAlertController *alertController = [UIAlertController
                                           alertControllerWithTitle:@"Invalid username"
+                                          message:nil
+                                          preferredStyle:UIAlertControllerStyleAlert];
+    UIAlertAction *okAction = [UIAlertAction
+                               actionWithTitle:NSLocalizedString(@"OK", @"OK action")
+                               style:UIAlertActionStyleDefault
+                               handler:^(UIAlertAction *action)
+                               {}];
+    
+    [alertController addAction:okAction];
+    [viewController presentViewController:alertController animated:YES completion:nil];
+}
+-(void)presentEmailTakenAlert:(UIViewController *)viewController{
+    UIAlertController *alertController = [UIAlertController
+                                          alertControllerWithTitle:@"Email already registered."
                                           message:nil
                                           preferredStyle:UIAlertControllerStyleAlert];
     UIAlertAction *okAction = [UIAlertAction

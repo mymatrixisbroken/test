@@ -18,7 +18,12 @@
 @import HCSStarRatingView;
 
 @interface WriteReviewViewController : UIViewController
-@property (strong, nonatomic) IBOutlet HCSStarRatingView *star_rating;
-@property (strong, nonatomic) IBOutlet UITextView *review_text;
+@property (strong, nonatomic) IBOutlet HCSStarRatingView *storeStarRating;
+@property (strong, nonatomic) IBOutlet UILabel *storeRatingLabel;
+@property (strong, nonatomic) IBOutlet UILabel *storeReviewCount;
+@property (strong, nonatomic) IBOutlet UILabel *storeNameLabel;
+@property (strong, nonatomic) IBOutlet UITextView *reviewTextField;
+@property (strong, nonatomic) IBOutlet HCSStarRatingView *reviewStarRating;
+@property (strong, nonatomic) IBOutlet UIButton *submitButton;
 @end
 

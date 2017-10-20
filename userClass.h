@@ -20,6 +20,8 @@ extern userClass *user;
 @property NSString *dateJoined;
 @property NSString *lastSignedIn;
 @property NSString *accountType;
+@property NSString *sortStoreType;
+@property NSString *storeOwnerKey;
 @property NSData *data;
 @property NSString *avatarDataString;
 
@@ -30,6 +32,7 @@ extern userClass *user;
 @property NSInteger checkInCount;
 
 @property NSMutableArray *friendsEvents;
+@property NSMutableArray *activityArray;
 @property NSInteger *friendsEventsCount;
 
 @property NSMutableArray *friendsKeys;
@@ -120,6 +123,7 @@ friendRequestsKeys:(NSMutableArray *)array8;
 -(void)presentLoginErrorAlert:(UIViewController *)viewController;
 -(void)presentImageNotSelectedAlert:(UIViewController *)viewController;
 -(void)presentUsernameInvalidAlert:(UIViewController *)viewController;
+-(void)presentEmailTakenAlert:(UIViewController *)viewController;
 -(void)presentUsernameTakenAlert:(UIViewController *)viewController;
 -(void)presentPasswordInvalidAlert:(UIViewController *)viewController;
 -(void)presentTermsNotAgreedAlert:(UIViewController *)viewController;
