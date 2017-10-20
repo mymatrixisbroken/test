@@ -1,18 +1,18 @@
 //
-//  storePromosTableViewController.m
+//  sortTableViewController.m
 //  myProject
 //
-//  Created by Guy on 8/26/17.
+//  Created by Guy on 9/18/17.
 //  Copyright © 2017 Joaquin. All rights reserved.
 //
 
-#import "storePromosTableViewController.h"
+#import "sortTableViewController.h"
 
-@interface storePromosTableViewController ()
+@interface sortTableViewController ()
 
 @end
 
-@implementation storePromosTableViewController
+@implementation sortTableViewController
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -36,29 +36,43 @@
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return [store.promosArray count];
+    return 4;
 }
 
-- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    return 120;
+- (void) tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
+    if(indexPath.row == 1){
+        UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+        UIViewController *vc = [sb instantiateViewControllerWithIdentifier:@"List View Controller  SB ID"];
+        NSString *sortType = @"nearMe";
+        user.sortStoreType = sortType;
+        [self presentViewController:vc animated:YES completion:^{}];
+    }
+    else if(indexPath.row == 2){
+        UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+        UIViewController *vc = [sb instantiateViewControllerWithIdentifier:@"List View Controller  SB ID"];
+        NSString *sortType = @"rating";
+        user.sortStoreType = sortType;
+        [self presentViewController:vc animated:YES completion:^{}];
+    }
+    else if(indexPath.row == 3){
+        UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+        UIViewController *vc = [sb instantiateViewControllerWithIdentifier:@"List View Controller  SB ID"];
+        NSString *sortType = @"mostReviewed";
+        user.sortStoreType = sortType;
+        [self presentViewController:vc animated:YES completion:^{}];
+    }
 }
 
+
+/*
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    promoClass *promo = [[promoClass alloc] init];
-    promo = [store.promosArray objectAtIndex:indexPath.row];
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:<#@"reuseIdentifier"#> forIndexPath:indexPath];
     
-    NSString *cellIdentifier = @"StorePromoCell";
-    storePromoTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier forIndexPath:indexPath];
-    cell.promoDateLabel.text = promo.promoDate;
-    cell.promoTextLabel.text = promo.promoText;
-    cell.preservesSuperviewLayoutMargins = false;
-    cell.separatorInset = UIEdgeInsetsZero;
-    cell.layoutMargins = UIEdgeInsetsZero;
-
+     Configure the cell...
+    
     return cell;
 }
-
+*/
 
 /*
 // Override to support conditional editing of the table view.

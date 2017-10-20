@@ -150,6 +150,7 @@ static NSString * const reuseIdentifier = @"Cell";
     
     
     UIBarButtonItem *space = [[UIBarButtonItem alloc]initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:self action:nil];
+    space.width = 55;
     
     NSArray *buttons = @[buttonOne, space, buttonTwo];
     
@@ -180,6 +181,13 @@ static NSString * const reuseIdentifier = @"Cell";
         [self presentViewController:alert animated:YES completion:nil];
     }
     else{
+        _spinner = [[UIActivityIndicatorView alloc]
+                    initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
+        _spinner.hidesWhenStopped = YES;
+        _spinner.center = self.collectionView.center;
+        [self.collectionView addSubview:_spinner];
+        [_spinner startAnimating];
+
         int i = [store.imagesArray count];
         
         for(NSURL *url in objectsArray.addPhotosObjectArray){
@@ -199,7 +207,8 @@ static NSString * const reuseIdentifier = @"Cell";
             [UIImagePNGRepresentation(newImage) writeToFile:filePath atomically:YES];           //Write resized image to library
             
             NSURL *imageURL = [[NSURL alloc] initFileURLWithPath:filePath];                     //NSURL with resized saved photo
-            
+            NSLog(@"iamge path is %@",filePath);
+            NSLog(@"image url is %@",imageURL);
                                                                                                 //Updating Firebase
             NSString *imageKey = [[[[firebaseRef.ref child:@"images"] child:@"stores"] child:store.storeKey] childByAutoId].key;
             NSString *imageName = [imageKey stringByAppendingString:@".jpg"];
@@ -217,8 +226,18 @@ static NSString * const reuseIdentifier = @"Cell";
                     // Metadata contains file metadata such as size, content-type, and download URL.
                     //                                                      NSURL *downloadURL = metadata.downloadURL;
                 }
+                
+                if ( url == [ objectsArray.addPhotosObjectArray lastObject] ) {
+                    [_spinner stopAnimating];
+                }
             }];
         }
+        
+        NSString *activityKey = [[firebaseRef.ref  child:@"activityType"] childByAutoId].key;
+        [[[[firebaseRef.ref  child:@"activityType"]  child:activityKey] child:@"type"] setValue:@"storeAddPhotos"];
+        [[[[firebaseRef.ref  child:@"activityKey"]  child:user.userKey] child:activityKey] setValue:@"true"];
+        [[[[firebaseRef.ref  child:@"activityObject"]  child:activityKey] child:store.storeKey] setValue:@"true"];
+        
         UIAlertController * alert = [UIAlertController
                                      alertControllerWithTitle:@"Thank you!"
                                      message:@"Thank you for helping the community thrive. Your photos will help other enthusiasts."

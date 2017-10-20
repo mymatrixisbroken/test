@@ -1,14 +1,15 @@
 //
-//  StoreReviewCell.m
+//  searchStrainTableViewCell.m
 //  myProject
 //
-//  Created by Guy on 10/24/16.
-//  Copyright © 2016 Joaquin. All rights reserved.
+//  Created by Guy on 10/8/17.
+//  Copyright © 2017 Joaquin. All rights reserved.
 //
 
-#import "StoreStrainsCell.h"
+#import "searchStrainTableViewCell.h"
 
-@implementation StoreStrainsCell
+@implementation searchStrainTableViewCell
+
 - (void)awakeFromNib {
     [super awakeFromNib];
     // Initialization code
@@ -16,7 +17,7 @@
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated {
     [super setSelected:selected animated:animated];
-    
+
     // Configure the view for the selected state
 }
 

@@ -9,11 +9,14 @@
 #import <UIKit/UIKit.h>
 #import "StoreReviewCell.h"
 #import "storeClass.h"
-#import "reviewClass.h"
+#import "reviewClassNew.h"
 #import "userClass.h"
+#import <FirebaseStorageUI/FirebaseStorageUI.h>
 @import Firebase;
 
 
 @interface StoreReviewTableViewController : UITableViewController  <UITableViewDelegate, UITableViewDataSource>
+@property (strong, nonatomic) IBOutlet UILabel *ratingLabel;
+@property (strong, nonatomic) IBOutlet UILabel *reviewCountLabel;
 
 @end

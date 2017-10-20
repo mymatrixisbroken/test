@@ -24,6 +24,9 @@
 @property (strong, nonatomic) IBOutlet UILabel *voteCountLabel;
 @property (strong, nonatomic) IBOutlet UILabel *voteThumbsUpLabel;
 @property (copy, nonatomic) NSString *passedString;
+@property (strong, nonatomic) IBOutlet UILabel *usernameLabel;
+@property (strong, nonatomic) IBOutlet UIImageView *userImage;
+@property NSInteger indexForImage;
 
 @end
 

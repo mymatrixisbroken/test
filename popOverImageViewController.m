@@ -39,104 +39,168 @@
     swipeDown.direction=UISwipeGestureRecognizerDirectionDown;
     [self.view addGestureRecognizer:swipeDown];
 
-    
+//    UIPinchGestureRecognizer *pinch = [[UIPinchGestureRecognizer alloc] initWithTarget:self action:@selector(screenSwipedDown)];
+////    pinch.numberOfTouchesRequired = 1;
+////    swipeDown.direction=UISwipeGestureRecognizerDirectionDown;
+//    [self.view addGestureRecognizer:swipeDown];
+}
+
+-(void) loadPhotoUploadedByUser{
+    imageClass *image = [[imageClass alloc] init];
+    NSLog(@"store images array count %lu", store.imagesArray.count);
+    NSLog(@"index is %lu", _indexForImage);
+    image = [store.imagesArray objectAtIndex:_indexForImage];
+
+    [[[[[firebaseRef.ref child:@"imageAddedByUser"] child:@"stores"] child:store.storeKey] child:image.imageKey]  observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
+        if ([NSNull null] != snapshot.value){                                   //check snapshot is null
+            NSString *userKey = [[snapshot.value allKeys] objectAtIndex:0];
+            [[[firebaseRef.ref child:@"usernames"] child:userKey] observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
+                if ([NSNull null] != snapshot.value){                                   //check snapshot is null
+                    NSString *username = [snapshot.value valueForKey:@"username"];
+                    _usernameLabel.text = username;
+                }
+            }];
+            [[[[firebaseRef.ref child:@"images"] child:@"users"] child:userKey] observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
+                if ([NSNull null] != snapshot.value){                                   //check snapshot is null
+                    NSString *imageLink = [[snapshot.value allValues] objectAtIndex:0];
+                    FIRStorage *storage = [FIRStorage storage];
+                    FIRStorageReference *storageRef = [storage reference];
+                    FIRStorageReference *spaceRef = [[[storageRef child:@"users"] child:userKey] child:imageLink];
+                    NSLog(@"ref is %@", spaceRef);
+                    
+                    UIImage *placeHolder = [[UIImage alloc] init];
+                    [_userImage sd_setImageWithStorageReference:spaceRef placeholderImage:placeHolder];
+                }
+            }];
+        }
+    }];
+
 
 }
 
 -(void) loadImageIntoView{
-    if ([_passedString rangeOfString:@"StoreProfile"].location != NSNotFound) {
+    [self loadPhotoUploadedByUser];
+
+    
+    if ([store.imagesArray count] > 0) {
+        FIRStorage *storage = [FIRStorage storage];
+        FIRStorageReference *storageRef = [storage reference];
+        
         imageClass *image = [[imageClass alloc] init];
-        NSLog(@"store images array count %lu", store.imagesArray.count);
-        image = [store.imagesArray objectAtIndex:0];
-        //    _store_image_view.image = [UIImage imageWithData: image.data];
+        image = [store.imagesArray objectAtIndex:_indexForImage];
         
-        if ([store.imagesArray count] > 0) {
-            FIRStorage *storage = [FIRStorage storage];
-            FIRStorageReference *storageRef = [storage reference];
-            
-            imageClass *image = [[imageClass alloc] init];
-            image = [store.imagesArray objectAtIndex:0];
-            
-            NSLog(@"image link is %@", image.imageURL);
-            FIRStorageReference *spaceRef = [[[storageRef child:@"stores"] child:store.storeKey] child:image.imageURL];
-            NSLog(@"ref is %@", spaceRef);
-            
-            UIImage *placeHolder = [[UIImage alloc] init];
-            [_imageView sd_setImageWithStorageReference:spaceRef placeholderImage:placeHolder];
-        }
+        NSLog(@"image link is %@", image.imageURL);
+        FIRStorageReference *spaceRef = [[[storageRef child:@"stores"] child:store.storeKey] child:image.imageURL];
+        NSLog(@"ref is %@", spaceRef);
         
+        UIImage *placeHolder = [[UIImage alloc] init];
+        [_imageView sd_setImageWithStorageReference:spaceRef placeholderImage:placeHolder];
+    }
+//    if ([_passedString rangeOfString:@"StoreProfile"].location != NSNotFound) {
+////        imageClass *image = [[imageClass alloc] init];
+////        NSLog(@"store images array count %lu", store.imagesArray.count);
+////        image = [store.imagesArray objectAtIndex:_indexForImage];
+//        //    _store_image_view.image = [UIImage imageWithData: image.data];
+//        
+//        if ([store.imagesArray count] > 0) {
+//            FIRStorage *storage = [FIRStorage storage];
+//            FIRStorageReference *storageRef = [storage reference];
+//            
+//            imageClass *image = [[imageClass alloc] init];
+//            image = [store.imagesArray objectAtIndex:_indexForImage];
+//            
+//            NSLog(@"image link is %@", image.imageURL);
+//            FIRStorageReference *spaceRef = [[[storageRef child:@"stores"] child:store.storeKey] child:image.imageURL];
+//            NSLog(@"ref is %@", spaceRef);
+//            
+//            UIImage *placeHolder = [[UIImage alloc] init];
+//            [_imageView sd_setImageWithStorageReference:spaceRef placeholderImage:placeHolder];
+//        }
+//        
+////        NSInteger thumbsDownScore = image.imageThumbsDown.count;
+////        NSString *errorTag2 = [NSString stringWithFormat: @"%ld",thumbsDownScore];
+////        self.voteCountLabel.text = errorTag2;
+////      
+////        NSInteger thumbsUpScore = image.imageThumbsUp.count;
+////        NSString *errorTag1 = [NSString stringWithFormat: @"%ld",thumbsUpScore];
+////        self.voteThumbsUpLabel.text = errorTag1;
+////        
+////        NSString *errorTag = [NSString stringWithFormat: @"%ld / ",store.imageArrayIndex+1];
+////        NSString *errorString = [NSString stringWithFormat: @"%ld",store.imagesArray.count];
+////        NSString *errorMessage = [errorTag stringByAppendingString:errorString];
+////        
+////        self.indexLabel.text = errorMessage;
+//        
+//    }
+//    else{
+//        imageClass *image = [[imageClass alloc] init];
+//        image = [strain.imagesArray objectAtIndex:strain.imageArrayIndex];
+//        
 //        NSInteger thumbsDownScore = image.imageThumbsDown.count;
 //        NSString *errorTag2 = [NSString stringWithFormat: @"%ld",thumbsDownScore];
 //        self.voteCountLabel.text = errorTag2;
-//      
+//        
 //        NSInteger thumbsUpScore = image.imageThumbsUp.count;
 //        NSString *errorTag1 = [NSString stringWithFormat: @"%ld",thumbsUpScore];
 //        self.voteThumbsUpLabel.text = errorTag1;
-//        
-//        NSString *errorTag = [NSString stringWithFormat: @"%ld / ",store.imageArrayIndex+1];
-//        NSString *errorString = [NSString stringWithFormat: @"%ld",store.imagesArray.count];
+//
+//        _imageView.image = [UIImage imageWithData: image.data];
+//
+//        NSString *errorTag = [NSString stringWithFormat: @"%ld / ",strain.imageArrayIndex+1];
+//        NSString *errorString = [NSString stringWithFormat: @"%ld",strain.imagesArray.count];
 //        NSString *errorMessage = [errorTag stringByAppendingString:errorString];
 //        
 //        self.indexLabel.text = errorMessage;
-        
-    }
-    else{
-        imageClass *image = [[imageClass alloc] init];
-        image = [strain.imagesArray objectAtIndex:strain.imageArrayIndex];
-        
-        NSInteger thumbsDownScore = image.imageThumbsDown.count;
-        NSString *errorTag2 = [NSString stringWithFormat: @"%ld",thumbsDownScore];
-        self.voteCountLabel.text = errorTag2;
-        
-        NSInteger thumbsUpScore = image.imageThumbsUp.count;
-        NSString *errorTag1 = [NSString stringWithFormat: @"%ld",thumbsUpScore];
-        self.voteThumbsUpLabel.text = errorTag1;
-
-        _imageView.image = [UIImage imageWithData: image.data];
-
-        NSString *errorTag = [NSString stringWithFormat: @"%ld / ",strain.imageArrayIndex+1];
-        NSString *errorString = [NSString stringWithFormat: @"%ld",strain.imagesArray.count];
-        NSString *errorMessage = [errorTag stringByAppendingString:errorString];
-        
-        self.indexLabel.text = errorMessage;
-    }
+//    }
 }
 
 -(void) screenSwipedUp{
-    [self.navigationController popToRootViewControllerAnimated:YES];
+    [self.navigationController dismissViewControllerAnimated:YES completion:nil];
 }
 -(void) screenSwipedDown{
-    [self.navigationController popToRootViewControllerAnimated:YES];
+    [self.navigationController dismissViewControllerAnimated:YES completion:nil];
+
+//    [self.navigationController popToRootViewControllerAnimated:YES];
 }
 
 -(void) screenSwipedLeft{
-    if ([_passedString rangeOfString:@"StoreProfile"].location != NSNotFound) {
-        if(store.imageArrayIndex < (store.imagesArray.count -1)){
-        store.imageArrayIndex+= 1;
+    if(_indexForImage < (store.imagesArray.count -1)){
+        _indexForImage+= 1;
         [self loadImageIntoView];
-        }
     }
-    else{
-        if(strain.imageArrayIndex < (strain.imagesArray.count -1)){
-            strain.imageArrayIndex+= 1;
-            [self loadImageIntoView];
-        }
-    }
+
+//    if ([_passedString rangeOfString:@"StoreProfile"].location != NSNotFound) {
+//        if(store.imageArrayIndex < (store.imagesArray.count -1)){
+//        store.imageArrayIndex+= 1;
+//        [self loadImageIntoView];
+//        }
+//    }
+//    else{
+//        if(strain.imageArrayIndex < (strain.imagesArray.count -1)){
+//            strain.imageArrayIndex+= 1;
+//            [self loadImageIntoView];
+//        }
+//    }
 }
 
 -(void) screenSwipedRight{
-    if ([_passedString rangeOfString:@"StoreProfile"].location != NSNotFound) {
-        if(store.imageArrayIndex > 0){
-            store.imageArrayIndex-= 1;
+        if(_indexForImage > 0){
+            _indexForImage-= 1;
             [self loadImageIntoView];
         }
-    }
-    else{
-        if(strain.imageArrayIndex > 0){
-            strain.imageArrayIndex-= 1;
-            [self loadImageIntoView];
-        }
-    }
+
+//    if ([_passedString rangeOfString:@"StoreProfile"].location != NSNotFound) {
+//        if(store.imageArrayIndex > 0){
+//            store.imageArrayIndex-= 1;
+//            [self loadImageIntoView];
+//        }
+//    }
+//    else{
+//        if(strain.imageArrayIndex > 0){
+//            strain.imageArrayIndex-= 1;
+//            [self loadImageIntoView];
+//        }
+//    }
 }
 
 - (IBAction)touchedThumbsUpButton:(UIButton *)sender {

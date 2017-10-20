@@ -18,5 +18,6 @@
 
 
 @interface StorePhotosTableViewController : UITableViewController  <UITableViewDelegate, UITableViewDataSource>
+@property (strong, nonatomic) IBOutlet UILabel *numberOfPhotosLabel;
 
 @end

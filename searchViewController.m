@@ -16,11 +16,16 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
+    UISwipeGestureRecognizer *swipeLeft = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(screenSwipedLeft)];
+    swipeLeft.numberOfTouchesRequired = 1;
+    swipeLeft.direction=UISwipeGestureRecognizerDirectionLeft;
+    [self.view addGestureRecognizer:swipeLeft];
+
     [self loadExtView];
-    [self loadTextField];
     
     CGRect newFrame = _searchTableView.frame;
-    newFrame.origin.y += 40;
+    newFrame.origin.y += 100;
     _searchTableView.frame = newFrame;
     self.searchTableView.delegate = self;
     self.searchTableView.dataSource = self;
@@ -29,6 +34,15 @@
                   action:@selector(textFieldDidChange:)
         forControlEvents:UIControlEventEditingChanged];
 //    self.shyNavBarManager.scrollView = self.searchTableView;
+}
+
+-(void) screenSwipedLeft{
+    FIRUser *currentUser = [FIRAuth auth].currentUser;
+    if(currentUser.anonymous){
+        [user gotoOptionListViewController:self];
+    } else {
+        [user gotoOptionListSignedInViewController:self];
+    }
 }
 
 - (void) textFieldDidChange:(UITextField *)textField{
@@ -51,13 +65,18 @@
 - (void) loadExtView{
     _extView = [[extensionViewClass alloc] init];
     [_extView setView:CGRectGetWidth(self.view.bounds)];
-//    [extView addTexField:CGRectGetWidth(self.view.bounds)];
+    [self.view bringSubviewToFront:_extView];
     [self.shyNavBarManager setExtensionView:_extView];
     [self.shyNavBarManager setStickyExtensionView:YES];
+    
+    [self loadTextField];
 }
 
 - (void) loadTextField{
     _textField = [[UITextField alloc] initWithFrame:_extView.frame];
+    _extView.frame = CGRectOffset( _extView.frame, 0, 20 ); // offset by an amount
+//    _textField.frame = CGRectOffset( _textField.frame, 0, 20 ); // offset by an amount
+
     _textField.font = [UIFont fontWithName:@"CERVO-LIGHT" size:23.0];
     _textField.placeholder = @"Typing Goes Here...";
     _textField.tintColor = [UIColor colorWithRed:8.0/255.0 green:197.0/255.0 blue:103.0/255.0 alpha:1];
@@ -65,15 +84,14 @@
     [_extView addSubview:_textField];
 }
 
-- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
-{
+- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section{
     return 50;
 }
 
 - (void)tableView:(UITableView *)tableView willDisplayHeaderView:(UIView *)view forSection:(NSInteger)section {
     UITableViewHeaderFooterView *header = (UITableViewHeaderFooterView *)view;
     
-    NSArray *viewsToRemove = [header subviews];
+    NSArray *viewsToRemove = [header subviews];                         //remove previous image from section header cell
     for (UIView *v in viewsToRemove) {
         if ([v isKindOfClass:[UIImageView class]])
             [v removeFromSuperview];
@@ -111,8 +129,7 @@
     header.textLabel.font = [UIFont fontWithName:@"NEXA BOLD" size:17.0];
 }
 
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
-{
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{
     return 3;
 }
 
@@ -185,7 +202,7 @@
     }
     else if(indexPath.section == 2){
         UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-        UserProfileViewController *vc = [sb instantiateViewControllerWithIdentifier:@"Strain Profile VC SB ID"];
+        StrainProfileViewController *vc = [sb instantiateViewControllerWithIdentifier:@"Strain Profile VC SB ID"];
         NSLog(@"other strain name is %@",[_strainNamesArray objectAtIndex:indexPath.row]);
         NSString *otherStrainName = [_strainNamesArray objectAtIndex:indexPath.row];
         vc.passedString = otherStrainName;

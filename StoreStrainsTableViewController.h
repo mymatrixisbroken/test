@@ -11,6 +11,9 @@
 #import "storeClass.h"
 #import "reviewClass.h"
 #import "userClass.h"
+#import "strainClass.h"
+#import "StrainProfileViewController.h"
+#import <QuartzCore/QuartzCore.h>
 @import Firebase;
 
 

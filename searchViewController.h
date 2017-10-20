@@ -15,6 +15,7 @@
 #import "searchResultTableViewCell.h"
 #import "UserProfileViewController.h"
 #import "StoreProfileViewController.h"
+#import "StrainProfileViewController.h"
 @import Firebase;
 
 

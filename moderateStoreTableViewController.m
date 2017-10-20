@@ -51,6 +51,7 @@
         [objectsArray.moderateStoresObjectArray replaceObjectAtIndex:i withObject:myStore];
         
         [self getStoreName: i];
+        [self getStoreAddedByUser:i];
         [self getStoreLocation:i];
         [self getStorePhoneNumber:i];
 //        [self getStoreHours:i];
@@ -64,6 +65,21 @@
     [[[firebaseRef.ref child:@"toBeReviewedStoreNames"] child:myStore.storeKey] observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
         if ([NSNull null] != snapshot.value){                                   //check snapshot is null
             myStore.storeName = [snapshot.value valueForKey:@"name"];
+            
+            NSLog(@"object name is %@", myStore.storeName);
+            
+            [objectsArray.moderateStoresObjectArray replaceObjectAtIndex:i withObject:myStore];
+        }
+    }];
+}
+
+- (void) getStoreAddedByUser:(NSInteger) i {
+    storeClass *myStore = [[storeClass alloc] init];
+    myStore = [objectsArray.moderateStoresObjectArray objectAtIndex:i];
+    
+    [[[firebaseRef.ref child:@"toBeReviewedStoreAddedByUser"] child:myStore.storeKey] observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
+        if ([NSNull null] != snapshot.value){                                   //check snapshot is null
+            myStore.storeAddedByUser = [[snapshot.value allKeys] objectAtIndex:0];
             
             NSLog(@"object name is %@", myStore.storeName);
             
@@ -208,8 +224,9 @@
     UIBarButtonItem *buttonFive = [[UIBarButtonItem alloc] initWithCustomView:btn5];
     
     
-    UIBarButtonItem *space = [[UIBarButtonItem alloc]initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:self action:nil];
-    
+    UIBarButtonItem *space = [[UIBarButtonItem alloc]initWithBarButtonSystemItem:UIBarButtonSystemItemFixedSpace target:self action:nil];
+    space.width = 55;
+
     NSArray *buttons = @[buttonOne, space, buttonTwo, space, buttonThree, space, buttonFour, space, buttonFive];
     
     self.navigationController.navigationBar.topItem.title = nil;
@@ -223,11 +240,6 @@
 
 -(IBAction)mapButtonPressed:(UIButton*)btn {
     [user gotoMapViewViewController:self];
-    
-    //    user.mainNavigationSelected = 1;
-    //    objectsArray.filterSelected = 10;
-    //    objectsArray.strainOrStore = 0;
-    //    [user goToStrainsViewController:self];
 }
 
 -(IBAction)searchButtonPressed:(UIButton*)btn {

@@ -12,6 +12,7 @@
 #import "YLProgressBar.h"
 #import "FirebaseReferenceClass.h"
 #import "imageClass.h"
+#import <FirebaseStorageUI/FirebaseStorageUI.h>
 @import HCSStarRatingView;
 @import Firebase;
 
@@ -21,6 +22,7 @@
 @property (strong, nonatomic) IBOutlet UILabel *strainNameLabel;
 @property (strong, nonatomic) IBOutlet UILabel *strainTHCLabel;
 @property (strong, nonatomic) IBOutlet UILabel *strainCBDLabel;
+@property (strong, nonatomic) IBOutlet UILabel *strainCBNLabel;
 @property (strong, nonatomic) IBOutlet UILabel *strainFlavorLabel;
 @property (strong, nonatomic) IBOutlet UILabel *strainAromaLabel;
 @property (strong, nonatomic) IBOutlet UILabel *strainSpeciesLabel;
@@ -35,6 +37,10 @@
 @property (strong, nonatomic) IBOutlet UILabel *ratingCount;
 @property (strong, nonatomic) IBOutlet UIButton *smokedButton;
 @property (copy, nonatomic) NSString *passedString;
+@property (copy, nonatomic) NSString *passedStringSegueFromStore;
+@property (strong, nonatomic) IBOutlet UIView *priceView;
+@property (strong, nonatomic) IBOutlet UITableView *reviewsTableView;
+@property UIActivityIndicatorView *spinner;
 
 @end
 

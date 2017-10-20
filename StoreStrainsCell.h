@@ -11,10 +11,10 @@
 @import HCSStarRatingView;
 
 @interface StoreStrainsCell : UITableViewCell
-@property (strong, nonatomic) IBOutlet UIImageView *photoImageView;
-@property (strong, nonatomic) IBOutlet UILabel *titleLabel;
-@property (strong, nonatomic) IBOutlet UILabel *photoLikesLabel;
-
--(void)uploadCellWithPhoto;
+@property (strong, nonatomic) IBOutlet UIImageView *strainImageView;
+@property (strong, nonatomic) IBOutlet UILabel *strainNameLabel;
+@property (strong, nonatomic) IBOutlet UILabel *strainFamilyLabel;
+@property (strong, nonatomic) IBOutlet HCSStarRatingView *strainRatingView;
+@property (strong, nonatomic) IBOutlet UILabel *strainReviewCount;
 
 @end

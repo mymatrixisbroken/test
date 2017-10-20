@@ -13,16 +13,17 @@
 #import "userClass.h"
 #import "reviewClass.h"
 #import "imageClass.h"
+#import "promoClass.h"
+#import "reviewClassNew.h"
 #import <FirebaseStorageUI/FirebaseStorageUI.h>
 #import "popOverImageViewController.h"
+#import "EditStoreViewController.h"
 @import HCSStarRatingView;
 @import Firebase;
 @import GoogleMaps;
 
 @interface StoreProfileViewController : UIViewController <GMSMapViewDelegate, UITabBarDelegate>
 
-@property (strong, nonatomic) IBOutlet UIButton *back_button;
-@property (strong, nonatomic) IBOutlet UIButton *edit_button;
 @property (strong, nonatomic) IBOutlet UIImageView *store_image_view;
 @property (strong, nonatomic) IBOutlet HCSStarRatingView *store_rating_score;
 @property (strong, nonatomic) IBOutlet UILabel *store_rating_count;
@@ -47,7 +48,8 @@
 @property (strong, nonatomic) IBOutlet UITableViewController *tablevc;
 @property (strong, nonatomic) IBOutlet UIScrollView *scrollView;
 @property (copy, nonatomic) NSString *passedString;
-
+@property (strong, nonatomic) IBOutlet UIButton *editStoreButton;
+@property UIActivityIndicatorView *spinner;
 
 @end
 

@@ -7,7 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "eventClass.h"
+#import "activityClass.h"
 #import "objectsArrayClass.h"
 #import "FirebaseReferenceClass.h"
 #import "userClass.h"
@@ -23,7 +23,7 @@
 @property (strong, nonatomic) IBOutlet UIButton *commentsButton;
 @property (strong, nonatomic) IBOutlet UIButton *likeButton;
 
--(void) uploadCellWithUsernameEventData:(eventClass *)tempEvent;
+-(void) uploadCellWithUsernameEventData:(activityClass *)tempActivity;
 
 
 @end

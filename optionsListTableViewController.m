@@ -81,7 +81,6 @@
 
     UIViewController *vc2 = [sb instantiateViewControllerWithIdentifier:@"Login View VC SB ID"];
     vc2.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
-
     
     switch (indexPath.row) {
         case 0:
@@ -94,12 +93,16 @@
                 objectsArray.strainOrStore = 0;
             
             [self.navigationController pushViewController:vc animated:false];
+            break;
 //            [user goToStrainsViewController:self];
             break;
         case 3:
             [self.navigationController pushViewController:vc2 animated:false];
             break;
         case 4:
+            [self.navigationController pushViewController:vc2 animated:false];
+            break;
+        case 5:
             [user goToSearchUsersViewController:self];
             break;
         default:

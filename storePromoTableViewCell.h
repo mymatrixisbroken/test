@@ -9,5 +9,8 @@
 #import <UIKit/UIKit.h>
 
 @interface storePromoTableViewCell : UITableViewCell
+@property (strong, nonatomic) IBOutlet UILabel *promoLikesLabel;
+@property (strong, nonatomic) IBOutlet UILabel *promoDateLabel;
+@property (strong, nonatomic) IBOutlet UITextView *promoTextLabel;
 
 @end

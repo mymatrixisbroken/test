@@ -16,7 +16,13 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    
+    if ([store.imagesArray count] > 0) {
+        NSString *imageCount = [NSString stringWithFormat:@"%lu Photos", [store.imagesArray count]];
+        _numberOfPhotosLabel.text = imageCount;
+    }
+    else{
+        _numberOfPhotosLabel.text = @"0 Photos";
+    }
     self.tableView.delegate = self;
     self.tableView.dataSource = self;
 }
@@ -74,9 +80,9 @@
     StorePhotosCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier forIndexPath:indexPath];
         
     [cell uploadCellWithPhoto];
-    imageClass *image = [[imageClass alloc] init];
-    NSLog(@"store images array count %lu", store.imagesArray.count);
-    image = [store.imagesArray objectAtIndex:0];
+//    imageClass *image = [[imageClass alloc] init];
+//    NSLog(@"store images array count %lu", store.imagesArray.count);
+//    image = [store.imagesArray objectAtIndex:indexPath.row];
     //    _store_image_view.image = [UIImage imageWithData: image.data];
     
     for (int i = 0; i < [store.imagesArray count]; i++) {
@@ -105,6 +111,7 @@
     popOverImageViewController *vc = [sb instantiateViewControllerWithIdentifier:@"Popover Image VC SB ID"];
     NSString *otherStrainName = [NSString stringWithFormat: @"%@",[self.navigationController.viewControllers objectAtIndex:0]];
     vc.passedString = otherStrainName;
+    vc.indexForImage = indexPath.row;
     [self.navigationController pushViewController:vc animated:false];
 
 //    [user goToPopoverImageViewController:self];

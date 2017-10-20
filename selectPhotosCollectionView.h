@@ -20,5 +20,6 @@
     UIImagePickerController *picker;}
 
 @property (copy, nonatomic) NSMutableArray *assets;
+@property UIActivityIndicatorView *spinner;
 
 @end

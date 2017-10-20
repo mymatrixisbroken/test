@@ -46,8 +46,9 @@
     [[[[firebaseRef.ref child:@"location"] child:_myStore.storeKey] child:@"address"] setValue:_address.text];
     [[[[firebaseRef.ref child:@"location"] child:_myStore.storeKey] child:@"latitude"] setValue:_myStore.latitude];
     [[[[firebaseRef.ref child:@"location"] child:_myStore.storeKey] child:@"longitude"] setValue:_myStore.longitude];
-    [[[[firebaseRef.ref child:@"storeAddedByUser"] child:user.userKey] child:_myStore.storeKey] setValue:@"true"];
-    
+    [[[[firebaseRef.ref child:@"storeApprovedByUser"] child:user.userKey] child:_myStore.storeKey] setValue:@"true"];
+    [[[[firebaseRef.ref child:@"storeAddedByUser"] child:_myStore.storeAddedByUser] child:_myStore.storeKey] setValue:@"true"];
+
 
     if (strings.count > 2){                                   //check snapshot is null
         [[[[firebaseRef.ref child:@"location"] child:_myStore.storeKey] child:@"city"] setValue:[strings objectAtIndex:0]];
@@ -58,7 +59,8 @@
     [[[firebaseRef.ref child:@"toBeReviewedStoreNames"] child:_myStore.storeKey] removeValue];
     [[[firebaseRef.ref child:@"toBeReviewedPhoneNumbers"] child:_myStore.storeKey] removeValue];
     [[[firebaseRef.ref child:@"toBeReviewedLocation"] child:_myStore.storeKey] removeValue];
-    
+    [[[firebaseRef.ref  child:@"toBeReviewedStoreAddedByUser"]  child:_myStore.storeKey] removeValue];
+
     
     [objectsArray.moderateStoresObjectArray removeObjectAtIndex:self.tag];
     [self setNeedsDisplay];
@@ -74,6 +76,7 @@
     [[[firebaseRef.ref child:@"toBeReviewedStoreNames"] child:_myStore.storeKey] removeValue];
     [[[firebaseRef.ref child:@"toBeReviewedPhoneNumbers"] child:_myStore.storeKey] removeValue];
     [[[firebaseRef.ref child:@"toBeReviewedLocation"] child:_myStore.storeKey] removeValue];
+    [[[firebaseRef.ref  child:@"toBeReviewedStoreAddedByUser"]  child:_myStore.storeKey] removeValue];
     
     [objectsArray.moderateStoresObjectArray removeObjectAtIndex:self.tag];
     [self setNeedsDisplay];

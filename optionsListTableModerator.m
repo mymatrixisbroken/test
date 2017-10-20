@@ -36,7 +36,13 @@
     UIViewController *vc3 = [sb instantiateViewControllerWithIdentifier:@"Add Store VC SB ID"];
     vc.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
 
-    UIViewController *vc4 = [sb instantiateViewControllerWithIdentifier:@"Moderate Stores VC SB ID"];
+    UIViewController *vc4 = [sb instantiateViewControllerWithIdentifier:@"Add Strain VC SB ID"];
+    vc.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
+    
+    UIViewController *vc5 = [sb instantiateViewControllerWithIdentifier:@"Moderate Stores VC SB ID"];
+    vc.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
+    
+    UIViewController *vc6 = [sb instantiateViewControllerWithIdentifier:@"Moderate Strains VC SB ID"];
     vc.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
 
     switch (indexPath.row) {
@@ -48,11 +54,18 @@
             objectsArray.filterSelected = 10;
             objectsArray.strainOrStore = 0;
             [self.navigationController pushViewController:vc animated:false];
+            break;
         case 3:
             [self.navigationController pushViewController:vc3 animated:false];
             break;
         case 4:
             [self.navigationController pushViewController:vc4 animated:false];
+            break;
+        case 5:
+            [self.navigationController pushViewController:vc5 animated:false];
+            break;
+        case 6:
+            [self.navigationController pushViewController:vc6    animated:false];
             break;
         default:
             break;

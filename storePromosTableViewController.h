@@ -7,6 +7,9 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "storeClass.h"
+#import "promoClass.h"
+#import "storePromoTableViewCell.h"
 
 @interface storePromosTableViewController : UITableViewController
 

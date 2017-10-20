@@ -17,10 +17,28 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     _tabBar.delegate = self;
+    
+    _spinner = [[UIActivityIndicatorView alloc]
+                initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
+    _spinner.hidesWhenStopped = YES;
+    _spinner.center = self.view.center;
+    [self.view addSubview:_spinner];
+    [_spinner startAnimating];
+
     [self loadNavController];
     [self addGradientLayers];
     [self loadTabBar];
     [self getStoreKey];
+    
+    [_editStoreButton addTarget:self
+                   action:@selector(tappedEditStore:)
+         forControlEvents:UIControlEventTouchUpInside];
+}
+
+-(void) tappedEditStore:(UIButton *) button{
+    UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+    EditStoreViewController *vc = [sb instantiateViewControllerWithIdentifier:@"Edit Store VC SB ID"];
+    [self.navigationController pushViewController:vc animated:false];
 }
 
 -(void) addGradientLayers{
@@ -89,6 +107,7 @@
 }
 
 - (void) getStoreInformation{
+    [self editButtonHiddenOrNot];
     [self getStoreLocations];
     [self getImagesStore];
     [self getStoreName];
@@ -100,7 +119,17 @@
     [self getTotalCount];
     [self getMontlyCount];
     [self getDailyCount];
-    [self loadReviewsFromFirebase];
+    [self getPromoKeys];
+    [self getStrainKeys];
+    [self getReviewKeys];
+}
+
+-(void) editButtonHiddenOrNot{
+    if ([user.storeOwnerKey isEqual:store.storeKey]) {
+        _editStoreButton.hidden = NO;
+    }
+    else
+        _editStoreButton.hidden = YES;
 }
 
 - (void) getStoreLocations{
@@ -223,6 +252,7 @@
             NSLog(@"object name is %@", store.storeName);
             _store_name_label.text = store.storeName;
         }
+        [_spinner stopAnimating];
     }];
 }
 
@@ -240,7 +270,7 @@
 
             image.imageThumbsDown = [NSMutableArray arrayWithArray:[snapshot.value allKeys]];
             
-            [store.imagesArray addObject:image];
+            [store.imagesArray replaceObjectAtIndex:j withObject:image];
             }
         }];
     }
@@ -259,7 +289,7 @@
                 image.imageThumbsUp = [NSMutableArray arrayWithArray:[snapshot.value allKeys]];
                 image.voteScore = image.imageThumbsUp.count - image.imageThumbsDown.count;
                 
-                [store.imagesArray addObject:image];
+                [store.imagesArray replaceObjectAtIndex:j withObject:image];
             }
             
         }];
@@ -382,45 +412,382 @@
     }
 }
 
--(void)loadReviewsFromFirebase{
-    FIRDatabaseQuery *reviewQuery = [[firebaseRef.reviewsRef queryOrderedByChild:@"objectKey"] queryEqualToValue:store.storeKey];
-    
-    UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-    UITableViewController *vc = [sb instantiateViewControllerWithIdentifier:@"reviewsSBID"];
-    [self addChildViewController:vc];
-    vc.tableView.frame = CGRectMake(0, 0, _containerView.frame.size.width, _containerView.frame.size.height);
-    [_containerView addSubview:vc.tableView];
-    [vc didMoveToParentViewController:self];
-    
-    
-    [reviewQuery observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
+- (void) getPromoKeys {
+    [[[firebaseRef.ref child:@"promos"] child:store.storeKey] observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
         if ([NSNull null] != snapshot.value){                                   //check snapshot is null
-            for (NSInteger i = 0; i < [snapshot.value allKeys].count; i++) {
-                reviewClass *tempReview = [[reviewClass alloc] init];
-                tempReview.reviewKey = [[snapshot.value allKeys] objectAtIndex:i];
-                NSLog(@"key is %@", tempReview.reviewKey);
+            
+            NSArray *promoKeys = [[NSArray alloc] init];
+            promoKeys = [snapshot.value allKeys];
+            
+            for(int j=0; j< promoKeys.count ; j++){
+                NSLog(@"image snapshot  is %@", snapshot.value);
                 
-                NSDictionary *dictionary = [[NSDictionary alloc] init];
-                dictionary = [snapshot.value valueForKey:tempReview.reviewKey];
-                tempReview.message = [dictionary valueForKey:@"message"];
-                tempReview.objectImageURL = [dictionary valueForKey:@"objectImage"];
-                tempReview.objectKey = [dictionary valueForKey:@"objectKey"];
-                tempReview.objectName = [dictionary valueForKey:@"objectName"];
-                tempReview.objectType = [dictionary valueForKey:@"objectType"];
-                tempReview.userKey = [dictionary valueForKey:@"userKey"];
-                tempReview.username = [dictionary valueForKey:@"username"];
-                tempReview.rating = [dictionary valueForKey:@"rating"];
-                tempReview.objectDataString = [dictionary valueForKey:@"objectData"];
-                tempReview.objectData = [[NSData alloc] initWithBase64EncodedString:tempReview.objectDataString options:0];
                 
-                [store.reviews addObject:tempReview];
+                promoClass *promo = [[promoClass alloc] init];
+                promo.promoKey = [promoKeys objectAtIndex:j];
+                [store.promosArray addObject:promo];
             }
-    }
-        [vc.tableView reloadData];
-        _tablevc = vc;
-        
+            
+            NSLog(@"object image count is %lu", (unsigned long)[store.promosArray count]);
+            
+            [self getPromoDate];
+            [self getPromoText];
+            [self getPromoLikes];
+        }
     }];
 }
+
+- (void) getPromoDate {
+    NSLog(@"promo key  is %lu", store.promosArray.count);
+    
+    for (int j = 0; j < store.promosArray.count; j++){
+        promoClass *promo = [[promoClass alloc] init];
+        promo = [store.promosArray objectAtIndex:j];
+        NSLog(@"promo key  is %@", promo.promoKey);
+        
+        
+        [[[[firebaseRef.ref child:@"promoDate"] child:store.storeKey] child:promo.promoKey] observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
+            if ([NSNull null] != snapshot.value){                                   //check snapshot is null
+                promo.promoDate = [[snapshot.value allValues] objectAtIndex:0];
+                
+                [store.promosArray replaceObjectAtIndex:j withObject:promo];
+            }
+        }];
+    }
+}
+
+- (void) getPromoText {
+    NSLog(@"promo key  is %lu", store.promosArray.count);
+    
+    for (int j = 0; j < store.promosArray.count; j++){
+        promoClass *promo = [[promoClass alloc] init];
+        promo = [store.promosArray objectAtIndex:j];
+        NSLog(@"promo key  is %@", promo.promoKey);
+        
+        
+        [[[[firebaseRef.ref child:@"promoText"] child:store.storeKey] child:promo.promoKey] observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
+            if ([NSNull null] != snapshot.value){                                   //check snapshot is null
+                promo.promoText = [[snapshot.value allValues] objectAtIndex:0];
+                
+                [store.promosArray replaceObjectAtIndex:j withObject:promo];
+            }
+        }];
+    }
+}
+
+- (void) getPromoLikes {
+    NSLog(@"promo key  is %lu", store.promosArray.count);
+    
+    for (int j = 0; j < store.promosArray.count; j++){
+        promoClass *promo = [[promoClass alloc] init];
+        promo = [store.promosArray objectAtIndex:j];
+        NSLog(@"promo key  is %@", promo.promoKey);
+        
+        
+        [[[[firebaseRef.ref child:@"promoLikes"] child:store.storeKey] child:promo.promoKey] observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
+            if ([NSNull null] != snapshot.value){                                   //check snapshot is null
+                promo.promoLikes = [snapshot.value allKeys];
+                
+                [store.promosArray replaceObjectAtIndex:j withObject:promo];
+            }
+        }];
+    }
+}
+
+- (void) getStrainKeys {
+    [[[firebaseRef.ref child:@"storeHasStrains"] child:store.storeKey] observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
+        if ([NSNull null] != snapshot.value){                                   //check snapshot is null
+            NSArray *strainKeys = [[NSArray alloc] init];
+            strainKeys = [snapshot.value allKeys];
+            
+            for(int j=0; j< strainKeys.count ; j++){
+                NSLog(@"image snapshot  is %@", snapshot.value);
+                
+                
+                strainClass *tempStrain = [[strainClass alloc] init];
+                tempStrain.strainKey = [strainKeys objectAtIndex:j];
+                [store.hasStrainsArray addObject:tempStrain];
+            }
+            
+            NSLog(@"object image count is %lu", (unsigned long)[store.hasStrainsArray count]);
+
+            [self getStrainInformation];
+        }
+    }];
+}
+
+- (void) getStrainInformation{
+    /* need to change from count to 20 items per page*/
+    for (int i = 0; i < store.hasStrainsArray.count; i++){
+        
+        strainClass *tempStrain = [[strainClass alloc] init];
+        tempStrain = [store.hasStrainsArray objectAtIndex:i];
+//                [store.hasStrainsArray replaceObjectAtIndex:i withObject:tempStrain];
+        
+        [self getStrainName: i];
+        [self getStrainRatingScore: i];
+        [self getStrainFamily: i];
+    }
+}
+
+
+
+- (void) getStrainName:(NSInteger) i {
+    strainClass *tempStrain = [[strainClass alloc] init];
+    tempStrain = [store.hasStrainsArray objectAtIndex:i];
+
+    [[[firebaseRef.ref child:@"strainNames"] child:tempStrain.strainKey] observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
+        if ([NSNull null] != snapshot.value){                                   //check snapshot is null
+            tempStrain.strainName = [snapshot.value valueForKey:@"name"];
+            NSLog(@"object name is %@", tempStrain.strainName);
+            [store.hasStrainsArray replaceObjectAtIndex:i withObject:tempStrain];
+
+//            _strainNameLabel.text = strain.strainName;
+        }
+    }];
+}
+
+- (void) getStrainRatingScore:(NSInteger) i {
+    strainClass *tempStrain = [[strainClass alloc] init];
+    tempStrain = [store.hasStrainsArray objectAtIndex:i];
+
+    [[[[firebaseRef.ref child:@"starRating"] child:@"strains"] child:tempStrain.strainKey] observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
+        if ([NSNull null] != snapshot.value){                                   //check snapshot is null
+            NSArray *scores = [[NSArray alloc] init];
+            scores = [snapshot.value allValues];
+            tempStrain.ratingCount = [scores count];
+            
+            if ([scores count] > 0) {
+                for (id i in scores){
+                    tempStrain.ratingScore = tempStrain.ratingScore + [i floatValue];
+                }
+                [store.hasStrainsArray replaceObjectAtIndex:i withObject:tempStrain];
+
+//                _starRating.value = strain.ratingScore;
+//                _ratingCount.text = [[NSString stringWithFormat:@"%lu", strain.ratingCount] stringByAppendingString:@" Reviews"];
+            }
+        }
+    }];
+}
+
+- (void) getStrainFamily:(NSInteger) i {
+    strainClass *tempStrain = [[strainClass alloc] init];
+    tempStrain = [store.hasStrainsArray objectAtIndex:i];
+
+    [[[firebaseRef.ref child:@"strainFamily"] child:tempStrain.strainKey] observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
+        if ([NSNull null] != snapshot.value){                                   //check snapshot is null
+            tempStrain.family = [snapshot.value valueForKey:@"family"];
+            [store.hasStrainsArray replaceObjectAtIndex:i withObject:tempStrain];
+
+//            _strainSpeciesLabel.text = strain.family;
+            NSLog(@"object montly views is %@",tempStrain.family);
+        }
+    }];
+}
+
+- (void) getReviewKeys {
+    [[[[firebaseRef.ref child:@"reviewKeys"] child:@"stores"] child:store.storeKey] observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
+        if ([NSNull null] != snapshot.value){                                   //check snapshot is null
+            
+            NSArray *reviewKeys = [[NSArray alloc] init];
+            reviewKeys = [snapshot.value allKeys];
+            
+            for(int j=0; j< reviewKeys.count ; j++){
+                NSLog(@"image snapshot  is %@", snapshot.value);
+                
+                
+                reviewClassNew *review = [[reviewClassNew alloc] init];
+                review.reviewKey = [reviewKeys objectAtIndex:j];
+                [store.reviewsArray addObject:review];
+            }
+            
+            NSLog(@"object image count is %lu", (unsigned long)[store.reviewsArray count]);
+            
+            [self getReviewAuthoredByUser];
+            [self getReviewMessage];
+            [self getReviewRating];
+        }
+    }];
+}
+
+- (void) getReviewAuthoredByUser {
+    NSLog(@"review key  is %lu", store.reviewsArray.count);
+    
+    for (int j = 0; j < store.reviewsArray.count; j++){
+        reviewClassNew *review = [[reviewClassNew alloc] init];
+        review = [store.reviewsArray objectAtIndex:j];
+        NSLog(@"review key  is %@", review.reviewKey);
+        
+        
+        [[[firebaseRef.ref child:@"reviewAddedByUser"] child:review.reviewKey] observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
+            if ([NSNull null] != snapshot.value){                                   //check snapshot is null
+                NSLog(@"user key  is %@", [[snapshot.value allKeys] objectAtIndex:0]);
+
+                review.authoredByUserKey = [[snapshot.value allKeys] objectAtIndex:0];
+                [store.reviewsArray replaceObjectAtIndex:j withObject:review];
+                
+                [self getReviewAuthoredByUserImage:j];
+                [self getAuthoredByUsername:j];
+            }
+        }];
+    }
+}
+
+- (void) getReviewAuthoredByUserImage:(NSInteger) i {
+    NSLog(@"review key  is %lu", store.reviewsArray.count);
+    
+        reviewClassNew *review = [[reviewClassNew alloc] init];
+        review = [store.reviewsArray objectAtIndex:i];
+        NSLog(@"review key  is %@", review.reviewKey);
+        
+        
+        [[[[firebaseRef.ref child:@"images"] child:@"users"] child:review.authoredByUserKey] observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
+            if ([NSNull null] != snapshot.value){                                   //check snapshot is null
+                for (id key in snapshot.value) {
+                    [review.userImageLink addObject:[snapshot.value valueForKey:key]];
+                }
+                [store.reviewsArray replaceObjectAtIndex:i withObject:review];
+            }
+        }];
+}
+
+- (void) getAuthoredByUsername:(NSInteger) i{
+    NSLog(@"review key  is %lu", store.reviewsArray.count);
+    
+        reviewClassNew *review = [[reviewClassNew alloc] init];
+        review = [store.reviewsArray objectAtIndex:i];
+        NSLog(@"review key  is %@", review.reviewKey);
+
+        [[[firebaseRef.ref child:@"usernames"] child:review.authoredByUserKey] observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
+            if ([NSNull null] != snapshot.value){                                   //check snapshot is null
+                review.authoredByUsername = [snapshot.value valueForKey:@"username"];
+                
+                [store.reviewsArray replaceObjectAtIndex:i withObject:review];
+            }
+        }];
+}
+
+
+- (void) getReviewMessage {
+    NSLog(@"review key  is %lu", store.reviewsArray.count);
+    
+    for (int j = 0; j < store.reviewsArray.count; j++){
+        reviewClassNew *review = [[reviewClassNew alloc] init];
+        review = [store.reviewsArray objectAtIndex:j];
+        NSLog(@"review key  is %@", review.reviewKey);
+        
+        
+        [[[firebaseRef.ref child:@"reviewMessage"] child:review.reviewKey] observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
+            if ([NSNull null] != snapshot.value){                                   //check snapshot is null
+                review.message = [[snapshot.value allValues] objectAtIndex:0];
+                
+                [store.reviewsArray replaceObjectAtIndex:j withObject:review];
+            }
+        }];
+    }
+}
+
+- (void) getReviewRating {
+    NSLog(@"review key  is %lu", store.reviewsArray.count);
+    
+    for (int j = 0; j < store.reviewsArray.count; j++){
+        reviewClassNew *review = [[reviewClassNew alloc] init];
+        review = [store.reviewsArray objectAtIndex:j];
+        NSLog(@"review key  is %@", review.reviewKey);
+        
+        
+        [[[firebaseRef.ref child:@"reviewRating"] child:review.reviewKey] observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
+            if ([NSNull null] != snapshot.value){                                   //check snapshot is null
+                review.rating = [[snapshot.value allValues] objectAtIndex:0];
+                
+                [store.reviewsArray replaceObjectAtIndex:j withObject:review];
+            }
+        }];
+    }
+}
+
+
+
+
+//-(void)getPromos{
+//    FIRDatabaseQuery *reviewQuery = [[firebaseRef.reviewsRef queryOrderedByChild:@"objectKey"] queryEqualToValue:store.storeKey];
+//    
+//    UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+//    UITableViewController *vc = [sb instantiateViewControllerWithIdentifier:@"reviewsSBID"];
+//    [self addChildViewController:vc];
+//    vc.tableView.frame = CGRectMake(0, 0, _containerView.frame.size.width, _containerView.frame.size.height);
+//    [_containerView addSubview:vc.tableView];
+//    [vc didMoveToParentViewController:self];
+//    
+//    
+//    [reviewQuery observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
+//        if ([NSNull null] != snapshot.value){                                   //check snapshot is null
+//            for (NSInteger i = 0; i < [snapshot.value allKeys].count; i++) {
+//                reviewClass *tempReview = [[reviewClass alloc] init];
+//                tempReview.reviewKey = [[snapshot.value allKeys] objectAtIndex:i];
+//                NSLog(@"key is %@", tempReview.reviewKey);
+//                
+//                NSDictionary *dictionary = [[NSDictionary alloc] init];
+//                dictionary = [snapshot.value valueForKey:tempReview.reviewKey];
+//                tempReview.message = [dictionary valueForKey:@"message"];
+//                tempReview.objectImageURL = [dictionary valueForKey:@"objectImage"];
+//                tempReview.objectKey = [dictionary valueForKey:@"objectKey"];
+//                tempReview.objectName = [dictionary valueForKey:@"objectName"];
+//                tempReview.objectType = [dictionary valueForKey:@"objectType"];
+//                tempReview.userKey = [dictionary valueForKey:@"userKey"];
+//                tempReview.username = [dictionary valueForKey:@"username"];
+//                tempReview.rating = [dictionary valueForKey:@"rating"];
+//                tempReview.objectDataString = [dictionary valueForKey:@"objectData"];
+//                tempReview.objectData = [[NSData alloc] initWithBase64EncodedString:tempReview.objectDataString options:0];
+//                
+//                [store.reviews addObject:tempReview];
+//            }
+//        }
+//        [vc.tableView reloadData];
+//        _tablevc = vc;
+//        
+//    }];
+//}
+
+//-(void)loadReviewsFromFirebase{
+//    FIRDatabaseQuery *reviewQuery = [[firebaseRef.reviewsRef queryOrderedByChild:@"objectKey"] queryEqualToValue:store.storeKey];
+//    
+//    UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+//    UITableViewController *vc = [sb instantiateViewControllerWithIdentifier:@"reviewsSBID"];
+//    [self addChildViewController:vc];
+//    vc.tableView.frame = CGRectMake(0, 0, _containerView.frame.size.width, _containerView.frame.size.height);
+//    [_containerView addSubview:vc.tableView];
+//    [vc didMoveToParentViewController:self];
+//    
+//    
+//    [reviewQuery observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
+//        if ([NSNull null] != snapshot.value){                                   //check snapshot is null
+//            for (NSInteger i = 0; i < [snapshot.value allKeys].count; i++) {
+//                reviewClass *tempReview = [[reviewClass alloc] init];
+//                tempReview.reviewKey = [[snapshot.value allKeys] objectAtIndex:i];
+//                NSLog(@"key is %@", tempReview.reviewKey);
+//                
+//                NSDictionary *dictionary = [[NSDictionary alloc] init];
+//                dictionary = [snapshot.value valueForKey:tempReview.reviewKey];
+//                tempReview.message = [dictionary valueForKey:@"message"];
+//                tempReview.objectImageURL = [dictionary valueForKey:@"objectImage"];
+//                tempReview.objectKey = [dictionary valueForKey:@"objectKey"];
+//                tempReview.objectName = [dictionary valueForKey:@"objectName"];
+//                tempReview.objectType = [dictionary valueForKey:@"objectType"];
+//                tempReview.userKey = [dictionary valueForKey:@"userKey"];
+//                tempReview.username = [dictionary valueForKey:@"username"];
+//                tempReview.rating = [dictionary valueForKey:@"rating"];
+//                tempReview.objectDataString = [dictionary valueForKey:@"objectData"];
+//                tempReview.objectData = [[NSData alloc] initWithBase64EncodedString:tempReview.objectDataString options:0];
+//                
+//                [store.reviews addObject:tempReview];
+//            }
+//    }
+//        [vc.tableView reloadData];
+//        _tablevc = vc;
+//        
+//    }];
+//}
 
 -(void)tabBar:(UITabBar *)tabBar didSelectItem:(UITabBarItem *)item {
     [_tablevc.tableView removeFromSuperview];
@@ -591,8 +958,9 @@
     UIBarButtonItem *buttonFive = [[UIBarButtonItem alloc] initWithCustomView:btn5];
     
     
-    UIBarButtonItem *space = [[UIBarButtonItem alloc]initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:self action:nil];
-    
+    UIBarButtonItem *space = [[UIBarButtonItem alloc]initWithBarButtonSystemItem:UIBarButtonSystemItemFixedSpace target:self action:nil];
+    space.width = 55;
+
     NSArray *buttons = @[buttonOne, space, buttonTwo, space, buttonThree, space, buttonFour, space, buttonFive];
     
     self.navigationController.navigationBar.topItem.title = nil;

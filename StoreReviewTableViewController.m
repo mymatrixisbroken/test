@@ -19,13 +19,17 @@
     
     self.tableView.delegate = self;
     self.tableView.dataSource = self;
+    
+    _ratingLabel.text = [NSString stringWithFormat:@"%.1f",store.ratingScore];
+    _reviewCountLabel.text = [[NSString stringWithFormat:@"%ld",(long)store.ratingCount] stringByAppendingString:@" Reviews"];
 }
 
 - (IBAction)tappedWriteReviewButton:(UIButton *)sender {
     FIRUser *youser = [FIRAuth auth].currentUser;
-    if (youser.email == nil) {
-        [user goToUserNotSignedInViewController:self];
-    } else {
+    if(youser.anonymous){
+        [user goToLoginViewController:self];
+    }
+    else{
         [user goToWriteReviewViewController:self];
     }
 }
@@ -54,19 +58,41 @@
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    NSLog(@"store reviews count %lu", store.reviews.count);
-    return [store.reviews count];
+    NSLog(@"store reviews count %lu", store.reviewsArray.count);
+    return [store.reviewsArray count];
 }
 
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    return 178;
+}
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     NSString *cellIdentifier = @"StoreReviewCell";
     StoreReviewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier forIndexPath:indexPath];
+    FIRStorage *storage = [FIRStorage storage];
+    FIRStorageReference *storageRef = [storage reference];
+
     
-    reviewClass *tempReview = [[reviewClass alloc] init];
-    tempReview = [store.reviews objectAtIndex:indexPath.row];
+    reviewClassNew *review = [[reviewClassNew alloc] init];
+    review = [store.reviewsArray objectAtIndex:indexPath.row];
     
-    [cell uploadCellWithReview:tempReview];
+//    [cell uploadCellWithReview:tempReview];
+    if ([review.userImageLink count] > 0){                                      //check images array is null
+        FIRStorageReference *spaceRef = [[[storageRef child:@"users"] child:review.authoredByUserKey] child:[review.userImageLink objectAtIndex:0]];
+        UIImage *placeHolder = [[UIImage alloc] init];
+        
+        [cell.userImageView sd_setImageWithStorageReference:spaceRef placeholderImage:placeHolder];
+    }
+
+    
+    cell.usernameLabel.text = review.authoredByUsername;
+    cell.reviewStarRating.value = [review.rating floatValue];;
+    cell.reviewMessageLabel.text = review.message;
+//    cell.reviewLikesLabel.text = promo.promoText;
+    cell.preservesSuperviewLayoutMargins = false;
+    cell.separatorInset = UIEdgeInsetsZero;
+    cell.layoutMargins = UIEdgeInsetsZero;
     
     return cell;
 }
