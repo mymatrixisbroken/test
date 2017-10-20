@@ -10,7 +10,6 @@
 #import "ICHObjectPrinter.h"
 #import "userClass.h"
 #import "strainClass.h"
-#import "eventClass.h"
 #import "storeClass.h"
 #import "objectsArrayClass.h"
 #import "FirebaseReferenceClass.h"

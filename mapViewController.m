@@ -108,9 +108,17 @@
 }
 
 - (void)mapView:(GMSMapView *)mapView didTapInfoWindowOfMarker:(GMSMarker *)marker {
+    UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+    StoreProfileViewController *vc = [sb instantiateViewControllerWithIdentifier:@"Store Profile VC SB ID"];
     NSInteger i = [marker.userData integerValue];
     store = [objectsArray.storeObjectArray objectAtIndex:i];
-    [user goToStoreProfileViewController:self];
+
+    NSLog(@"other store name is %@",store.storeName);
+//    NSString *otherStoreName = [_storeNamesArray objectAtIndex:indexPath.row];
+    vc.passedString = store.storeName;
+    [self.navigationController pushViewController:vc animated:false];
+
+//    [user goToStoreProfileViewController:self];
 }
 
 - (void)didReceiveMemoryWarning {

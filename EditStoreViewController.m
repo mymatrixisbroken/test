@@ -1,9 +1,9 @@
 //
-//  FirstViewController.m
+//  EditStoreViewController.m
 //  myProject
 //
-//  Created by Guy on 6/15/16.
-//  Copyright © 2016 Joaquin. All rights reserved.
+//  Created by Guy on 9/19/17.
+//  Copyright © 2017 Joaquin. All rights reserved.
 //
 
 #import "EditStoreViewController.h"
@@ -16,73 +16,114 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    [self loadImage];
-    [self loadLabels];
-    _imageSelected = false;
-    // Do any additional setup after loading the view, typically from a nib.
+    _tabBar.delegate = self;
+    [self loadTabBar];
+    [self loadTextFields];
+    [self loadMap];
+    
+    [_confirmButton addTarget:self
+                         action:@selector(tappedConfirm:)
+               forControlEvents:UIControlEventTouchUpInside];
+    
+    [_addressField addTarget:self
+                    action:@selector(addressFieldDidEndEditing:)
+          forControlEvents:UIControlEventEditingDidEnd];
+    
+    [_cityStateZipField addTarget:self
+                   action:@selector(cityStateZipFieldDidEndEditing:)
+         forControlEvents:UIControlEventEditingDidEnd];
+
+
+
+    // Do any additional setup after loading the view.
 }
 
-- (void) loadImage {
-//    [_image_view setImage:[UIImage imageWithData:store.data]];
+-(void) tappedConfirm:(UIButton *)button{
+    NSArray *strings = [_cityStateZipField.text componentsSeparatedByString:@", "];
+    NSString *stringLat = [NSString stringWithFormat:@"%lf", _storeLat];
+    NSString *stringLng = [NSString stringWithFormat:@"%lf", _storeLng];
+
+    
+    [[[[firebaseRef.ref child:@"phoneNumbers"] child:store.storeKey] child:@"phoneNumber"] setValue:_phoneNumberField.text];
+    [[[[firebaseRef.ref child:@"location"] child:store.storeKey] child:@"address"] setValue:_addressField.text];
+    [[[[firebaseRef.ref child:@"location"] child:store.storeKey] child:@"latitude"] setValue:stringLat];
+    [[[[firebaseRef.ref child:@"location"] child:store.storeKey] child:@"longitude"] setValue:stringLng];
+    
+    if (strings.count > 2){                                   //check snapshot is null
+        [[[[firebaseRef.ref child:@"location"] child:store.storeKey] child:@"city"] setValue:[strings objectAtIndex:0]];
+        [[[[firebaseRef.ref child:@"location"] child:store.storeKey] child:@"state"] setValue:[strings objectAtIndex:1]];
+        [[[[firebaseRef.ref child:@"location"] child:store.storeKey] child:@"zipcode"] setValue:[strings objectAtIndex:2]];
+    }
+    
+    UIAlertController * alert = [UIAlertController
+                                 alertControllerWithTitle:@"Store updated"
+                                 message:@"Successfully updated your store."
+                                 preferredStyle:UIAlertControllerStyleAlert];
+    
+    UIAlertAction* okButton = [UIAlertAction
+                               actionWithTitle:@"OK"
+                               style:UIAlertActionStyleDefault
+                               handler:^(UIAlertAction * action) {
+                                   [self.navigationController popToRootViewControllerAnimated:YES];
+                               }];
+    
+    
+    [alert addAction:okButton];
+    
+    [self presentViewController:alert animated:YES completion:nil];
 }
 
-- (void) loadLabels {
-    _store_name_label.text = store .storeName;
-    _address_label.text = store .address;
-    _city_label.text = store .city;
-    _state_label.text = store .state;
-    _phone_number_label.text = store .phone_number;
+-(void) loadMap{
+    double lat = [store.latitude doubleValue];
+    double lon = [store.longitude doubleValue];
+    
+    
+    GMSCameraPosition *camera = [GMSCameraPosition cameraWithLatitude:lat
+                                                            longitude:lon
+                                                                 zoom:16];
+    GMSMapView *mapView = [GMSMapView mapWithFrame:_mapView.bounds camera:camera];
+    mapView.delegate = self;
+    mapView.myLocationEnabled = true;
+    mapView.layer.masksToBounds = NO;
+    mapView.layer.shadowOffset = CGSizeMake(0, 3);
+    mapView.layer.shadowRadius = 3;
+    mapView.layer.shadowOpacity = 0.5;
+    
+    [_mapView addSubview: mapView];
+    
+    NSLog(@"store lat is %f",lat);
+    NSLog(@"store long is %f",lon);
+    
+    
+    CLLocationCoordinate2D position = CLLocationCoordinate2DMake(lat, lon);
+    GMSMarker *marker = [GMSMarker markerWithPosition:position];
+    marker.icon = [UIImage imageNamed:@"markerSmartObject"];
+    marker.map = mapView;
 }
 
-- (void) updateStoreProfile {
-    [self updateFirebaseDatabase];
-    [self updateClassObjectValues];
-    if(_imageSelected){
-        [self updateFirebaseStorage];
+-(void) addressFieldDidEndEditing:(UITextField *) textField{
+    _addressField.attributedPlaceholder = [[NSAttributedString alloc] initWithString:@"Address" attributes:@{NSForegroundColorAttributeName: [UIColor colorWithRed:122.0/255.0 green:122.0/255.0 blue:122.0/255.0 alpha:1.0]}];
+    if ((_addressField.text.length > 0) && (_cityStateZipField.text.length > 0)) {
+        [self moveMapFromStoreAddress];
     }
 }
 
-- (void) updateFirebaseDatabase{
-    [[[firebaseRef.storesRef child:store.storeKey] child:@"store_name"]setValue:_store_name_label.text];
-    [[[[firebaseRef.storesRef child:store.storeKey] child:@"location"] child:@"address"] setValue:_address_label.text];
-    [[[[firebaseRef.storesRef child:store.storeKey] child:@"location"] child:@"city"]setValue:_city_label.text];
-    [[[[firebaseRef.storesRef child:store.storeKey] child:@"location"] child:@"state"]setValue:_state_label.text];
-    [[[firebaseRef.storesRef child:store.storeKey] child:@"phone_number"]setValue:_phone_number_label.text];
+-(void) cityStateZipFieldDidEndEditing:(UITextField *) textField{
+    _cityStateZipField.attributedPlaceholder = [[NSAttributedString alloc] initWithString:@"City, State, Zip" attributes:@{NSForegroundColorAttributeName: [UIColor colorWithRed:122.0/255.0 green:122.0/255.0 blue:122.0/255.0 alpha:1.0]}];
+
+    if ((_addressField.text.length > 0) && (_cityStateZipField.text.length > 0)) {
+        [self moveMapFromStoreAddress];
+    }
 }
 
-- (void) updateClassObjectValues {
-    store.storeKey = _store_name_label.text;
-    store.address = _address_label.text;
-    store.city = _city_label.text;
-    store.state = _state_label.text;
-    store.phone_number = _phone_number_label.text;
-}
-
-- (void) updateFirebaseStorage {
-    /*FIRStorageReference *medium_image_ref = [firebaseRef.stores_medium_images_ref child:store.store_key];
-    NSData *medium_data = UIImagePNGRepresentation(store.medium_image); //Converts UIImage to Data for Storage upload
-    FIRStorageUploadTask *uploadTask = [self uploadImage:medium_data ToRef:medium_image_ref];
-    [uploadTask observeStatus:FIRStorageTaskStatusSuccess handler:^(FIRStorageTaskSnapshot *snapshot) {
-        [self dismissViewControllerAnimated:YES completion:^{}];
-    }];*/
-}
-
-- (FIRStorageUploadTask *) uploadImage:(NSData *)data ToRef:(FIRStorageReference *)ref {
-    FIRStorageUploadTask *uploadTask = [ref putData:data metadata:nil completion:^(FIRStorageMetadata *metadata, NSError *error) {
-    }];
-    return uploadTask;
-}
-
-- (void) gecodeAddress:(NSString *)address{
-    NSString *geocodingBaseURL = @"https://maps.googleapis.com/maps/api/geocode/json?";
-    NSString *url = [NSString stringWithFormat:@"%@address=%@&sensor=false", geocodingBaseURL, address];
+-(void) moveMapFromStoreAddress{
+    NSString *address = [_addressField.text stringByAppendingString:_cityStateZipField.text];
+    NSString *geocodingBaseURL = @"https://maps.googleapis.com/maps/api/geocode/json?address=";
+    NSString *url = [NSString stringWithFormat:@"%@%@&key=AIzaSyAsZ171sgZHuTcapToLRQ5-W9dl_WRLOh4",geocodingBaseURL, address];
     url = [url stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
     NSURL *queryURL = [NSURL URLWithString:url];
     NSData *data = [NSData dataWithContentsOfURL:queryURL];
-    [self fetchedData:data];
-}
-
-- (void) fetchedData:(NSData *)data{
+    
     NSError *error;
     NSDictionary *json = [NSJSONSerialization
                           JSONObjectWithData:data
@@ -92,99 +133,105 @@
     NSDictionary *result = [results objectAtIndex:0];
     NSDictionary *geometry = [result objectForKey:@"geometry"];
     NSDictionary *location = [geometry objectForKey:@"location"];
-    store.latitude = [location objectForKey:@"lat"];
-    store.longitude = [location objectForKey:@"lng"];
-    store.googlePlaceID = [result objectForKey:@"place_id"];
-}
-
-- (void)loadFirstPhotoForPlace:(NSString *)placeID {
-    GMSPlacesClient *place_client = [GMSPlacesClient sharedClient];
-    [place_client lookUpPhotosForPlaceID:placeID callback:^(GMSPlacePhotoMetadataList *_Nullable photos, NSError *_Nullable error) {
-        if (error) {
-            // TODO: handle the error.
-            NSLog(@"loadFirstPhotoForPlace Error: %@", [error description]);
-        } else {
-            if (photos.results.count > 0) {
-                GMSPlacePhotoMetadata *firstPhoto = photos.results.firstObject;
-                [self loadImageForMetadata:firstPhoto];
-            }
-        }
-    }];
-}
-
-- (void)loadImageForMetadata:(GMSPlacePhotoMetadata *)photoMetadata {
-    GMSPlacesClient *place_client = [GMSPlacesClient sharedClient];
-    [place_client loadPlacePhoto:photoMetadata constrainedToSize:self.image_view.bounds.size scale:self.image_view.window.screen.scale callback:^(UIImage *_Nullable photo, NSError *_Nullable error) {
-        if (error) {
-            NSLog(@"Error: %@", [error description]);
-        } else {
-            _imageSelected = true;
-            [self.image_view setImage: photo];
-        }
-    }];
-}
-
-- (IBAction)tappedImageView:(id)sender {
-    UIAlertController *actionSheet = [UIAlertController alertControllerWithTitle:@"Select Image" message:nil preferredStyle:UIAlertControllerStyleActionSheet];
+    _storeLat = [[location valueForKey:@"lat"] doubleValue];
+    _storeLng = [[location valueForKey:@"lng"] doubleValue];
     
-    [actionSheet addAction:[UIAlertAction actionWithTitle:@"Gallery" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
-        picker2 = [[UIImagePickerController alloc] init];
-        self->picker2.delegate = self;
-        [picker2 setSourceType:UIImagePickerControllerSourceTypePhotoLibrary];
-        [self presentViewController:picker2 animated:YES completion:NULL];
-        // Distructive button tapped.[self dismissViewControllerAnimated:YES completion:^{}];
-    }]];
+    GMSCameraPosition *camera = [GMSCameraPosition cameraWithLatitude:_storeLat
+                                                            longitude:_storeLng
+                                                                 zoom:16];
+    GMSMapView *mapView = [GMSMapView mapWithFrame:_mapView.bounds camera:camera];
+    [_mapView.subviews makeObjectsPerformSelector: @selector(removeFromSuperview)];
+    [_mapView addSubview:mapView];
     
-    [actionSheet addAction:[UIAlertAction actionWithTitle:@"Photo" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
-        picker = [[UIImagePickerController alloc] init];
-        self->picker.delegate = self;
-        [picker setSourceType:UIImagePickerControllerSourceTypeCamera];
-        [self presentViewController:picker animated:YES completion:NULL];
-        // OK button tapped. [self dismissViewControllerAnimated:YES completion:^{}];
-    }]];
-    
-    // Present action sheet.
-    [self presentViewController:actionSheet animated:YES completion:nil];
+    CLLocationCoordinate2D position = CLLocationCoordinate2DMake(_storeLat, _storeLng);
+    GMSMarker *marker = [GMSMarker markerWithPosition:position];
+    marker.icon = [UIImage imageNamed:@"markerSmartObject"];
+    marker.infoWindowAnchor = CGPointMake(0.44f, 0.45f);
+    marker.map = mapView;
 }
 
-- (void) imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary<NSString *,id> *)info{
-    image = [info objectForKey:UIImagePickerControllerOriginalImage];
-    self.image_view.contentMode  = UIViewContentModeScaleAspectFit;
-    [self.image_view setImage:image];
-    _imageSelected = true;
-    [self loadImagesToClassObject];
-    [self dismissViewControllerAnimated:YES completion:NULL];
+
+-(void)loadTextFields{
+    _storeNameLabel.text = store.storeName;
+    _addressField.text = store.address;
+    NSString *string = [[[[store.city stringByAppendingString:@", "]
+                          stringByAppendingString:store.state]
+                         stringByAppendingString:@" "]
+                        stringByAppendingString:store.zipcode ];
+    _cityStateZipField.text = string ;
+    _phoneNumberField.text = store.phone_number;
+    _storeHoursField.text = store.storeHours;
 }
 
-- (void) loadImagesToClassObject{
-    //store .medium_image = [[self class] imageWithImage:image scaledToWidth:150];
+-(void)loadTabBar{
+    _tabBar.barTintColor = [UIColor colorWithRed:18.0/255.0 green:24.0/255.0 blue:23.0/255.0 alpha:1.0];
+    
+    _promosTabBarItem.image = [[UIImage imageNamed:@"notSelectedAboutIcon"] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal ];
+    _promosTabBarItem.selectedImage = [[UIImage imageNamed:@"selectedAboutIcon"]imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
+    
+    _strainsTabBarItem.image = [[UIImage imageNamed:@"notSelectedStrainIcon"] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal ];
+    _strainsTabBarItem.selectedImage = [[UIImage imageNamed:@"selectedStrainIcon"]imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
+    
+    _reviewsTabBarItem.image = [[UIImage imageNamed:@"notSelectedReviewsIcon"] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
+    _reviewsTabBarItem.selectedImage = [[UIImage imageNamed:@"selectedReviewsIcon"]imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
+    _tabBar.selectedItem = _promosTabBarItem;
+    
+    
+    UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+    UITableViewController *vc = [sb instantiateViewControllerWithIdentifier:@"Edit Store Promos SB ID"];
+    [self addChildViewController:vc];
+    vc.tableView.frame = CGRectMake(0, 0, _containerView.frame.size.width, _containerView.frame.size.height);
+    [_containerView addSubview:vc.tableView];
+    [vc didMoveToParentViewController:self];
+    [_scrollView setContentOffset:CGPointMake(0, 381) animated:YES];
 }
 
-+(UIImage*)imageWithImage: (UIImage*) sourceImage scaledToWidth: (float) i_width
-{
-    float oldWidth = sourceImage.size.width;
-    float scaleFactor = i_width / oldWidth;
+-(void)tabBar:(UITabBar *)tabBar didSelectItem:(UITabBarItem *)item {
+//    [_tablevc.tableView removeFromSuperview];
     
-    float newHeight = sourceImage.size.height * scaleFactor;
-    float newWidth = oldWidth * scaleFactor;
-    
-    UIGraphicsBeginImageContext(CGSizeMake(newWidth, newHeight));
-    [sourceImage drawInRect:CGRectMake(0, 0, newWidth, newHeight)];
-    UIImage *newImage = UIGraphicsGetImageFromCurrentImageContext();
-    UIGraphicsEndImageContext();
-    return newImage;
+    if(item.tag == 1) {
+        UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+        UITableViewController *vc = [sb instantiateViewControllerWithIdentifier:@"Edit Store Promos SB ID"];
+        [self addChildViewController:vc];
+        vc.tableView.frame = CGRectMake(0, 0, _containerView.frame.size.width, _containerView.frame.size.height);
+        [_containerView addSubview:vc.tableView];
+        [vc didMoveToParentViewController:self];
+        [_scrollView setContentOffset:CGPointMake(0, 381) animated:YES];
+    }
+    else if(item.tag == 2) {
+        UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+        UITableViewController *vc = [sb instantiateViewControllerWithIdentifier:@"editStoreStrainsSBID"];
+        [self addChildViewController:vc];
+        vc.tableView.frame = CGRectMake(0, 0, _containerView.frame.size.width, _containerView.frame.size.height);
+        [_containerView addSubview:vc.tableView];
+        [vc didMoveToParentViewController:self];
+        [_scrollView setContentOffset:CGPointMake(0, 381) animated:YES];
+    }
+    else if(item.tag == 3) {
+        UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+        UITableViewController *vc = [sb instantiateViewControllerWithIdentifier:@"reviewsSBID"];
+        [self addChildViewController:vc];
+        vc.tableView.frame = CGRectMake(0, 0, _containerView.frame.size.width, _containerView.frame.size.height);
+        [_containerView addSubview:vc.tableView];
+        [vc didMoveToParentViewController:self];
+        [_scrollView setContentOffset:CGPointMake(0, 381) animated:YES];
+    }
 }
-- (IBAction)tappedDoneButton:(UIBarButtonItem *)sender {
-    [self updateStoreProfile];
-    [self dismissViewControllerAnimated:YES completion:^{}];
-}
-- (IBAction)tappedCancelButton:(UIBarButtonItem *)sender {
-    [self dismissViewControllerAnimated:YES completion:^{}];
-}
+
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
+
+/*
+#pragma mark - Navigation
+
+// In a storyboard-based application, you will often want to do a little preparation before navigation
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    // Get the new view controller using [segue destinationViewController].
+    // Pass the selected object to the new view controller.
+}
+*/
 
 @end

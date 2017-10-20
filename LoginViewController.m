@@ -186,6 +186,8 @@ const static CGFloat frameSizeWidth = 600.0f;
                 [self getUserEmail];
             }
         }
+        else
+            [user presentLoginErrorAlert:self];
     }];
 
     
@@ -550,10 +552,12 @@ const static CGFloat frameSizeWidth = 600.0f;
     UIBarButtonItem *buttonFive = [[UIBarButtonItem alloc] initWithCustomView:btn5];
     
     
-    UIBarButtonItem *space = [[UIBarButtonItem alloc]initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:self action:nil];
+    UIBarButtonItem *space = [[UIBarButtonItem alloc]initWithBarButtonSystemItem:UIBarButtonSystemItemFixedSpace target:self action:nil];
+    space.width = 55;
     
     NSArray *buttons = @[buttonOne, space, buttonTwo, space, buttonThree, space, buttonFour, space, buttonFive];
     
+    self.navigationController.navigationBar.topItem.title = nil;
     self.navigationController.navigationBar.topItem.leftBarButtonItems = buttons;
 }
 

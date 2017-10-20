@@ -16,10 +16,12 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    
+//    [self.navigationController.navigationBar setFrame:CGRectMake(0, 0, self.view.frame.size.width,49.0)];
+
     
     UIButton *btn1 =  [UIButton buttonWithType:UIButtonTypeCustom];
     btn1.frame = CGRectMake(0,0,25,25);
+    btn1.imageView.frame = CGRectMake(0,0,25,25);
     if (user.mainNavigationSelected == 0) {
         [btn1 setBackgroundImage:[UIImage imageNamed:@"newsFeedGreenIcon"] forState:UIControlStateNormal];
     } else {
@@ -31,6 +33,7 @@
     
     UIButton *btn2 =  [UIButton buttonWithType:UIButtonTypeCustom];
     btn2.frame = CGRectMake(0,0,25,25);
+    btn2.imageView.frame = CGRectMake(0,0,25,25);
     if (user.mainNavigationSelected == 1) {
         [btn2 setBackgroundImage:[UIImage imageNamed:@"mapGreenIcon"] forState:UIControlStateNormal];
     } else {
@@ -42,6 +45,7 @@
     
     UIButton *btn3 =  [UIButton buttonWithType:UIButtonTypeCustom];
     btn3.frame = CGRectMake(0,0,25,25);
+    btn3.imageView.frame = CGRectMake(0,0,25,25);
     if (user.mainNavigationSelected == 2) {
         [btn3 setBackgroundImage:[UIImage imageNamed:@"searchGreenIcon"] forState:UIControlStateNormal];
     } else {
@@ -53,6 +57,7 @@
     
     UIButton *btn4 =  [UIButton buttonWithType:UIButtonTypeCustom];
     btn4.frame = CGRectMake(0,0,25,25);
+    btn4.imageView.frame = CGRectMake(0,0,25,25);
     if (user.mainNavigationSelected == 3) {
         [btn4 setBackgroundImage:[UIImage imageNamed:@"storesGreenIcon"] forState:UIControlStateNormal];
     } else {
@@ -64,12 +69,14 @@
     
     UIButton *btn5 =  [UIButton buttonWithType:UIButtonTypeCustom];
     btn5.frame = CGRectMake(0,0,25,25);
+    btn5.imageView.frame = CGRectMake(0,0,25,25);
     [btn5 setBackgroundImage:[UIImage imageNamed:@"hamburgerWhiteIcon"] forState:UIControlStateNormal];
     [btn5 addTarget:self action:@selector(barButtonCustomPressed:) forControlEvents:UIControlEventTouchUpInside];
     UIBarButtonItem *buttonFive = [[UIBarButtonItem alloc] initWithCustomView:btn5];
     
     
-    UIBarButtonItem *space = [[UIBarButtonItem alloc]initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:self action:nil];
+    UIBarButtonItem *space = [[UIBarButtonItem alloc]initWithBarButtonSystemItem:UIBarButtonSystemItemFixedSpace target:self action:nil];
+    space.width = 55;
     
     NSArray *buttons = @[buttonOne, space, buttonTwo, space, buttonThree, space, buttonFour, space, buttonFive];
     

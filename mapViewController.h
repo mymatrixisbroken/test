@@ -13,6 +13,7 @@
 #import "storeClass.h"
 #import "markerInfoView.h"
 #import "imageClass.h"
+#import "storeProfileViewController.h"
 @import GoogleMaps;
 
 @interface mapViewController : UIViewController <GMSMapViewDelegate>

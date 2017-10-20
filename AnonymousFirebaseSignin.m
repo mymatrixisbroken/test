@@ -27,7 +27,7 @@
     user = [userClass sharedInstance];
     store = [storeClass sharedInstance];
     objectsArray = [objectsArrayClass sharedInstance];
-    event = [eventClass sharedInstance];
+    firebaseRef = [FirebaseReferenceClass sharedInstance];
 }
 
 - (void) signinFirebaseAnonymously {
@@ -64,24 +64,93 @@
 //            }
 ////        }
 //    }];
-    
-    [[FIRAuth auth] signInAnonymouslyWithCompletion:^(FIRUser * _Nullable user, NSError * _Nullable error) {
-        if (error != nil) {
-            // Uh-oh, an error occurred!
-            NSLog(@"Anonymous Firebase User is NOT signed in..");
-            NSLog(@"%@", error.localizedDescription);
-            //NSLog(@"UID:%@.",error.userInfo);
+    [[FIRAuth auth] addAuthStateDidChangeListener:^(FIRAuth *_Nonnull auth, FIRUser *_Nullable userAuth) {
+        BOOL isAnonymous = userAuth.anonymous;  // YES
+        NSLog(isAnonymous ? @"Yes" : @"No");
+
+
+        if (isAnonymous) {
+            [[FIRAuth auth] signInAnonymouslyWithCompletion:^(FIRUser * _Nullable user, NSError * _Nullable error) {
+                if (error != nil) {
+                    // Uh-oh, an error occurred!
+                    NSLog(@"Anonymous Firebase User is NOT signed in..");
+                    NSLog(@"%@", error.localizedDescription);
+                }
+                else {
+                    //Assign current Firebase user to a variable called user
+                    //                FIRUser *user = [FIRAuth auth].currentUser;
+//                    BOOL isAnonymous = user.anonymous;  // YES
+                    NSLog(@"Anonymous Firebase User is signed in.. ");
+//                    NSLog(isAnonymous ? @"Yes" : @"No");
+//                    NSLog(@"UID:%@.",user.uid);
+                    //NSLog(@"ref %@ strains %@ stores %@ users %@", firebaseRef.ref, firebaseRef.strainsRef, firebaseRef.storesRef, firebaseRef.usersRef);
+                    [self loadCurrentLocation];
+                }
+            }];
         }
-        else {
-            //Assign current Firebase user to a variable called user
-            FIRUser *user = [FIRAuth auth].currentUser;
-            BOOL isAnonymous = user.anonymous;  // YES
-            NSLog(@"Anonymous Firebase User is signed in.. ");
-            NSLog(isAnonymous ? @"Yes" : @"No");
-            NSLog(@"UID:%@.",user.uid);
-            //NSLog(@"ref %@ strains %@ stores %@ users %@", firebaseRef.ref, firebaseRef.strainsRef, firebaseRef.storesRef, firebaseRef.usersRef);
-            [self loadCurrentLocation];
+        else{
+            user.email = userAuth.email;
+            NSLog(@"email is %@", user.email);
+
+            NSString *lowerString = [user.email lowercaseString];
+            FIRDatabaseQuery *queryLowerUsername = [[[firebaseRef.ref child:@"emailAddress"] queryOrderedByChild:@"lowerEmailAddress"] queryEqualToValue:lowerString];
+            
+            [queryLowerUsername observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
+                if ([NSNull null] != snapshot.value){                                   //check snapshot is null
+                    NSLog(@"snapshot is %@", snapshot.value);
+                    if ([[snapshot.value allKeys] count]== 1) {                         //check one email found
+                        user.userKey =[[snapshot.value allKeys] objectAtIndex:0];
+                        [self getUsername];
+                        [self getAccountType];
+                        [self getStoreOwner];
+                        [self getFriends];
+                        
+//                        [[[firebaseRef.ref child:@"usernames"] child:user.userKey] observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
+//                            if ([NSNull null] != snapshot.value){                                   //check snapshot is null
+//                                user.username = [snapshot.value valueForKey:@"username"];
+//                                [self loadCurrentLocation];
+//                            }
+//                        }];
+                    }
+                }
+            }];
         }
+    }];
+}
+
+- (void) getUsername{
+    [[[firebaseRef.ref child:@"usernames"] child:user.userKey] observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
+        if ([NSNull null] != snapshot.value){                                   //check snapshot is null
+            user.username = [snapshot.value valueForKey:@"username"];
+        }
+    }];
+}
+
+- (void) getAccountType{
+    [[[firebaseRef.ref child:@"accountType"] child:user.userKey] observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
+        if ([NSNull null] != snapshot.value){                                   //check snapshot is null
+            user.accountType = [snapshot.value valueForKey:@"accountType"];
+        }
+    }];
+}
+
+- (void) getStoreOwner{
+    [[[firebaseRef.ref child:@"storeOwner"] child:user.userKey] observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
+        if ([NSNull null] != snapshot.value){                                   //check snapshot is null
+            user.storeOwnerKey = [[snapshot.value allKeys] objectAtIndex:0];
+        }
+    }];
+}
+
+- (void) getFriends{
+    [[[firebaseRef.ref child:@"friends"] child:user.userKey] observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
+        if ([NSNull null] != snapshot.value){                                   //check snapshot is null
+            user.friendsKeys = [[NSMutableArray alloc] init];
+            for (id key in snapshot.value) {
+                [user.friendsKeys addObject:key];
+            }
+        }
+        [self loadCurrentLocation];
     }];
 }
 
@@ -119,9 +188,9 @@
 }
 
 - (void) loadfirebaseRef {
-    firebaseRef = [FirebaseReferenceClass sharedInstance];
     objectsArray.strainOrStore = 1;
     objectsArray.filterSelected = loadObjects;
+    user.mainNavigationSelected = 3;
     [user goToStrainsStoresViewController:self];
 }
 

@@ -16,6 +16,12 @@
 @property (nonatomic, strong) UIImageView *indicaImageView;
 @property (nonatomic, strong) UILabel *label;
 @property (nonatomic, strong) UILabel *locationLabel;
+@property (nonatomic, strong) UILabel *cbdLabel;
+@property (nonatomic, strong) UILabel *cbdPercentLabel;
+@property (nonatomic, strong) UILabel *thcLabel;
+@property (nonatomic, strong) UILabel *thcPercentLabel;
+@property (nonatomic, strong) UILabel *cbnLabel;
+@property (nonatomic, strong) UILabel *cbnPercentLabel;
 @property (nonatomic, strong) UILabel *reviewCountLabel;
 @property (nonatomic, strong) UILabel *distanceToMeLabel;
 @property (nonatomic, strong) HCSStarRatingView *starRatingView;

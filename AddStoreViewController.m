@@ -285,6 +285,8 @@
     [[[[firebaseRef.ref  child:@"toBeReviewedLocation"]  child:store2.storeKey] child:@"cityStateZip"] setValue:_cityStateZip.text];
     [[[[firebaseRef.ref  child:@"toBeReviewedLocation"]  child:store2.storeKey] child:@"latitude"] setValue:stringLat];
     [[[[firebaseRef.ref  child:@"toBeReviewedLocation"]  child:store2.storeKey] child:@"longitude"] setValue:stringLng];
+    [[[[firebaseRef.ref  child:@"toBeReviewedStoreAddedByUser"]  child:store2.storeKey] child:user.userKey] setValue:@"true"];
+
     
     
     UIAlertController * alert = [UIAlertController

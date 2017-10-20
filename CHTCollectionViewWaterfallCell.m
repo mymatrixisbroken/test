@@ -85,11 +85,97 @@
         _starRatingView = [[HCSStarRatingView alloc] initWithFrame:CGRectMake(self.bounds.size.width*0.575, (self.contentView.bounds.size.height*0.7), 80, 50)];
         _starRatingView.backgroundColor = [UIColor clearColor];
         _starRatingView.tintColor = [UIColor colorWithRed:8.0/255.0 green:197.0/255.0 blue:103.0/255.0 alpha:1.0];
-        _starRatingView.value = 3.0;
-        _starRatingView.emptyStarImage = [UIImage imageNamed:@"emptyStarSmartObject"];
+        _starRatingView.spacing = 0.0;
+        _starRatingView.value = 0.0;
+        _starRatingView.allowsHalfStars = YES;
+        _starRatingView.filledStarImage = [UIImage imageNamed:@"starGreenIcon"];
+        _starRatingView.emptyStarImage = [UIImage imageNamed:@"starGrayIcon"];
         _starRatingView.userInteractionEnabled=NO;
     }
     return _starRatingView;
+}
+
+- (UILabel *)cbdLabel{
+    if (!_cbdLabel) {
+        _cbdLabel = [[UILabel alloc] initWithFrame:CGRectMake(self.bounds.size.width*0.7, self.bounds.size.height*0.4, 50, 50)];
+        _cbdLabel.tag = 201;
+        _cbdLabel.textColor = [UIColor colorWithRed:254.0/255.0 green:254.0/255.0 blue:254.0/255.0 alpha:1.0];
+        _cbdLabel.text = @"CBD:";
+        _cbdLabel.font = [UIFont fontWithName:@"NEXA BOLD" size:10.0];
+        _cbdLabel.textColor = [UIColor colorWithRed:8.0/255.0 green:197.0/255.0 blue:103.0/255.0 alpha:1.0];
+        _cbdLabel.userInteractionEnabled=NO;
+        _cbdLabel.hidden = YES;
+    }
+    return _cbdLabel;
+}
+
+- (UILabel *)cbdPercentLabel{
+    if (!_cbdPercentLabel) {
+        _cbdPercentLabel = [[UILabel alloc] initWithFrame:CGRectMake(self.bounds.size.width*0.7, self.bounds.size.height*0.475, 50, 50)];
+        _cbdPercentLabel.tag = 201;
+        _cbdPercentLabel.textColor = [UIColor colorWithRed:254.0/255.0 green:254.0/255.0 blue:254.0/255.0 alpha:1.0];
+        _cbdPercentLabel.font = [UIFont fontWithName:@"NEXA LIGHT" size:14.0];
+        _cbdPercentLabel.text = @"15%";
+        _cbdPercentLabel.textColor = [UIColor colorWithRed:255.0/255.0 green:255.0/255.0 blue:255.0/255.0 alpha:1.0];
+        _cbdPercentLabel.userInteractionEnabled=NO;
+        _cbdPercentLabel.hidden = YES;
+    }
+    return _cbdPercentLabel;
+}
+
+- (UILabel *)thcLabel{
+    if (!_thcLabel) {
+        _thcLabel = [[UILabel alloc] initWithFrame:CGRectMake(self.bounds.size.width*0.8, self.bounds.size.height*0.4, 50, 50)];
+        _thcLabel.tag = 201;
+        _thcLabel.font = [UIFont fontWithName:@"NEXA BOLD" size:10.0];
+        _thcLabel.textColor = [UIColor colorWithRed:8.0/255.0 green:197.0/255.0 blue:103.0/255.0 alpha:1.0];
+        _thcLabel.userInteractionEnabled=NO;
+        _thcLabel.text = @"THC:";
+        _thcLabel.hidden = YES;
+    }
+    return _thcLabel;
+}
+
+- (UILabel *)thcPercentLabel{
+    if (!_thcPercentLabel) {
+        _thcPercentLabel = [[UILabel alloc] initWithFrame:CGRectMake(self.bounds.size.width*0.8, self.bounds.size.height*0.475, 50, 50)];
+        _thcPercentLabel.tag = 201;
+        _thcPercentLabel.textColor = [UIColor colorWithRed:254.0/255.0 green:254.0/255.0 blue:254.0/255.0 alpha:1.0];
+        _thcPercentLabel.font = [UIFont fontWithName:@"NEXA LIGHT" size:14.0];
+        _thcPercentLabel.text = @"16%";
+        _thcPercentLabel.textColor = [UIColor colorWithRed:255.0/255.0 green:255.0/255.0 blue:255.0/255.0 alpha:1.0];
+        _thcPercentLabel.userInteractionEnabled=NO;
+        _thcPercentLabel.hidden = YES;
+    }
+    return _thcPercentLabel;
+}
+
+
+- (UILabel *)cbnLabel{
+    if (!_cbnLabel) {
+        _cbnLabel = [[UILabel alloc] initWithFrame:CGRectMake(self.bounds.size.width*0.9, self.bounds.size.height*0.4, 50, 50)];
+        _cbnLabel.tag = 201;
+        _cbnLabel.font = [UIFont fontWithName:@"NEXA BOLD" size:10.0];
+        _cbnLabel.textColor = [UIColor colorWithRed:8.0/255.0 green:197.0/255.0 blue:103.0/255.0 alpha:1.0];
+        _cbnLabel.userInteractionEnabled=NO;
+        _cbnLabel.text = @"CBN:";
+        _cbnLabel.hidden = YES;
+    }
+    return _cbnLabel;
+}
+
+- (UILabel *)cbnPercentLabel{
+    if (!_cbnPercentLabel) {
+        _cbnPercentLabel = [[UILabel alloc] initWithFrame:CGRectMake(self.bounds.size.width*0.9, self.bounds.size.height*0.475, 50, 50)];
+        _cbnPercentLabel.tag = 201;
+        _cbnPercentLabel.textColor = [UIColor colorWithRed:254.0/255.0 green:254.0/255.0 blue:254.0/255.0 alpha:1.0];
+        _cbnPercentLabel.font = [UIFont fontWithName:@"NEXA LIGHT" size:14.0];
+        _cbnPercentLabel.text = @"17%";
+        _cbnPercentLabel.textColor = [UIColor colorWithRed:255.0/255.0 green:255.0/255.0 blue:255.0/255.0 alpha:1.0];
+        _cbnPercentLabel.userInteractionEnabled=NO;
+        _cbnPercentLabel.hidden = YES;
+    }
+    return _cbnPercentLabel;
 }
 
 
@@ -103,8 +189,12 @@
       [self.contentView addSubview:self.distanceToMeLabel];
       [self.contentView addSubview:self.reviewCountLabel];
       [self.contentView addSubview:self.starRatingView];
-      
-
+      [self.contentView addSubview:self.cbdLabel];
+      [self.contentView addSubview:self.cbdPercentLabel];
+      [self.contentView addSubview:self.thcLabel];
+      [self.contentView addSubview:self.thcPercentLabel];
+      [self.contentView addSubview:self.cbnLabel];
+      [self.contentView addSubview:self.cbnPercentLabel];
   }
   return self;
 }

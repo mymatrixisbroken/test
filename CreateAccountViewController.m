@@ -19,6 +19,8 @@ const static CGFloat frameSizeWidth = 600.0f;
 - (void)viewDidLoad {
     [super viewDidLoad];
     
+    self.emailField.delegate = self;
+    
     [_usernameField addTarget:self
                         action:@selector(usernameFieldDidChange:)
               forControlEvents:UIControlEventEditingChanged];
@@ -84,6 +86,14 @@ const static CGFloat frameSizeWidth = 600.0f;
     _gradientMask.startPoint = CGPointMake(0.0, 0.5);   // start at left middle
     _gradientMask.endPoint = CGPointMake(1.0, 0.5);     // end at right middle
 
+}
+
+- (BOOL)textFieldShouldReturn:(UITextField *)textField {
+    if (textField == self.emailField) {
+        [textField resignFirstResponder];
+        return NO;
+    }
+    return YES;
 }
 
 - (void) usernameFieldDidChange:(UITextField *) textField{
@@ -166,10 +176,10 @@ const static CGFloat frameSizeWidth = 600.0f;
         else return;
     
     if([self isValidPassword]){}
-    else return;
+        else return;
 
     if([self isTermsAccepted]){}
-    else return;
+        else return;
 
     
     
@@ -182,21 +192,60 @@ const static CGFloat frameSizeWidth = 600.0f;
     
     [myTopPostsQuery observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
         if ([NSNull null] == snapshot.value){
-            user.userKey = [[firebaseRef.ref  child:@"usernames"] childByAutoId].key;
-            [user createUser:_emailField.text SignedUp:_usernameField.text];
-            [self updateAnonymousUserToSignedUp:_passwordField.text];
-            [self updateFirebaseDatabaseValues];
-            
-            if (user.userKey != nil) {
-                [user goToCurrentUserProfileViewController:self];
-            }
-            else {
-                NSLog(@"Failed to create account.");
-            }
+            [self isEmailTaken];
+
+//            user.userKey = [[firebaseRef.ref  child:@"usernames"] childByAutoId].key;
+//            [user createUser:_emailField.text SignedUp:_usernameField.text];
+//            [self updateAnonymousUserToSignedUp:_passwordField.text];
+//            [self updateFirebaseDatabaseValues];
+//            
+//            if (user.userKey != nil) {
+//                [self isEmailTaken];
+//            }
+//            else {
+//                NSLog(@"Failed to create account.");
+//            }
         }
         else if ([[snapshot.value allKeys] count] > 0) {
             NSLog(@"Username already taken");
             [user presentUsernameTakenAlert:self];
+        }
+    }];
+}
+
+-(void) isEmailTaken{
+    NSString *lowerString = [_emailField.text lowercaseString];
+    
+    NSLog(@"lowerString is %@", lowerString);
+
+    FIRDatabaseQuery *myTopPostsQuery = [[[firebaseRef.ref  child:@"emailAddress"] queryOrderedByChild:@"lowerEmailAddress"] queryEqualToValue:lowerString];
+
+    [myTopPostsQuery observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
+        if ([NSNull null] == snapshot.value){
+            [[FIRAuth auth] fetchProvidersForEmail:_emailField.text completion:^(NSArray<NSString *> * _Nullable providers, NSError * _Nullable error) {
+                if ([providers objectAtIndex:0] == nil) {
+                    user.userKey = [[firebaseRef.ref  child:@"usernames"] childByAutoId].key;
+                    [user createUser:_emailField.text SignedUp:_usernameField.text];
+
+                    FIRUser *userAuth = [FIRAuth auth].currentUser;
+                    [userAuth updateEmail:user.email completion:^(NSError *_Nullable error) {
+                        [userAuth updatePassword:_passwordField.text completion:^(NSError *_Nullable error) {
+                            [self updateFirebaseDatabaseValues];
+                            if (user.userKey != nil) {
+                                [user goToCurrentUserProfileViewController:self];
+                            }
+                            else {
+                                NSLog(@"Failed to create account.");
+                            }
+                        }];
+                    }];
+                }
+                else
+                    [user presentEmailTakenAlert:self];
+            }];
+        }
+        else if ([[snapshot.value allKeys] count] > 0) {
+            [user presentEmailTakenAlert:self];
         }
     }];
 }

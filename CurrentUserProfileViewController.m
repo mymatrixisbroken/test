@@ -16,45 +16,68 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
+    UISwipeGestureRecognizer *swipeLeft = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(screenSwipedLeft)];
+    swipeLeft.numberOfTouchesRequired = 1;
+    swipeLeft.direction=UISwipeGestureRecognizerDirectionLeft;
+    [self.view addGestureRecognizer:swipeLeft];
+
+    
     [self loadNavController];
-    _usernameLabel.text = user.username;
     [self loadUserFromFirebaseDatabase];
 //    [self loadProfilePicture];
     self.scrollView.contentSize = self.view.bounds.size;
     self.shyNavBarManager.scrollView = self.scrollView;
 //    [self loadExtView];
-    
-    _myFriendsNumber.text = [NSString stringWithFormat:@"%lu", (unsigned long)user.friendsKeys.count];
-    _myReviewsNumber.text = [NSString stringWithFormat:@"%lu", (unsigned long)user.reviews.count];
-    _strainsTriedNumber.text = [NSString stringWithFormat:@"%lu", (unsigned long)user.friendRequestsIncomingKeys.count];
-    _storesVisitedNumber.text = [NSString stringWithFormat:@"%lu", (unsigned long)user.storesVisited.count];
-    
-    _badgesNumber.text = [NSString stringWithFormat:@"%lu", (unsigned long)user.badges.count];
 }
+
+-(void) screenSwipedLeft{
+    FIRUser *currentUser = [FIRAuth auth].currentUser;
+    if(currentUser.anonymous){
+        [user gotoOptionListViewController:self];
+    } else {
+        [user gotoOptionListSignedInViewController:self];
+    }
+}
+
 
 - (void) loadUserFromFirebaseDatabase {
+    NSString *lowerString = [user.email lowercaseString];
+    FIRDatabaseQuery *queryLowerUsername = [[[firebaseRef.ref child:@"emailAddress"] queryOrderedByChild:@"lowerEmailAddress"] queryEqualToValue:lowerString];
     
-    [self getDateJoined];
-    [self getLastSignedIn];
-    [self getAccountType];
-    [self getUserImages];
-    [self getUserBadges];
-    [self getCheckIns];
-    [self getFriends];
-    [self getStoresVisited];
-    [self getStrainsTried];
-    [self getStoreBookMarks];
-    [self getStrainBookMarks];
-    [self getFriendRequestInbound];
-    [self getFriendRequestOutbound];
-    [self loadReviewsFromFirebase];
+    [queryLowerUsername observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
+        if ([NSNull null] != snapshot.value){                                   //check snapshot is null
+            NSLog(@"snapshot is %@", snapshot.value);
+            if ([[snapshot.value allKeys] count]== 1) {                         //check one email found
+                user.userKey =[[snapshot.value allKeys] objectAtIndex:0];
+                    [self getusername];
+                    [self getDateJoined];
+                    [self getLastSignedIn];
+                    [self getAccountType];
+                    [self storeOwner];
+                    [self getUserImages];
+                    [self getUserBadges];
+                    [self getCheckIns];
+                    [self getFriends];
+                    [self getStoresVisited];
+                    [self getStrainsTried];
+                    [self getStoreBookMarks];
+                    [self getStrainBookMarks];
+                    [self getFriendRequestInbound];
+                    [self getFriendRequestOutbound];
+                    [self loadReviewsFromFirebase];
+            }
+        }
+    }];
+
     
 }
 
-- (void) getUsername{
+- (void) getusername{
     [[[firebaseRef.ref child:@"usernames"] child:user.userKey] observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
         if ([NSNull null] != snapshot.value){                                   //check snapshot is null
             user.username = [snapshot.value valueForKey:@"username"];
+            _usernameLabel.text = user.username;
         }
     }];
 }
@@ -83,6 +106,14 @@
     }];
 }
 
+- (void) storeOwner{
+    [[[firebaseRef.ref child:@"storeOwner"] child:user.userKey] observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
+        if ([NSNull null] != snapshot.value){                                   //check snapshot is null
+            user.storeOwnerKey = [[snapshot.value allKeys] objectAtIndex:0];
+        }
+    }];
+}
+
 - (void) getUserImages{
     [[[[firebaseRef.ref child:@"images"] child:@"users"] child:user.userKey] observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
         if ([NSNull null] != snapshot.value){                                   //check snapshot is null
@@ -107,6 +138,7 @@
                     [user.badges addObject:key];
                 }
             }
+            _badgesNumber.text = [NSString stringWithFormat:@"%lu", (unsigned long)user.badges.count];
         }
     }];
 }
@@ -129,6 +161,7 @@
             for (id key in snapshot.value) {
                 [user.friendsKeys addObject:key];
             }
+            _myFriendsNumber.text = [NSString stringWithFormat:@"%lu", (unsigned long)user.friendsKeys.count];
         }
         [self.view setNeedsDisplay];
     }];
@@ -141,6 +174,7 @@
             for (id key in snapshot.value) {
                 [user.storesVisited addObject:key];
             }
+            _storesVisitedNumber.text = [NSString stringWithFormat:@"%lu", (unsigned long)user.storesVisited.count];
         }
     }];
 }
@@ -152,6 +186,7 @@
             for (id key in snapshot.value) {
                 [user.strainsTried addObject:key];
             }
+            _strainsTriedNumber.text = [NSString stringWithFormat:@"%lu", (unsigned long)user.friendRequestsIncomingKeys.count];
         }
     }];
 }
@@ -224,6 +259,7 @@
                 
                 [user.reviews addObject:tempReview];
             }
+            _myReviewsNumber.text = [NSString stringWithFormat:@"%lu", (unsigned long)user.reviews.count];
         }
         [self.view setNeedsDisplay];
     }];
@@ -309,7 +345,11 @@
             else {
                 //Assign current Firebase user to a variable called user
                 if([FIRAuth auth].currentUser.anonymous){
-                    [user goToLoginViewController:self];
+//                    [user goToLoginViewController:self];
+                    UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+                    UIViewController *vc2 = [sb instantiateViewControllerWithIdentifier:@"Login View VC SB ID"];
+                    vc2.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
+                    [self.navigationController pushViewController:vc2 animated:false];
                 }
             }
         }];
@@ -454,8 +494,9 @@
     UIBarButtonItem *buttonFive = [[UIBarButtonItem alloc] initWithCustomView:btn5];
     
     
-    UIBarButtonItem *space = [[UIBarButtonItem alloc]initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:self action:nil];
-    
+    UIBarButtonItem *space = [[UIBarButtonItem alloc]initWithBarButtonSystemItem:UIBarButtonSystemItemFixedSpace target:self action:nil];
+    space.width = 55;
+
     NSArray *buttons = @[buttonOne, space, buttonTwo, space, buttonThree, space, buttonFour, space, buttonFive];
     
     self.navigationController.navigationBar.topItem.leftBarButtonItems = buttons;
