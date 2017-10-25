@@ -87,20 +87,30 @@
 }
 
 -(NSArray *)tableView:(UITableView *)tableView editActionsForRowAtIndexPath:(NSIndexPath *)indexPath {
-    UITableViewRowAction *button = [UITableViewRowAction rowActionWithStyle:UITableViewRowActionStyleDestructive title:@"Delete" handler:^(UITableViewRowAction *action, NSIndexPath *indexPath)
-                                    {
-                                        NSLog(@"Action to perform with Button 1");
-                                    }];
+    strainClass *tempStrain = [[strainClass alloc] init];
+    tempStrain = [store.hasStrainsArray objectAtIndex:indexPath.row];
+
+    UITableViewRowAction *button = [UITableViewRowAction
+                                    rowActionWithStyle:UITableViewRowActionStyleDestructive
+                                    title:@"Delete"
+                                    handler:^(UITableViewRowAction *action, NSIndexPath *indexPath)
+    {
+        NSLog(@"Action to perform with Button 1");
+        [store.hasStrainsArray removeObject:tempStrain];
+        
+        [[[[firebaseRef.ref child:@"storeHasStrains"]  child:store.storeKey] child:tempStrain.strainKey] removeValue];
+        [[[[[firebaseRef.ref child:@"storeStrainPrices"]  child:store.storeKey] child:tempStrain.strainKey] child:@"oneGram"] removeValue];
+        [[[[[firebaseRef.ref child:@"storeStrainPrices"]  child:store.storeKey] child:tempStrain.strainKey] child:@"twoGram"] removeValue];
+        [[[[[firebaseRef.ref child:@"storeStrainPrices"]  child:store.storeKey] child:tempStrain.strainKey] child:@"eighth"] removeValue];
+        [[[[[firebaseRef.ref child:@"storeStrainPrices"]  child:store.storeKey] child:tempStrain.strainKey] child:@"fourth"] removeValue];
+        [[[[[firebaseRef.ref child:@"storeStrainPrices"]  child:store.storeKey] child:tempStrain.strainKey] child:@"half"] removeValue];
+        [[[[[firebaseRef.ref child:@"storeStrainPrices"]  child:store.storeKey] child:tempStrain.strainKey] child:@"ounce"] removeValue];
+        
+        [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:(UITableViewRowAnimationFade)];
+    }];
 
     return @[button]; //array with all the buttons you want. 1,2,3, etc...
-
     
-//    UITableViewRowAction *button2 = [UITableViewRowAction rowActionWithStyle:UITableViewRowActionStyleDefault title:@"Button 2" handler:^(UITableViewRowAction *action, NSIndexPath *indexPath)
-//                                     {
-//                                         NSLog(@"Action to perform with Button2!");
-//                                     }];
-//    button2.backgroundColor = [UIColor blueColor]; //arbitrary color
-//    return @[button, button2]; //array with all the buttons you want. 1,2,3, etc...
 }
 
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {

@@ -13,7 +13,12 @@
 #import "extensionViewClass.h"
 #import "objectsArrayClass.h"
 #import <FirebaseStorageUI/FirebaseStorageUI.h>
-#import "reviewClass.h"
+#import "friendRequestTableViewController.h"
+#import "reviewClassNew.h"
+#import "userFriendsViewController.h"
+#import "userReviewsViewController.h"
+#import "userBookmarksViewController.h"
+#import "userPhotosTableViewController.h"
 @import Firebase;
 
 @interface CurrentUserProfileViewController : UIViewController <UIImagePickerControllerDelegate, UINavigationControllerDelegate>{
@@ -27,7 +32,7 @@
 @property (strong, nonatomic) IBOutlet UIScrollView *scrollView;
 @property (strong, nonatomic) IBOutlet UILabel *badgesNumber;
 @property (strong, nonatomic) IBOutlet UILabel *storesVisitedNumber;
-@property (strong, nonatomic) IBOutlet UILabel *strainsTriedNumber;
+@property (strong, nonatomic) IBOutlet UILabel *photosNumber;
 @property (strong, nonatomic) IBOutlet UILabel *myReviewsNumber;
 @property (strong, nonatomic) IBOutlet UILabel *myFriendsNumber;
 

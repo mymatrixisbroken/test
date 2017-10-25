@@ -88,6 +88,40 @@
     return cell;
 }
 
+-(NSArray *)tableView:(UITableView *)tableView editActionsForRowAtIndexPath:(NSIndexPath *)indexPath {
+    promoClass *promo = [[promoClass alloc] init];
+    promo = [store.promosArray objectAtIndex:indexPath.row];
+
+    UITableViewRowAction *button = [UITableViewRowAction
+                                    rowActionWithStyle:UITableViewRowActionStyleDestructive
+                                    title:@"Delete"
+                                    handler:^(UITableViewRowAction *action, NSIndexPath *indexPath)
+                                    {
+                                        NSLog(@"Action to perform with Button 1");
+                                        [store.promosArray removeObject:promo];
+//
+                                        [[[[[firebaseRef.ref child:@"promos"] child:store.storeKey] child:promo.promoKey] child:promo.promoKey] removeValue];
+                                        
+                                        [[[[firebaseRef.ref child:@"promoDate"] child:store.storeKey] child:promo.promoKey] removeValue];
+                                        
+                                        [[[[firebaseRef.ref child:@"promoText"] child:store.storeKey] child:promo.promoKey] removeValue];
+//
+                                        [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:(UITableViewRowAnimationFade)];
+                                    }];
+    
+    return @[button]; //array with all the buttons you want. 1,2,3, etc...
+    
+}
+
+- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
+    // you need to implement this method too or nothing will work:
+    
+}
+- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath{
+    return YES; //tableview must be editable or nothing will work...
+}
+
+
 /*
 // Override to support conditional editing of the table view.
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {

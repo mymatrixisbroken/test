@@ -10,6 +10,8 @@
 #import "AddStorePromoViewController.h"
 #import "EditStoresPromosCellTableViewCell.h"
 #import "promoClass.h"
+#import "FirebaseReferenceClass.h"
+@import Firebase;
 
 @interface EditStorePromosTableViewController : UITableViewController <UIPopoverPresentationControllerDelegate>
 @property (strong, nonatomic) IBOutlet UIButton *addButton;
