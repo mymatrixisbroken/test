@@ -73,15 +73,38 @@
     _reviewsBarItem.image = [[UIImage imageNamed:@"notSelectedReviewsIcon"] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
     _reviewsBarItem.selectedImage = [[UIImage imageNamed:@"selectedReviewsIcon"]imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
     _tabBar.selectedItem = _reviewsBarItem;
+    _currentSelectedTabBarItem = 3;
+    UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+    UITableViewController *vc = [sb instantiateViewControllerWithIdentifier:@"reviewsSBID"];
+    [self addChildViewController:vc];
+    vc.tableView.frame = CGRectMake(0, 0, _containerView.frame.size.width, _containerView.frame.size.height);
+    [_containerView addSubview:vc.tableView];
+    [vc didMoveToParentViewController:self];
+
     
     _photosBarItem.enabled = YES;
     _photosBarItem.image = [[UIImage imageNamed:@"notSelectedPhotosIcon"] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal ];
     _photosBarItem.selectedImage = [[UIImage imageNamed:@"selectedPhotosIcon"]imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
-    
-    _favoriteBarItem.image = [[UIImage imageNamed:@"notSelectedFavoriteIcon"] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal ];
-    _favoriteBarItem.selectedImage = [[UIImage imageNamed:@"selectedFavoriteIcon"]imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
-}
 
+    if ([user.storeBookmarks indexOfObject:store.storeKey] != NSNotFound) {
+        _favoriteBarItem.image = [[UIImage imageNamed:@"bookmarkGreenIcon"] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal ];
+    }
+    else{
+    _favoriteBarItem.image = [[UIImage imageNamed:@"bookmarkWhiteIcon"]imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
+    }
+    
+//    UITapGestureRecognizer *tappedBookmark = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tappedBookmarkImage:)];
+//
+//    [self.tabBar addGestureRecognizer:tappedBookmark];
+
+
+//    _favoriteBarItem.selectedImage = [[UIImage imageNamed:@"bookmarkGreenIcon"]imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
+//    _favoriteBarItem.image = [[UIImage imageNamed:@"bookmarkWhiteIcon"] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal ];
+//
+//    if ([user.storeBookmarks indexOfObject:store.storeKey] != NSNotFound) {
+////        _favoriteBarItem.
+//    }
+}
 
 - (void) getStoreKey{
     [store init];
@@ -793,6 +816,7 @@
     [_tablevc.tableView removeFromSuperview];
     
     if(item.tag == 1) {
+        _currentSelectedTabBarItem = 1;
         UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
         UITableViewController *vc = [sb instantiateViewControllerWithIdentifier:@"promosSBID"];
         [self addChildViewController:vc];
@@ -803,6 +827,7 @@
         
     }
     else if(item.tag == 2) {
+        _currentSelectedTabBarItem = 2;
         UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
         UITableViewController *vc = [sb instantiateViewControllerWithIdentifier:@"strainsSBID"];
         [self addChildViewController:vc];
@@ -812,6 +837,7 @@
         [_scrollView setContentOffset:CGPointMake(0, 570) animated:YES];
     }
     else if(item.tag == 3) {
+        _currentSelectedTabBarItem = 3;
         UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
         UITableViewController *vc = [sb instantiateViewControllerWithIdentifier:@"reviewsSBID"];
         [self addChildViewController:vc];
@@ -821,6 +847,7 @@
         [_scrollView setContentOffset:CGPointMake(0, 570) animated:YES];
     }
     else if(item.tag == 4) {
+        _currentSelectedTabBarItem = 4;
         UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
         UITableViewController *vc = [sb instantiateViewControllerWithIdentifier:@"photosSBID"];
         [self addChildViewController:vc];
@@ -831,6 +858,40 @@
     }
     else if(item.tag == 5) {
         //Bookmark store
+        if([FIRAuth auth].currentUser.anonymous){
+            UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+            UIViewController *vc2 = [sb instantiateViewControllerWithIdentifier:@"Login View VC SB ID"];
+            vc2.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
+            [self.navigationController pushViewController:vc2 animated:false];
+        }
+        else{
+            if ([user.storeBookmarks indexOfObject:store.storeKey] != NSNotFound) {
+                [user.storeBookmarks removeObject:store.storeKey];
+                [[[[[firebaseRef.ref child:@"bookmarks"] child:user.userKey] child:@"stores"] child:store.storeKey] removeValue];
+                _favoriteBarItem.image = [[UIImage imageNamed:@"bookmarkWhiteIcon"]imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
+            } else {
+                [user.storeBookmarks addObject:store.storeKey];
+                [[[[[firebaseRef.ref child:@"bookmarks"] child:user.userKey] child:@"stores"] child:store.storeKey] setValue:@"store"];
+                _favoriteBarItem.image = [[UIImage imageNamed:@"bookmarkGreenIcon"]imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
+            }
+            
+            switch (_currentSelectedTabBarItem) {
+                case 1:
+                    self.tabBar.selectedItem = _aboutBarItem;
+                    break;
+                case 2:
+                    self.tabBar.selectedItem = _strainsBarItem;
+                    break;
+                case 3:
+                    self.tabBar.selectedItem = _reviewsBarItem;
+                    break;
+                case 4:
+                    self.tabBar.selectedItem = _photosBarItem;
+                    break;
+                default:
+                    break;
+            }
+        }
     }
 }
 

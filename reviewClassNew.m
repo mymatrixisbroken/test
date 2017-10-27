@@ -12,6 +12,12 @@
 @synthesize reviewKey;
 @synthesize authoredByUserKey;
 @synthesize authoredByUsername;
+@synthesize objectType;
+@synthesize objectKey;
+@synthesize objectName;
+@synthesize objectImageLink;
+@synthesize objectRating;
+@synthesize objectReviewCount;
 @synthesize message;
 @synthesize rating;
 @synthesize userImageLink;
@@ -20,6 +26,7 @@
     self = [super init];
     if (self) {
         self.userImageLink = [[NSMutableArray alloc] init];
+        self.objectImageLink = [[NSMutableArray alloc] init];
     }
     return self;
 }

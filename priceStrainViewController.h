@@ -19,5 +19,6 @@
 @property (strong, nonatomic) IBOutlet NSMutableArray *strainArray;
 @property (strong, nonatomic) IBOutlet UITableView *priceStrainsTableView;
 @property (strong, nonatomic) IBOutlet UIButton *confirmButton;
+@property (strong, nonatomic) IBOutlet UIView *menuView;
 
 @end

@@ -48,6 +48,7 @@
 @property (strong, nonatomic) IBOutlet UITableViewController *tablevc;
 @property (strong, nonatomic) IBOutlet UIScrollView *scrollView;
 @property (copy, nonatomic) NSString *passedString;
+@property NSInteger currentSelectedTabBarItem;
 @property (strong, nonatomic) IBOutlet UIButton *editStoreButton;
 @property UIActivityIndicatorView *spinner;
 

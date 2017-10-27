@@ -56,7 +56,17 @@
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-    return 1;
+    NSInteger sectionCount = 0;
+    
+    if ([store.imagesArray count] > 0){
+        sectionCount++;
+    }
+    else{
+        UIView *rootView = [[[NSBundle mainBundle] loadNibNamed:@"photosEmptyView" owner:self options:nil] objectAtIndex:0];
+        self.tableView.backgroundView = rootView;
+    }
+    NSLog(@"section count is %lu",sectionCount);
+    return sectionCount;
 }
 
 - (IBAction)selectedAddPhoto:(UIButton *)sender {

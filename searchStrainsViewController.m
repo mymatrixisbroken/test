@@ -26,10 +26,11 @@
     [self.view addGestureRecognizer:swipeLeft];
     
     [self loadExtView];
-    [self loadTextField];
+    
+
     
     CGRect newFrame = _searchStrainsTableView.frame;
-    newFrame.origin.y += 100;
+    newFrame.origin.y = 150;
     _searchStrainsTableView.frame = newFrame;
     self.searchStrainsTableView.delegate = self;
     self.searchStrainsTableView.dataSource = self;
@@ -246,14 +247,11 @@
 - (void) loadExtView{
     _extView = [[extensionViewClass alloc] init];
     [_extView setView:CGRectGetWidth(self.view.bounds)];
-    CGRect newFrame = _extView.frame;
-    newFrame.origin.y += 75;
-    _extView.frame = newFrame;
-    
-    //    [extView addTexField:CGRectGetWidth(self.view.bounds)];
-//        [self.view bringSubviewToFront:_extView];
+    [self.view bringSubviewToFront:_extView];
     [self.shyNavBarManager setExtensionView:_extView];
     [self.shyNavBarManager setStickyExtensionView:NO];
+    
+    [self loadTextField];
 }
 
 - (void) loadTextField{

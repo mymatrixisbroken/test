@@ -12,8 +12,14 @@
 @property NSString *reviewKey;
 @property NSString *authoredByUserKey;
 @property NSString *authoredByUsername;
+@property NSString *objectType;
+@property NSString *objectKey;
+@property NSString *objectName;
+@property NSString *objectRating;
+@property (nonatomic, assign) NSInteger objectReviewCount;
 @property NSString *message;
 @property NSString *rating;
 @property NSMutableArray *userImageLink;
+@property NSMutableArray *objectImageLink;
 
 @end

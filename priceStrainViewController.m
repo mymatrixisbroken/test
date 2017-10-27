@@ -29,6 +29,8 @@
     self.priceStrainsTableView.delegate = self;
     self.priceStrainsTableView.dataSource = self;
     self.priceStrainsTableView.allowsSelection = NO;
+    
+    _menuView.frame = CGRectOffset( _menuView.frame, 0, 40 ); // offset by an amount
 
     [_confirmButton addTarget:self
                    action:@selector(tappedConfirmButton:)

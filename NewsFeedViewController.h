@@ -20,6 +20,7 @@
 #import "imageClass.h"
 #import "StoreProfileViewController.h"
 #import <FirebaseStorageUI/FirebaseStorageUI.h>
+#import "UserProfileViewController.h"
 @import Firebase;
 
 @interface NewsFeedViewController : UIViewController <UITableViewDelegate, UITableViewDataSource>
@@ -27,6 +28,11 @@
 @property (strong, nonatomic) IBOutlet NSMutableArray *queriesArray;
 @property (strong, nonatomic) IBOutlet NSMutableDictionary *dict;
 @property (strong, nonatomic) IBOutlet UIView *emptyStateView;
+
+@property (strong, nonatomic) IBOutlet UILabel *testLabel;
+@property NSRange moreStringRange;
+@property NSMutableAttributedString *attrString;
+@property (strong, nonatomic) IBOutlet UITextView *testTextField;
 
 @end
 

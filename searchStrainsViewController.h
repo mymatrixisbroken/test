@@ -26,5 +26,6 @@
 @property (strong, nonatomic) IBOutlet NSArray *strainKeys;
 @property (strong, nonatomic) IBOutlet extensionViewClass *extView;
 @property (strong, nonatomic) IBOutlet UIButton *addButton;
+@property (strong, nonatomic) IBOutlet UIView *menuView;
 
 @end

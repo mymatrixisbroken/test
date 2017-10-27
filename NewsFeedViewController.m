@@ -28,7 +28,7 @@
     self.shyNavBarManager.scrollView = self.tableView;
 //    [self loadExtView];
     
-//    user.activityArray = [[NSMutableArray alloc] init];
+    user.activityArray = [[NSMutableArray alloc] init];
     _queriesArray = [[NSMutableArray alloc] init];
     _dict = [[NSMutableDictionary alloc] init];
 
@@ -43,7 +43,67 @@
 //    if (!([FIRAuth auth].currentUser.isAnonymous)) {
 //        [self newLoadEventsFromFirebaseDatabse];
 //    }
+    
+    
+    //empty state implementation
+    NSMutableAttributedString *paragraph = [[NSMutableAttributedString alloc] initWithString:@"No activity here. " attributes:@{NSForegroundColorAttributeName: [UIColor colorWithRed:122.0/255.0 green:122.0/255.0 blue:122.0/255.0 alpha:1.0], NSFontAttributeName: [UIFont fontWithName:@"NEXA LIGHT" size:14.0]}];
+    NSAttributedString* attributedString = [[NSAttributedString alloc] initWithString:@"Click" attributes:@{ @"myCustomTag" : @"1", NSForegroundColorAttributeName: [UIColor colorWithRed:8.0/255.0 green:197.0/255.0 blue:103.0/255.0 alpha:1.0], NSFontAttributeName: [UIFont fontWithName:@"NEXA LIGHT" size:14.0]}];
+    NSMutableAttributedString *paragraph1 = [[NSMutableAttributedString alloc] initWithString:@" here to see activity near by.  " attributes:@{NSForegroundColorAttributeName: [UIColor colorWithRed:122.0/255.0 green:122.0/255.0 blue:122.0/255.0 alpha:1.0],NSFontAttributeName: [UIFont fontWithName:@"NEXA LIGHT" size:14.0]}];
+    NSAttributedString* attributedString1 = [[NSAttributedString alloc] initWithString:@"Click" attributes:@{ @"myCustomTag1" : @"2", NSForegroundColorAttributeName: [UIColor colorWithRed:8.0/255.0 green:197.0/255.0 blue:103.0/255.0 alpha:1.0], NSFontAttributeName: [UIFont fontWithName:@"NEXA LIGHT" size:14.0] }];
+    NSMutableAttributedString *paragraph2 = [[NSMutableAttributedString alloc] initWithString:@" to add friends." attributes:@{NSForegroundColorAttributeName: [UIColor colorWithRed:122.0/255.0 green:122.0/255.0 blue:122.0/255.0 alpha:1.0], NSFontAttributeName: [UIFont fontWithName:@"NEXA LIGHT" size:14.0]}];
+
+    [paragraph appendAttributedString:attributedString];
+    [paragraph appendAttributedString:paragraph1];
+    [paragraph appendAttributedString:attributedString1];
+    [paragraph appendAttributedString:paragraph2];
+
+    _testTextField.attributedText = paragraph;
+    
+    UITapGestureRecognizer *tapGest = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(textTapped:)];
+    [_testTextField addGestureRecognizer:tapGest];
+    
 }
+
+- (void)textTapped:(UITapGestureRecognizer *)recognizer
+{
+    UITextView *textView = (UITextView *)recognizer.view;
+    
+    // Location of the tap in text-container coordinates
+    
+    NSLayoutManager *layoutManager = textView.layoutManager;
+    CGPoint location = [recognizer locationInView:textView];
+    location.x -= textView.textContainerInset.left;
+    location.y -= textView.textContainerInset.top;
+    
+    // Find the character that's been tapped on
+    
+    NSUInteger characterIndex;
+    characterIndex = [layoutManager characterIndexForPoint:location
+                                           inTextContainer:textView.textContainer
+                  fractionOfDistanceBetweenInsertionPoints:NULL];
+    
+    if (characterIndex < textView.textStorage.length) {
+        
+        NSRange range;
+        NSString *value = [textView.attributedText attribute:@"myCustomTag" atIndex:characterIndex effectiveRange:&range];
+        NSLog(@"%@, %lu, %lu", value, (unsigned long)range.location, (unsigned long)range.length);
+        NSString *value1 = [textView.attributedText attribute:@"myCustomTag1" atIndex:characterIndex effectiveRange:&range];
+        NSLog(@"%@, %lu, %lu", value1, (unsigned long)range.location, (unsigned long)range.length);
+        
+        if ([value isEqualToString:@"1"]) {
+            // go to near me activity view
+            NSLog(@"tapped near me activity");
+        }
+        else if ([value1 isEqualToString:@"2"]){
+            //go to search friends view
+            NSLog(@"find friends activity");
+            user.mainNavigationSelected = 2;
+            [user goToSearchViewController:self];
+        }
+    }
+}
+
+
 
 -(void) screenSwipedLeft{
     FIRUser *currentUser = [FIRAuth auth].currentUser;
@@ -97,7 +157,9 @@
     
     if ([user.activityArray count] > 0){
         sectionCount++;
-        self.tableView.backgroundView = nil;
+//        self.tableView.backgroundView = nil;
+        _emptyStateView.hidden = YES;
+        [self.tableView setHidden:NO];
     }
     else{
 //        UIImageView *noDataImage         = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, self.tableView.bounds.size.width/2, self.tableView.bounds.size.height/2)];
@@ -106,14 +168,17 @@
 //        self.tableView.backgroundView = noDataImage;
 //        self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
         _emptyStateView.hidden = NO;
-        [self.tableView addSubview:_emptyStateView];
+        [self.tableView setHidden:YES];
+        [self.view addSubview:_emptyStateView];
 //        self.tableView.backgroundView = _emptyStateView;
 
     }
+    NSLog(@"section count is %lu",sectionCount);
     return sectionCount;
 }
 
 - (NSInteger) tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
+    NSLog(@"activity count is %lu",[user.activityArray count]);
     return [user.activityArray count];
 }
 
@@ -122,7 +187,38 @@
     return 175;
 }
 
+-(void)goToUserProfile:(UITapGestureRecognizer *)recognizer{
+    CGPoint point = [recognizer locationInView:self.tableView];
+    NSIndexPath *indexPath = [self.tableView indexPathForRowAtPoint:point];
+    
+    activityClass *activity = [[activityClass alloc] init];
+    activity = [user.activityArray objectAtIndex:indexPath.row];
+    
+    UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+    UserProfileViewController *vc = [sb instantiateViewControllerWithIdentifier:@"User Profile VC SB ID"];
+    vc.passedString = activity.username;
+    [self.navigationController pushViewController:vc animated:false];
+}
+
+-(void)goToStoreProfile:(UITapGestureRecognizer *)recognizer{
+    CGPoint point = [recognizer locationInView:self.tableView];
+    NSIndexPath *indexPath = [self.tableView indexPathForRowAtPoint:point];
+    
+    activityClass *activity = [[activityClass alloc] init];
+    activity = [user.activityArray objectAtIndex:indexPath.row];
+    
+    UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+    StoreProfileViewController *vc = [sb instantiateViewControllerWithIdentifier:@"Store Profile VC SB ID"];
+    vc.passedString = activity.objectName;
+    [self.navigationController pushViewController:vc animated:false];
+}
+
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
+    UITapGestureRecognizer *tapUserImage = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(goToUserProfile:)];
+
+    UITapGestureRecognizer *tapStoreImage = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(goToStoreProfile:)];
+
+    
     NSString *cellIdentifier = @"newsFeedStoreAddPhotosCell";
     NSString *cellIdentifier1 = @"newsFeedCheckInCell";
     NSString *cellIdentifier2 = @"newsFeedWroteReviewStoreCell";
@@ -163,6 +259,9 @@
             [cell.userImageView sd_setImageWithStorageReference:spaceRef placeholderImage:placeHolder];
         }
         
+        cell.userImageView.userInteractionEnabled = YES;                //add tap to user image
+        [cell.userImageView addGestureRecognizer:tapUserImage];
+        
         if ([activity.objectImagesArray count] > 0) {
 //            FIRStorage *storage = [FIRStorage storage];
 //            FIRStorageReference *storageRef = [storage reference];
@@ -173,6 +272,9 @@
             
             [cell.strainImageView sd_setImageWithStorageReference:spaceRef placeholderImage:placeHolder];
         }
+        
+        cell.strainImageView.userInteractionEnabled = YES;                //add tap to store image
+        [cell.strainImageView addGestureRecognizer:tapStoreImage];
         
         cell.usernameLabel.text = activity.username;
         cell.eventLabel.text = @"Added photos for:";
@@ -201,6 +303,10 @@
             [cell.userImageView sd_setImageWithStorageReference:spaceRef placeholderImage:placeHolder];
         }
         
+        cell.userImageView.userInteractionEnabled = YES;                    //add tap to user image
+        [cell.userImageView addGestureRecognizer:tapUserImage];
+
+        
         if ([activity.objectImagesArray count] > 0) {
             //            FIRStorage *storage = [FIRStorage storage];
             //            FIRStorageReference *storageRef = [storage reference];
@@ -211,6 +317,10 @@
             
             [cell.storeImageView sd_setImageWithStorageReference:spaceRef placeholderImage:placeHolder];
         }
+        
+        cell.storeImageView.userInteractionEnabled = YES;                //add tap to store image
+        [cell.storeImageView addGestureRecognizer:tapStoreImage];
+
         
         cell.usernameLabel.text = activity.username;
         cell.eventLabel.text = @"Wrote a review for:";

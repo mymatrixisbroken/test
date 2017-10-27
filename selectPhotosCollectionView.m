@@ -214,6 +214,8 @@ static NSString * const reuseIdentifier = @"Cell";
             NSString *imageName = [imageKey stringByAppendingString:@".jpg"];
             [[[[[firebaseRef.ref child:@"images"] child:@"stores"] child:store.storeKey] child:imageKey] setValue:imageName];
             [[[[[[firebaseRef.ref child:@"imageAddedByUser"] child:@"stores"] child:store.storeKey] child:imageKey] child:user.userKey] setValue:@"true"];
+            [[[[firebaseRef.ref child:@"userAddedImage"] child:user.userKey]  child:imageKey] setValue:@"stores"];
+            [[[[firebaseRef.ref child:@"imageForObject"] child:imageKey]  child:store.storeKey] setValue:@"true"];
 
             FIRStorage *storage = [FIRStorage storage];
             FIRStorageReference *storageRef = [storage reference];
