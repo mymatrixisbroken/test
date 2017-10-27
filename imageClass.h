@@ -11,6 +11,8 @@
 @interface imageClass : NSObject
 @property NSString *imageKey;
 @property NSString *imageURL;
+@property NSString *imageType;
+@property NSString *objectKey;
 @property NSMutableArray *imageThumbsUp;
 @property NSMutableArray *imageThumbsDown;
 @property NSInteger voteScore;

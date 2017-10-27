@@ -11,6 +11,8 @@
 @implementation imageClass
 @synthesize imageKey;
 @synthesize imageURL;
+@synthesize imageType;
+@synthesize objectKey;
 @synthesize imageThumbsUp;
 @synthesize imageThumbsDown;
 @synthesize voteScore;
