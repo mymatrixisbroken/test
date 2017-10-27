@@ -37,6 +37,8 @@
         NSString *reviewKey = [[[[firebaseRef.ref child:@"reviewKeys"] child:@"stores"] child:store.storeKey] childByAutoId].key;
         [[[[[firebaseRef.ref child:@"reviewKeys"] child:@"stores"] child:store.storeKey] child:reviewKey] setValue:@"true"];
         [[[[firebaseRef.ref child:@"reviewAddedByUser"] child:reviewKey] child:user.userKey] setValue:@"true"];
+//        [[[[firebaseRef.ref child:@"reviewAboutStore"] child:reviewKey] child:store.storeKey] setValue:@"true"];
+        [[[[firebaseRef.ref child:@"reviewAboutObject"] child:reviewKey] child:store.storeKey] setValue:@"store"];
         [[[[firebaseRef.ref child:@"reviewUserWroteReview"] child:user.userKey] child:reviewKey] setValue:@"true"];
         [[[[firebaseRef.ref child:@"reviewRating"] child:reviewKey] child:@"rating"] setValue:rating];
         [[[[firebaseRef.ref child:@"reviewMessage"] child:reviewKey] child:@"message"] setValue:_reviewTextField.text];

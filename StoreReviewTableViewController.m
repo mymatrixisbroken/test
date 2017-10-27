@@ -54,7 +54,17 @@
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-    return 1;
+    NSInteger sectionCount = 0;
+    
+    if ([store.reviewsArray count] > 0){
+        sectionCount++;
+    }
+    else{
+        UIView *rootView = [[[NSBundle mainBundle] loadNibNamed:@"reviewsEmptyView" owner:self options:nil] objectAtIndex:0];
+        self.tableView.backgroundView = rootView;
+    }
+    NSLog(@"section count is %lu",sectionCount);
+    return sectionCount;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {

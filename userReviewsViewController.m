@@ -19,66 +19,64 @@
     self.tableView.delegate = self;
     self.tableView.dataSource = self;
     // Do any additional setup after loading the view.
+    
 }
+
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
 
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
+    NSInteger sectionCount = 0;
+    
+    if ([user.reviews count] > 0){
+        sectionCount++;
+    }
+    else{
+        UIView *rootView = [[[NSBundle mainBundle] loadNibNamed:@"reviewsEmptyView" owner:self options:nil] objectAtIndex:0];
+        self.tableView.backgroundView = rootView;
+    }
+    NSLog(@"section count is %lu",sectionCount);
+    return sectionCount;
+}
+
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     return [user.reviews count];
 }
-
-- (NSArray *)rightButtons
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSMutableArray *rightUtilityButtons = [NSMutableArray new];
-    [rightUtilityButtons sw_addUtilityButtonWithColor:
-     [UIColor colorWithRed:1.0f green:0.231f blue:0.188 alpha:1.0f]
-                                                title:@"Delete"];
-    
-    return rightUtilityButtons;
+    return 120;
 }
 
-- (BOOL)swipeableTableViewCellShouldHideUtilityButtonsOnSwipe:(SWTableViewCell *)cell{
-    return YES;
-}
-
-- (void)swipeableTableViewCell:(SWTableViewCell *)cell didTriggerRightUtilityButtonWithIndex:(NSInteger)index {
-    switch (index) {
-        case 0:{
-            NSLog(@"Delete button was pressed");
-            NSIndexPath *cellIndexPath = [self.tableView indexPathForCell:cell];
-            reviewClass *review = [user.reviews objectAtIndex:cellIndexPath.row];
-            NSLog(@"review key is %@", review.reviewKey);
-            
-            [[firebaseRef.reviewsRef child:review.reviewKey]  removeValue];
-            [user.reviews removeObject:review];
-                        
-            [self.tableView deleteRowsAtIndexPaths:@[cellIndexPath]
-                                  withRowAnimation:UITableViewRowAnimationAutomatic];
-            
-            break;
-        }
-        default:
-            break;
-    }
-}
-
-
--(UITableViewCell *) tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     NSString *cellIdentifier = @"userReviewCell";
     userReviewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier forIndexPath:indexPath];
     
-    reviewClass *tempReview = [[reviewClass alloc] init];
+    reviewClassNew *tempReview = [[reviewClassNew alloc] init];
     tempReview = [user.reviews objectAtIndex:indexPath.row];
-    cell.rightUtilityButtons = [self rightButtons];
-    cell.delegate = self;
+    
+    FIRStorage *storage = [FIRStorage storage];
+    FIRStorageReference *storageRef = [storage reference];
 
-    [cell uploadCellWithReview:tempReview];
+    if ([tempReview.objectImageLink count] > 0){                                      //check images array is null
+        FIRStorageReference *spaceRef = [[[storageRef child:@"stores"] child:tempReview.objectKey] child:[tempReview.objectImageLink objectAtIndex:0]];
+        UIImage *placeHolder = [[UIImage alloc] init];
+        
+        [cell.objectImageView sd_setImageWithStorageReference:spaceRef placeholderImage:placeHolder];
+    }
+
+    cell.reviewRatingView.value = [tempReview.rating floatValue];
+    cell.reviewMessageLabel.text = tempReview.message;
+    cell.objectNameLabel.text = tempReview.objectName;
+//    cell.objectRatingView.value = tempReview.objectRating ;
+    cell.objectReviewCount.text = [[NSString stringWithFormat: @"%ld", tempReview.objectReviewCount] stringByAppendingString:@" Reviews"];
+
+
+    //    [cell uploadCellWithReview:tempReview];
     
     return cell;
-
 }
 
 @end

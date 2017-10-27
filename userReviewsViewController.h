@@ -10,6 +10,8 @@
 #import "userClass.h"
 #import "userReviewCell.h"
 #import "reviewClass.h"
+#import <FirebaseStorageUI/FirebaseStorageUI.h>
+@import Firebase;
 
 @interface userReviewsViewController : UIViewController <UITableViewDelegate, UITableViewDataSource>
 @property (strong, nonatomic) IBOutlet UITableView *tableView;

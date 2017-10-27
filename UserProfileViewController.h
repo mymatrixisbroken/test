@@ -13,7 +13,12 @@
 #import "extensionViewClass.h"
 #import "objectsArrayClass.h"
 #import <FirebaseStorageUI/FirebaseStorageUI.h>
+#import "friendRequestTableViewController.h"
 #import "reviewClass.h"
+#import "otherUserReviewsViewController.h"
+#import "otherUserBookmarksViewController.h"
+#import "otherUserFriendsViewController.h"
+#import "otherUserPhotosTableViewController.h"
 @import Firebase;
 
 @interface UserProfileViewController : UIViewController<UIImagePickerControllerDelegate, UINavigationControllerDelegate>{

@@ -1,21 +1,24 @@
 //
-//  storePromosTableViewController.m
+//  userPhotosTableViewController.m
 //  myProject
 //
-//  Created by Guy on 8/26/17.
+//  Created by Guy on 10/25/17.
 //  Copyright © 2017 Joaquin. All rights reserved.
 //
 
-#import "storePromosTableViewController.h"
+#import "userPhotosTableViewController.h"
 
-@interface storePromosTableViewController ()
+@interface userPhotosTableViewController ()
 
 @end
 
-@implementation storePromosTableViewController
+@implementation userPhotosTableViewController
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
+    _photosCountLabel.text = [[NSString stringWithFormat: @"%ld", [user.imagesUploaded count]] stringByAppendingString:@" Photos"];
+
     
     // Uncomment the following line to preserve selection between presentations.
     // self.clearsSelectionOnViewWillAppear = NO;
@@ -34,11 +37,11 @@
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
     NSInteger sectionCount = 0;
     
-    if ([store.promosArray count] > 0){
+    if ([user.imagesUploaded count] > 0){
         sectionCount++;
     }
-    else{
-        UIView *rootView = [[[NSBundle mainBundle] loadNibNamed:@"promosEmptyView" owner:self options:nil] objectAtIndex:0];
+    if ([user.imagesUploaded count] == 0) {
+        UIView *rootView = [[[NSBundle mainBundle] loadNibNamed:@"reviewsEmptyView" owner:self options:nil] objectAtIndex:0];
         self.tableView.backgroundView = rootView;
     }
     NSLog(@"section count is %lu",sectionCount);
@@ -46,26 +49,31 @@
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return [store.promosArray count];
+    return [user.imagesUploaded count]; 
 }
 
-- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    return 120;
-}
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    promoClass *promo = [[promoClass alloc] init];
-    promo = [store.promosArray objectAtIndex:indexPath.row];
+    userPhotosTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"currentUserPhotoCell" forIndexPath:indexPath];
     
-    NSString *cellIdentifier = @"StorePromoCell";
-    storePromoTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier forIndexPath:indexPath];
-    cell.promoDateLabel.text = promo.promoDate;
-    cell.promoTextLabel.text = promo.promoText;
-    cell.preservesSuperviewLayoutMargins = false;
-    cell.separatorInset = UIEdgeInsetsZero;
-    cell.layoutMargins = UIEdgeInsetsZero;
+    FIRStorage *storage = [FIRStorage storage];
+    FIRStorageReference *storageRef = [storage reference];
+    
+    if ([user.imagesUploaded count] > 0){                                      //check images array is null
+        imageClass *image = [[imageClass alloc] init];
+        image = [user.imagesUploaded objectAtIndex:0];
+        NSString *imageURL = [image.imageKey stringByAppendingString:@".jpg"];
+        FIRStorageReference *spaceRef = [[[storageRef child:image.imageType] child:image.objectKey] child:imageURL];
+        NSLog(@"space ref is %@", spaceRef);
+        UIImage *placeHolder = [[UIImage alloc] init];
+        
+        [cell.imageView sd_setImageWithStorageReference:spaceRef placeholderImage:placeHolder];
+    }
+    return cell;
 
+    // Configure the cell...
+
+    
     return cell;
 }
 

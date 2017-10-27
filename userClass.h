@@ -45,6 +45,8 @@ extern userClass *user;
 @property NSMutableArray *imageKeys;
 @property NSMutableArray *imageLinks;
 
+@property NSMutableArray *imagesUploaded;
+
 @property NSMutableArray *storesVisited;
 @property NSMutableArray *storeBookmarks;
 @property NSInteger storesVisitedCount;

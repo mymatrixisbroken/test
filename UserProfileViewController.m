@@ -70,7 +70,9 @@
                 [self getStrainBookMarks];
                 [self getFriendRequestInbound];
                 [self getFriendRequestOutbound];
-                [self loadReviewsFromFirebase];
+                [self getImagesUploadedByUser];
+                [self getReviewKeys];
+//                [self loadReviewsFromFirebase];
                 [self setFriendButton];
             }
         }
@@ -185,6 +187,7 @@
             for (id key in snapshot.value) {
                 [_otherUser.storeBookmarks addObject:key];
             }
+            _badgesNumber.text = [NSString stringWithFormat:@"%lu", (unsigned long)_otherUser.storeBookmarks.count];
         }
     }];
 }
@@ -219,33 +222,198 @@
     }];
 }
 
--(void)loadReviewsFromFirebase{
-    //    FIRDatabaseQuery *reviewQuery = [[ queryOrderedByChild:@"reviewData"] queryEqualToValue:_otherUser.userKey];
-    
-    [[[firebaseRef.ref child:@"reviewData"] child:_otherUser.userKey] observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
+-(void) getImagesUploadedByUser{
+    [[[firebaseRef.ref child:@"userAddedImage"] child:_otherUser.userKey] observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
         if ([NSNull null] != snapshot.value){                                   //check snapshot is null
-            for (id key in snapshot.value) {
-                reviewClass *tempReview = [[reviewClass alloc] init];
-                tempReview.reviewKey = key;
-                
-                NSDictionary *dictionary = [[NSDictionary alloc] init];
-                dictionary = [snapshot.value valueForKey:tempReview.reviewKey];
-                tempReview.message = [dictionary valueForKey:@"message"];
-                tempReview.objectImageURL = [dictionary valueForKey:@"objectImageKey"];
-                tempReview.objectKey = [dictionary valueForKey:@"objectKey"];
-                tempReview.objectName = [dictionary valueForKey:@"objectName"];
-                tempReview.objectType = [dictionary valueForKey:@"objectType"];
-                tempReview.userKey = [dictionary valueForKey:@"userKey"];
-                tempReview.rating = [dictionary valueForKey:@"rating"];
-                
-                [_otherUser.reviews addObject:tempReview];
+            _otherUser.imagesUploaded = [[NSMutableArray alloc] init];
+            NSArray *imageKeys = [[NSArray alloc] init];
+            imageKeys = [snapshot.value allKeys];
+            
+            for(NSString *key in imageKeys){
+                imageClass *image = [[imageClass alloc] init];
+                image.imageKey = key;
+                image.imageType = [snapshot.value valueForKey:key];
+                [self getObjectKeyForImage:image];
+            }
+        }
+    }];
+}
+
+-(void) getObjectKeyForImage:(imageClass *) image{
+    [[[firebaseRef.ref child:@"imageForObject"] child:image.imageKey] observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
+        if ([NSNull null] != snapshot.value){                                   //check snapshot is null
+            image.objectKey = [[snapshot.value allKeys] objectAtIndex:0];
+            [_otherUser.imagesUploaded addObject:image];
+        }
+        _strainsTriedNumber.text = [NSString stringWithFormat:@"%lu", (unsigned long)_otherUser.imagesUploaded.count];
+    }];
+}
+
+
+-(void) getReviewKeys{
+    [[[firebaseRef.ref child:@"reviewUserWroteReview"] child:_otherUser.userKey] observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
+        if ([NSNull null] != snapshot.value){                                   //check snapshot is null
+            _otherUser.reviews = [[NSMutableArray alloc] init];
+            NSArray *reviewKeys = [[NSArray alloc] init];
+            reviewKeys = [snapshot.value allKeys];
+            
+            for(NSString *key in reviewKeys){
+                reviewClassNew *review = [[reviewClassNew alloc] init];
+                review.reviewKey = key;
+                [_otherUser.reviews addObject:review];
             }
             _myReviewsNumber.text = [NSString stringWithFormat:@"%lu", (unsigned long)_otherUser.reviews.count];
+            
+            [self getReviewObject];
+            [self getReviewMessage];
+            [self getReviewRating];
         }
         [self.view setNeedsDisplay];
     }];
-    
 }
+
+- (void) getReviewObject {
+    NSLog(@" key  is %lu", _otherUser.reviews.count);
+    
+    for (int j = 0; j < _otherUser.reviews.count; j++){
+        reviewClassNew *review = [[reviewClassNew alloc] init];
+        review = [_otherUser.reviews objectAtIndex:j];
+        NSLog(@"review key  is %@", review.reviewKey);
+        
+        
+        [[[firebaseRef.ref child:@"reviewAboutObject"] child:review.reviewKey] observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
+            if ([NSNull null] != snapshot.value){                                   //check snapshot is null
+                review.objectKey = [[snapshot.value allKeys] objectAtIndex:0];
+                review.objectType = [[snapshot.value allValues] objectAtIndex:0];
+                
+                [_otherUser.reviews replaceObjectAtIndex:j withObject:review];
+                
+                if ([review.objectType isEqualToString:@"store"]) {
+                    [self getStoreName: j];
+                    [self getStoreRatingScore: j];
+                    [self getStoreImage: j];
+                }
+            }
+        }];
+    }
+}
+
+- (void) getStoreName:(NSInteger) i {
+    reviewClassNew *review = [[reviewClassNew alloc] init];
+    review = [_otherUser.reviews objectAtIndex:i];
+    
+    [[[firebaseRef.ref child:@"storeNames"] child:review.objectKey] observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
+        if ([NSNull null] != snapshot.value){                                   //check snapshot is null
+            review.objectName = [snapshot.value valueForKey:@"name"];
+            [_otherUser.reviews replaceObjectAtIndex:i withObject:review];
+            
+        }
+    }];
+}
+
+- (void) getStoreRatingScore:(NSInteger) i {
+    reviewClassNew *review = [[reviewClassNew alloc] init];
+    review = [_otherUser.reviews objectAtIndex:i];
+    
+    [[[[firebaseRef.ref child:@"starRating"] child:@"stores"] child:review.objectKey] observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
+        if ([NSNull null] != snapshot.value){                                   //check snapshot is null
+            NSArray *scores = [[NSArray alloc] init];
+            scores = [snapshot.value allValues];
+            review.objectReviewCount = [scores count];
+            
+            if ([scores count] > 0) {
+                float ratingFloat = [review.objectRating floatValue];
+                for (id i in scores){
+                    ratingFloat = ratingFloat + [i floatValue];
+                }
+                review.objectRating = [NSString stringWithFormat:@"%lf",ratingFloat];
+            }
+            [_otherUser.reviews replaceObjectAtIndex:i withObject:review];
+        }
+    }];
+}
+
+- (void) getStoreImage:(NSInteger) i {
+    reviewClassNew *review = [[reviewClassNew alloc] init];
+    review = [_otherUser.reviews objectAtIndex:i];
+    
+    [[[[firebaseRef.ref child:@"images"] child:@"stores"] child:review.objectKey] observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
+        if ([NSNull null] != snapshot.value){                                   //check snapshot is null
+            for (id key in snapshot.value) {
+                [review.objectImageLink addObject:[snapshot.value valueForKey:key]];
+            }
+            [_otherUser.reviews replaceObjectAtIndex:i withObject:review];
+        }
+    }];
+}
+
+
+
+- (void) getReviewMessage {
+    NSLog(@"review key  is %lu", _otherUser.reviews.count);
+    
+    for (int j = 0; j < _otherUser.reviews.count; j++){
+        reviewClassNew *review = [[reviewClassNew alloc] init];
+        review = [_otherUser.reviews objectAtIndex:j];
+        NSLog(@"review key  is %@", review.reviewKey);
+        
+        [[[firebaseRef.ref child:@"reviewMessage"] child:review.reviewKey] observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
+            if ([NSNull null] != snapshot.value){                                   //check snapshot is null
+                review.message = [[snapshot.value allValues] objectAtIndex:0];
+                
+                [_otherUser.reviews replaceObjectAtIndex:j withObject:review];
+            }
+        }];
+    }
+}
+
+- (void) getReviewRating {
+    NSLog(@"review key  is %lu", _otherUser.reviews.count);
+    
+    for (int j = 0; j < _otherUser.reviews.count; j++){
+        reviewClassNew *review = [[reviewClassNew alloc] init];
+        review = [_otherUser.reviews objectAtIndex:j];
+        NSLog(@"review key  is %@", review.reviewKey);
+        
+        
+        [[[firebaseRef.ref child:@"reviewRating"] child:review.reviewKey] observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
+            if ([NSNull null] != snapshot.value){                                   //check snapshot is null
+                review.rating = [[snapshot.value allValues] objectAtIndex:0];
+                
+                [_otherUser.reviews replaceObjectAtIndex:j withObject:review];
+            }
+        }];
+    }
+}
+
+
+//-(void)loadReviewsFromFirebase{
+//    //    FIRDatabaseQuery *reviewQuery = [[ queryOrderedByChild:@"reviewData"] queryEqualToValue:_otherUser.userKey];
+//
+//    [[[firebaseRef.ref child:@"reviewData"] child:_otherUser.userKey] observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot){
+//        if ([NSNull null] != snapshot.value){                                   //check snapshot is null
+//            for (id key in snapshot.value) {
+//                reviewClass *tempReview = [[reviewClass alloc] init];
+//                tempReview.reviewKey = key;
+//
+//                NSDictionary *dictionary = [[NSDictionary alloc] init];
+//                dictionary = [snapshot.value valueForKey:tempReview.reviewKey];
+//                tempReview.message = [dictionary valueForKey:@"message"];
+//                tempReview.objectImageURL = [dictionary valueForKey:@"objectImageKey"];
+//                tempReview.objectKey = [dictionary valueForKey:@"objectKey"];
+//                tempReview.objectName = [dictionary valueForKey:@"objectName"];
+//                tempReview.objectType = [dictionary valueForKey:@"objectType"];
+//                tempReview.userKey = [dictionary valueForKey:@"userKey"];
+//                tempReview.rating = [dictionary valueForKey:@"rating"];
+//
+//                [_otherUser.reviews addObject:tempReview];
+//            }
+//            _myReviewsNumber.text = [NSString stringWithFormat:@"%lu", (unsigned long)_otherUser.reviews.count];
+//        }
+//        [self.view setNeedsDisplay];
+//    }];
+//
+//}
 
 - (void) setFriendButton{
     if ([user.friendsKeys indexOfObject:_otherUser.userKey] != NSNotFound){
@@ -257,6 +425,12 @@
         [_addFriendButton setBackgroundImage:[UIImage imageNamed:@"buttonGreenBackground"] forState:UIControlStateNormal];
         [_addFriendButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
         [_addFriendButton setTitle:@"Pending" forState:UIControlStateNormal];
+    }
+    else if ([user.friendRequestsIncomingKeys indexOfObject:_otherUser.userKey] != NSNotFound){
+        [_addFriendButton setBackgroundImage:[UIImage imageNamed:@"buttonGreenBackground"] forState:UIControlStateNormal];
+        [_addFriendButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+        [_addFriendButton setTitle:@"View Request" forState:UIControlStateNormal];
+        _addFriendButton.titleLabel.adjustsFontSizeToFitWidth = YES;
     }
 }
 
@@ -367,12 +541,14 @@
                 [[[[firebaseRef.ref child:@"friends"] child:user.userKey] child:_otherUser.userKey] removeValue];
                 [[[[firebaseRef.ref child:@"friends"] child:_otherUser.userKey] child:user.userKey] removeValue];
 
-                NSInteger index = [user.friendsKeys indexOfObject:_otherUser.userKey];
-                [user.friendsKeys removeObjectAtIndex:index];
+//                NSInteger index = [user.friendsKeys indexOfObject:_otherUser.userKey];
+//                [user.friendsKeys removeObjectAtIndex:index];
                 
                 [_addFriendButton setBackgroundImage:nil forState:UIControlStateNormal];
                 [_addFriendButton setTitleColor:[UIColor colorWithRed:8.0/255.0 green:197.0/255.0 blue:103.0/255.0 alpha:1.0] forState:UIControlStateNormal];
                 [_addFriendButton setTitle:@"Add Friend" forState:UIControlStateNormal];
+                
+                [user.friendsKeys removeObject:_otherUser.userKey];
             }]];
             
             [self presentViewController:actionSheet animated:YES completion:nil];             // Present action sheet.
@@ -382,12 +558,19 @@
             [[[[firebaseRef.ref child:@"friendRequestOutbound"] child:user.userKey] child:_otherUser.userKey] removeValue];
             [[[[firebaseRef.ref child:@"friendRequestInbound"] child:_otherUser.userKey] child:user.userKey] removeValue];
             
-            NSInteger index = [user.friendRequestsOutgoingKeys indexOfObject:_otherUser.userKey];
-            [user.friendRequestsOutgoingKeys removeObjectAtIndex:index];
-
+            //            NSInteger index = [user.friendRequestsOutgoingKeys indexOfObject:_otherUser.userKey];
+            //            [user.friendRequestsOutgoingKeys removeObjectAtIndex:index];
+            
             [_addFriendButton setBackgroundImage:nil forState:UIControlStateNormal];
             [_addFriendButton setTitleColor:[UIColor colorWithRed:8.0/255.0 green:197.0/255.0 blue:103.0/255.0 alpha:1.0] forState:UIControlStateNormal];
             [_addFriendButton setTitle:@"Add Friend" forState:UIControlStateNormal];
+            
+            [user.friendRequestsOutgoingKeys removeObject:_otherUser.userKey];
+        }
+        else if ([user.friendRequestsIncomingKeys indexOfObject:_otherUser.userKey] != NSNotFound){
+            UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+            friendRequestTableViewController *vc = [sb instantiateViewControllerWithIdentifier:@"Friend Request SB ID"];
+            [self presentViewController:vc animated:YES completion:^{}];
         }
         else {
             [[[[firebaseRef.ref child:@"friendRequestOutbound"] child:user.userKey] child:_otherUser.userKey] setValue:@"test"];
@@ -483,19 +666,43 @@
 }
 
 - (IBAction)tappedBadges:(UITapGestureRecognizer *)sender {
-    [self performSegueWithIdentifier:@"badgesSegue" sender:self];
+    //do something
 }
 - (IBAction)tappedFriends:(UITapGestureRecognizer *)sender {
-    [self performSegueWithIdentifier:@"friendsSegue" sender:self];
+    //do something
+    UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+    otherUserFriendsViewController *vc = [sb instantiateViewControllerWithIdentifier:@"Other user friends VC SB ID"];
+    vc.otherUser2 = [[userClass alloc] init];
+    vc.otherUser2 = _otherUser;
+    [self.navigationController pushViewController:vc animated:false];
 }
 - (IBAction)tappedMyReviews:(UITapGestureRecognizer *)sender {
-    [self performSegueWithIdentifier:@"myReviewsSegue" sender:self];
+    //do something
+    UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+    otherUserReviewsViewController *vc = [sb instantiateViewControllerWithIdentifier:@"Other user reviews VC SB ID"];
+    vc.otherUser = [[userClass alloc] init];
+    vc.otherUser = _otherUser;
+    [self.navigationController pushViewController:vc animated:false];
 }
-- (IBAction)tappedStrainsTried:(UITapGestureRecognizer *)sender {
-    [self performSegueWithIdentifier:@"strainsTriedSegue" sender:self];
+- (IBAction)tappedBookmarks:(UITapGestureRecognizer *)sender {
+    //do something
+    UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+    otherUserBookmarksViewController *vc = [sb instantiateViewControllerWithIdentifier:@"Other user bookmarks VC SB ID"];
+    vc.otherUser = [[userClass alloc] init];
+    vc.otherUser = _otherUser;
+    [self.navigationController pushViewController:vc animated:false];
+}
+- (IBAction)tappedPhotos:(UITapGestureRecognizer *)sender {
+    //do something
+    UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+    otherUserPhotosTableViewController *vc = [sb instantiateViewControllerWithIdentifier:@"Other user photos VC SB ID"];
+    vc.otherUser = [[userClass alloc] init];
+    vc.otherUser = _otherUser;
+    [self.navigationController pushViewController:vc animated:false];
+    
 }
 - (IBAction)tappedStoresVisited:(UITapGestureRecognizer *)sender {
-    [self performSegueWithIdentifier:@"storesVisitedSegue" sender:self];
+    //do something
 }
 
 
@@ -511,6 +718,7 @@
     UIButton *btn2 =  [UIButton buttonWithType:UIButtonTypeCustom];
     btn2.frame = CGRectMake(0,0,25,25);
     [btn2 setBackgroundImage:[UIImage imageNamed:@"mapWhiteIcon"] forState:UIControlStateNormal];
+    [btn2 addTarget:self action:@selector(strainButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
     UIBarButtonItem *buttonTwo = [[UIBarButtonItem alloc] initWithCustomView:btn2];
     
     
@@ -535,11 +743,12 @@
     UIBarButtonItem *buttonFive = [[UIBarButtonItem alloc] initWithCustomView:btn5];
     
     
-    UIBarButtonItem *space = [[UIBarButtonItem alloc]initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:self action:nil];
+    UIBarButtonItem *space = [[UIBarButtonItem alloc]initWithBarButtonSystemItem:UIBarButtonSystemItemFixedSpace target:self action:nil];
     space.width = 55;
     
     NSArray *buttons = @[buttonOne, space, buttonTwo, space, buttonThree, space, buttonFour, space, buttonFive];
     
+    self.navigationController.navigationBar.topItem.title = nil;
     self.navigationController.navigationBar.topItem.leftBarButtonItems = buttons;
 }
 
@@ -549,9 +758,9 @@
 }
 
 -(IBAction)strainButtonPressed:(UIButton*)btn {
-    user.mainNavigationSelected = 1;
     [user gotoMapViewViewController:self];
     
+    //    user.mainNavigationSelected = 1;
     //    objectsArray.filterSelected = 10;
     //    objectsArray.strainOrStore = 0;
     //    [user goToStrainsViewController:self];

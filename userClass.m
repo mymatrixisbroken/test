@@ -41,6 +41,8 @@ userClass *user;
 @synthesize imageKeys;
 @synthesize imageLinks;
 
+@synthesize imagesUploaded;
+
 @synthesize storesVisited;
 @synthesize storeBookmarks;
 @synthesize storesVisitedCount;
@@ -106,6 +108,8 @@ userClass *user;
         
         self.imageKeys = [[NSMutableArray alloc] init];
         self.imageLinks = [[NSMutableArray alloc] init];
+        
+        self.imagesUploaded = [[NSMutableArray alloc] init];
 
         self.storesVisited = [[NSMutableArray alloc] init];
         self.storeBookmarks = [[NSMutableArray alloc] init];

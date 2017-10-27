@@ -11,8 +11,12 @@
 #import "FirebaseReferenceClass.h"
 #import "userFriendsCell.h"
 #import "findFriendClass.h"
+#import <FirebaseStorageUI/FirebaseStorageUI.h>
+#import "UserProfileViewController.h"
+@import Firebase;
 
 @interface userFriendsViewController : UIViewController <UITableViewDataSource, UITableViewDelegate>
 @property (strong, nonatomic) IBOutlet UITableView *tableView;
+@property (strong, nonatomic) IBOutlet NSMutableArray *friendsArray;
 
 @end

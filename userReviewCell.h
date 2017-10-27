@@ -16,6 +16,8 @@
 @property (strong, nonatomic) IBOutlet HCSStarRatingView *reviewRatingView;
 @property (strong, nonatomic) IBOutlet UILabel *objectNameLabel;
 @property (strong, nonatomic) IBOutlet UILabel *reviewMessageLabel;
+@property (strong, nonatomic) IBOutlet HCSStarRatingView *objectRatingView;
+@property (strong, nonatomic) IBOutlet UILabel *objectReviewCount;
 
 -(void)uploadCellWithReview:(reviewClass *)tempReview;
 
